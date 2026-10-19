@@ -1,5 +1,5 @@
 {{--
-    Tabel detail produksi: No Label / Tebal / Lebar / Panjang / Jmlh Batang / Kubik.
+    Tabel detail produksi: No Label / Tebal / Lebar / Panjang / Jmlh Batang / Kubik / No SPK Tujuan.
     Dipakai oleh tabel Input, Output, Repair, dan Afkir pada laporan produksi per nomor produksi.
 
     Data yang dibutuhkan:
@@ -14,19 +14,20 @@
 <table class="detail-table">
     <thead>
         <tr>
-            <th style="width: 20%;">No Label</th>
-            <th style="width: 12%;">Tebal (mm)</th>
-            <th style="width: 12%;">Lebar (mm)</th>
-            <th style="width: 18%;">Panjang (ft)</th>
-            <th style="width: 19%;">Jmlh Batang</th>
-            <th style="width: 19%;">Kubik</th>
+            <th style="width: 18%;">No Label</th>
+            <th style="width: 11%;">Tebal (mm)</th>
+            <th style="width: 11%;">Lebar (mm)</th>
+            <th style="width: 15%;">Panjang (ft)</th>
+            <th style="width: 15%;">Jmlh Batang</th>
+            <th style="width: 15%;">Kubik</th>
+            <th style="width: 15%;">No SPK Tujuan</th>
         </tr>
     </thead>
     <tbody>
         @if ($rows === [])
             @if ($showEmpty)
                 <tr>
-                    <td class="center" colspan="6">{{ $emptyMessage }}</td>
+                    <td class="center" colspan="7">{{ $emptyMessage }}</td>
                 </tr>
             @endif
         @else
@@ -38,6 +39,7 @@
                     <td class="number">{{ $fmtInt($row['panjang'] ?? null) }}</td>
                     <td class="number">{{ $fmtInt($row['jmlh_batang'] ?? null) }}</td>
                     <td class="number">{{ $fmt4($row['kubik'] ?? null) }}</td>
+                    <td>{{ $row['no_spk_tujuan'] ?? '' }}</td>
                 </tr>
             @endforeach
         @endif
@@ -49,6 +51,7 @@
                 <td class="total-label" colspan="3">Total :</td>
                 <td class="number">{{ $fmtInt($totals['jmlh_batang'] ?? 0) }}</td>
                 <td class="number">{{ $fmt4($totals['kubik'] ?? 0) }}</td>
+                <td></td>
             </tr>
         </tfoot>
     @endif

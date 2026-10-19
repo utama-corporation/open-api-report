@@ -289,6 +289,7 @@ class ProduksiPackingPerNomorProduksiReportService
             'panjang' => ['InputPanjang', 'PanjangInput', 'InPanjang'],
             'jmlh_batang' => ['InputJmlhBatang', 'InputJumlahBatang', 'JmlhBatangInput', 'InJmlhBatang'],
             'kubik' => ['InputKubik', 'KubikInput', 'InKubik', 'InputM3', 'InM3'],
+            'no_spk_tujuan' => ['InputNoSPKTujuan', 'NoSPKTujuanInput', 'InNoSPKTujuan'],
         ]);
 
         $output = $this->mapDetailRowFromAliases($row, [
@@ -298,6 +299,7 @@ class ProduksiPackingPerNomorProduksiReportService
             'panjang' => ['OutputPanjang', 'PanjangOutput', 'OutPanjang'],
             'jmlh_batang' => ['OutputJmlhBatang', 'OutputJumlahBatang', 'JmlhBatangOutput', 'OutJmlhBatang'],
             'kubik' => ['OutputKubik', 'KubikOutput', 'OutKubik', 'OutputM3', 'OutM3'],
+            'no_spk_tujuan' => ['OutputNoSPKTujuan', 'NoSPKTujuanOutput', 'OutNoSPKTujuan'],
         ]);
 
         return [
@@ -330,6 +332,7 @@ class ProduksiPackingPerNomorProduksiReportService
             'panjang' => $this->firstNumber($row, $aliases['panjang']),
             'jmlh_batang' => $this->firstInt($row, $aliases['jmlh_batang']),
             'kubik' => $this->firstNumber($row, $aliases['kubik']),
+            'no_spk_tujuan' => $this->firstNonEmptyString($row, $aliases['no_spk_tujuan']),
         ];
     }
 
@@ -346,6 +349,7 @@ class ProduksiPackingPerNomorProduksiReportService
             'panjang' => $this->firstNumber($row, ['Panjang']),
             'jmlh_batang' => $this->firstInt($row, ['JmlhBatang', 'JumlahBatang', 'Batang']),
             'kubik' => $this->firstNumber($row, ['Kubik', 'M3']),
+            'no_spk_tujuan' => $this->firstNonEmptyString($row, ['NoSPKTujuan', 'No_SPK_Tujuan', 'NoSPKTuj']),
         ];
     }
 

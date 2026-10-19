@@ -7,7 +7,7 @@ use Tests\TestCase;
 /**
  * Kontrak bersama untuk seluruh laporan "produksi per nomor produksi".
  *
- * Semua laporan dalam keluarga ini memanggil SP berbentuk sama (17 kolom, sama
+ * Semua laporan dalam keluarga ini memanggil SP berbentuk sama (18 kolom, sama
  * dengan flag IsReject/IsRepair), jadi perilaku partisi Input / Output /
  * Repair / Afkir harus identik. Subkelas hanya perlu menyatakan service dan
  * view PDF-nya masing-masing.
@@ -50,6 +50,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             'Kubik' => 1.5,
             'IsReject' => '0',
             'IsRepair' => null,
+            'NoSPKTujuan' => '',
         ], $overrides);
     }
 
@@ -140,6 +141,31 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertSame([], $report['afkir_rows']);
     }
 
+    public function test_no_spk_tujuan_follows_its_row_into_whichever_bucket(): void
+    {
+        $report = $this->build([
+            $this->spRow('Input', 'R.000001', ['NoSPKTujuan' => '2026-12']),
+            $this->spRow('Output', 'S.000001', ['NoSPKTujuan' => '2026-13']),
+            $this->spRow('Output', 'S.000002', ['IsReject' => '1', 'NoSPKTujuan' => 'LOKAL']),
+            $this->spRow('Output', 'S.000003', ['IsRepair' => '1', 'NoSPKTujuan' => '2026-14']),
+        ]);
+
+        $this->assertSame(['2026-12'], array_column($report['input_rows'], 'no_spk_tujuan'));
+        $this->assertSame(['2026-13'], array_column($report['output_rows'], 'no_spk_tujuan'));
+        $this->assertSame(['LOKAL'], array_column($report['afkir_rows'], 'no_spk_tujuan'));
+        $this->assertSame(['2026-14'], array_column($report['repair_rows'], 'no_spk_tujuan'));
+    }
+
+    public function test_no_spk_tujuan_blank_stays_null_not_empty_string(): void
+    {
+        // Cabang WIP di SP memang mengirim '' untuk NoSPKTujuan.
+        $report = $this->build([
+            $this->spRow('Input', 'W.000001', ['Group' => 'WIP', 'NoSPKTujuan' => '']),
+        ]);
+
+        $this->assertNull($report['input_rows'][0]['no_spk_tujuan']);
+    }
+
     public function test_every_sp_row_lands_in_exactly_one_bucket(): void
     {
         $rows = [
@@ -206,9 +232,9 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
     public function test_pdf_view_renders_four_detail_tables_with_repair_and_afkir_sections(): void
     {
         $report = $this->build([
-            $this->spRow('Input', 'R.000001'),
+            $this->spRow('Input', 'R.000001', ['NoSPKTujuan' => '2026-12']),
             $this->spRow('Output', 'S.000001'),
-            $this->spRow('Output', 'S.000002', ['IsReject' => '1']),
+            $this->spRow('Output', 'S.000002', ['IsReject' => '1', 'NoSPKTujuan' => '2026-13']),
         ]);
 
         $html = view($this->pdfView(), [
@@ -220,9 +246,12 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
 
         $this->assertSame(4, substr_count($html, '<table class="detail-table">'));
         $this->assertSame(4, substr_count($html, 'Total :'));
+        $this->assertSame(4, substr_count($html, 'No SPK Tujuan'), 'Tiap tabel punya kolom No SPK Tujuan.');
         $this->assertStringContainsString('Data repair tidak tersedia.', $html);
         $this->assertStringNotContainsString('Data afkir tidak tersedia.', $html);
         $this->assertStringContainsString('S.000002', $html);
+        $this->assertStringContainsString('2026-12', $html);
+        $this->assertStringContainsString('2026-13', $html);
     }
 
     public function test_pdf_view_paginates_when_second_table_pair_has_data(): void
