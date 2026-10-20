@@ -327,7 +327,9 @@
             @if ($isLastPage)
                 <p class="rendemen-line">
                     Rendemen :
-                    {{ $fmt4($outputTotals['kubik'] ?? 0) }}
+                    ({{ $fmt4($outputTotals['kubik'] ?? 0) }}
+                    +
+                    {{ $fmt4($repairTotals['kubik'] ?? 0) }})
                     /
                     {{ $fmt4($inputTotals['kubik'] ?? 0) }}
                     =

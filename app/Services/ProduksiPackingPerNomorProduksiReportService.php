@@ -89,8 +89,10 @@ class ProduksiPackingPerNomorProduksiReportService
         $outputTotals = $this->calculateTotals($outputRows);
         $repairTotals = $this->calculateTotals($repairRows);
         $afkirTotals = $this->calculateTotals($afkirRows);
+        // Rumus dari manajemen: (Output + Repair) / Input * 100. Afkir tidak dihitung.
+        $rendemenNumerator = $outputTotals['kubik'] + $repairTotals['kubik'];
         $rendemen = $inputTotals['kubik'] > 0
-            ? ($outputTotals['kubik'] / $inputTotals['kubik']) * 100.0
+            ? ($rendemenNumerator / $inputTotals['kubik']) * 100.0
             : null;
 
         return [

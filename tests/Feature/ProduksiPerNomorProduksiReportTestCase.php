@@ -195,7 +195,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertCount(5, array_unique($labels), 'Label harus muncul tepat satu kali di seluruh bucket.');
     }
 
-    public function test_rendemen_uses_input_and_output_totals_only(): void
+    public function test_rendemen_uses_output_plus_repair_over_input(): void
     {
         $rows = [
             $this->spRow('Input', 'R.000001', ['Kubik' => 10.0]),
@@ -211,8 +211,43 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertSame(2.0, $report['totals']['afkir']['kubik']);
         $this->assertSame(1.0, $report['totals']['repair']['kubik']);
 
-        // Rendemen = 8 / 10, bukan (8 + 2 + 1) / (10 + 2)
-        $this->assertEqualsWithDelta(80.0, $report['totals']['rendemen'], 0.0001);
+        // Rumus dari manajemen: (Output + Repair) / Input = (8 + 1) / 10.
+        // Afkir tetap di luar, baik dari numerator maupun denominator.
+        $this->assertEqualsWithDelta(90.0, $report['totals']['rendemen'], 0.0001);
+    }
+
+    public function test_rendemen_counts_repair_coming_from_an_input_row(): void
+    {
+        $report = $this->build([
+            $this->spRow('Input', 'R.000001', ['Kubik' => 10.0]),
+            $this->spRow('Input', 'R.000002', ['IsRepair' => '1', 'Kubik' => 1.0]),
+            $this->spRow('Output', 'S.000001', ['Kubik' => 8.0]),
+        ]);
+
+        // Baris repair keluar dari tabel Input, tapi tetap masuk numerator.
+        $this->assertSame(10.0, $report['totals']['input']['kubik']);
+        $this->assertSame(1.0, $report['totals']['repair']['kubik']);
+        $this->assertEqualsWithDelta(90.0, $report['totals']['rendemen'], 0.0001);
+    }
+
+    public function test_pdf_view_prints_output_plus_repair_in_the_rendemen_line(): void
+    {
+        $report = $this->build([
+            $this->spRow('Input', 'R.000001', ['Kubik' => 10.0]),
+            $this->spRow('Output', 'S.000001', ['Kubik' => 8.0]),
+            $this->spRow('Output', 'S.000002', ['IsRepair' => '1', 'Kubik' => 1.0]),
+        ]);
+
+        $html = view($this->pdfView(), [
+            'report' => $report,
+            'generatedBy' => null,
+            'generatedAt' => now(),
+            'pdf_simple_tables' => false,
+        ])->render();
+
+        $this->assertStringContainsString('(8.0000', $html, 'Numerator menampilkan kubik Output.');
+        $this->assertStringContainsString('1.0000)', $html, 'Numerator menampilkan kubik Repair.');
+        $this->assertStringContainsString('90.00%', $html);
     }
 
     public function test_repair_and_afkir_totals_default_to_zero_when_absent(): void
