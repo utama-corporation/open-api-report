@@ -567,7 +567,7 @@ return [
         'query' => env('REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_QUERY'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_PEMBELIAN_KAYU_BULAT_KG_REPORT_EXPECTED_COLUMNS',
-            'Tahun,Bulan,Ton'
+            'Tahun,Bulan,Ton,Harga'
         )))),
     ],
     'timeline_kayu_bulat_bulanan_kg' => [

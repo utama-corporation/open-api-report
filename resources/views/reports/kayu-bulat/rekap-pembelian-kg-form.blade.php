@@ -27,7 +27,7 @@
                 <p class="text-secondary mb-4">
                     Laporan ini mengambil data dari <code>SP_LapRekapPembelianKayuBulat</code> tanpa parameter input,
                     lalu otomatis membatasi rentang tahun 6 tahun terakhir ({{ now()->year - 5 }} sampai {{ now()->year }})
-                    dan menyajikannya dalam tabel rekap tahunan.
+                    dan menyajikannya dalam tabel rekap tahunan (Harga &amp; Berat) beserta grafik bulanan.
                 </p>
                 @if ($errors->any())
                     <div class="alert alert-danger">

@@ -17,6 +17,8 @@ class RekapPembelianKayuBulatKgReportService
             $item['Tahun'] = (int) ($item['Tahun'] ?? 0);
             $item['Bulan'] = (int) ($item['Bulan'] ?? 0);
             $item['Ton'] = $this->toFloat($item['Ton'] ?? null) ?? 0.0;
+            // Harga is already a monthly average from the SP (grade 1); keep null when no purchase.
+            $item['Harga'] = $this->toFloat($item['Harga'] ?? null);
 
             return $item;
         }, $this->runProcedureQuery());
@@ -38,14 +40,25 @@ class RekapPembelianKayuBulatKgReportService
             $years[$year] = [
                 'tahun' => $year,
                 'months' => array_fill(1, 12, 0.0),
+                'harga_months' => array_fill(1, 12, null),
                 'total' => 0.0,
+                'total_harga' => null,
+                'berat_average' => null,
+                'berat_min' => null,
+                'berat_max' => null,
+                'harga_average' => null,
+                'harga_min' => null,
+                'harga_max' => null,
             ];
         }
+
+        $hargaWeights = [];
 
         foreach ($rows as $row) {
             $year = (int) ($row['Tahun'] ?? 0);
             $month = (int) ($row['Bulan'] ?? 0);
             $ton = (float) ($row['Ton'] ?? 0.0);
+            $harga = $row['Harga'] ?? null;
 
             if ($year < $startYear || $year > $endYear) {
                 continue;
@@ -54,9 +67,55 @@ class RekapPembelianKayuBulatKgReportService
             if ($month >= 1 && $month <= 12) {
                 $years[$year]['months'][$month] += $ton;
                 $monthTotals[$month] += $ton;
+
+                if (is_numeric($harga) && $ton > 0) {
+                    $hargaWeights[$year][$month]['value'] = ($hargaWeights[$year][$month]['value'] ?? 0.0) + ((float) $harga * $ton);
+                    $hargaWeights[$year][$month]['ton'] = ($hargaWeights[$year][$month]['ton'] ?? 0.0) + $ton;
+                }
             }
 
             $years[$year]['total'] += $ton;
+        }
+
+        foreach ($years as $year => $yearRow) {
+            $hargaValues = [];
+
+            foreach ($hargaWeights[$year] ?? [] as $month => $weights) {
+                $weightedTon = (float) ($weights['ton'] ?? 0.0);
+
+                if ($weightedTon <= 0) {
+                    continue;
+                }
+
+                $harga = (float) $weights['value'] / $weightedTon;
+                $years[$year]['harga_months'][$month] = $harga;
+                $hargaValues[$month] = $harga;
+            }
+
+            $beratValues = array_values(array_filter(
+                $yearRow['months'],
+                static fn (float $value): bool => $value > 0,
+            ));
+
+            $years[$year]['berat_average'] = $beratValues === [] ? null : array_sum($beratValues) / count($beratValues);
+            $years[$year]['berat_min'] = $beratValues === [] ? null : min($beratValues);
+            $years[$year]['berat_max'] = $beratValues === [] ? null : max($beratValues);
+
+            $hargaAverageValues = array_values($hargaValues);
+            $years[$year]['harga_average'] = $hargaAverageValues === [] ? null : array_sum($hargaAverageValues) / count($hargaAverageValues);
+            $years[$year]['harga_min'] = $hargaAverageValues === [] ? null : min($hargaAverageValues);
+            $years[$year]['harga_max'] = $hargaAverageValues === [] ? null : max($hargaAverageValues);
+
+            $weightedHarga = 0.0;
+            $weightedTon = 0.0;
+
+            foreach ($hargaValues as $month => $harga) {
+                $ton = (float) ($yearRow['months'][$month] ?? 0.0);
+                $weightedHarga += $harga * $ton;
+                $weightedTon += $ton;
+            }
+
+            $years[$year]['total_harga'] = $weightedTon > 0 ? $weightedHarga / $weightedTon : null;
         }
 
         ksort($years);

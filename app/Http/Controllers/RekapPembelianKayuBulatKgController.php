@@ -109,7 +109,7 @@ class RekapPembelianKayuBulatKgController extends Controller
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
 
-            'pdf_column_count' => 14,
+            'pdf_column_count' => 33,
         ]);
 
         $filename = 'Laporan-Rekap-Pembelian-Kayu-Bulat-Ton-Timbang-KG.pdf';
