@@ -75,7 +75,7 @@ class RekapPembelianKayuBulatController extends Controller
             'generatedAt' => now(),
             'pdf_simple_tables' => false,
 
-            'pdf_column_count' => 14,
+            'pdf_column_count' => 17,
         ]);
 
         $filename = 'Laporan-Rekap-Pembelian-Kayu-Bulat-Ton.pdf';

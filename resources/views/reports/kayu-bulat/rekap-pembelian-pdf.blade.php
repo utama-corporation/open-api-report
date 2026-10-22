@@ -108,11 +108,6 @@
             border-right: 1px solid #000 !important;
         }
 
-        .report-table tbody tr.data-row td.data-cell:first-child,
-        .report-table tbody tr.data-row td.data-cell:last-child {
-            font-weight: bold;
-        }
-
         .report-table tbody tr.data-row+tr.data-row td.data-cell {
             border-top: 0 !important;
         }
@@ -129,7 +124,9 @@
         $yearRows = is_array($data['year_rows'] ?? null) ? $data['year_rows'] : [];
         $monthLabels = is_array($data['month_labels'] ?? null) ? $data['month_labels'] : [];
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
-        $fmt = static fn(float $value): string => abs($value) < 0.0000001 ? '' : number_format($value, 4, '.', ',');
+        $fmt = static fn(?float $value): string => $value === null || abs($value) < 0.0000001
+            ? ''
+            : number_format($value, 0, '.', ',');
 
         $startYear = (int) ($summary['start_year'] ?? 0);
         $endYear = (int) ($summary['end_year'] ?? 0);
@@ -154,6 +151,9 @@
                             <th>{{ $label }}</th>
                         @endforeach
                         <th style="width: 74px;">Total</th>
+                        <th style="width: 70px;">Average</th>
+                        <th style="width: 70px;">Min</th>
+                        <th style="width: 70px;">Max</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -168,10 +168,13 @@
                             <td class="number data-cell" style="font-weight: bold; font-size:11px;">
                                 {{ $fmt((float) ($row['total'] ?? 0.0)) }}
                             </td>
+                            <td class="number data-cell">{{ $fmt($row['average'] ?? null) }}</td>
+                            <td class="number data-cell">{{ $fmt($row['min'] ?? null) }}</td>
+                            <td class="number data-cell">{{ $fmt($row['max'] ?? null) }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ 2 + count($monthLabels) }}" class="center">Tidak ada data.</td>
+                            <td colspan="{{ 1 + count($monthLabels) + 4 }}" class="center">Tidak ada data.</td>
                         </tr>
                     @endforelse
                 </tbody>

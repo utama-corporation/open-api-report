@@ -39,6 +39,9 @@ class RekapPembelianKayuBulatReportService
                 'tahun' => $year,
                 'months' => array_fill(1, 12, 0.0),
                 'total' => 0.0,
+                'average' => null,
+                'min' => null,
+                'max' => null,
             ];
         }
 
@@ -57,6 +60,17 @@ class RekapPembelianKayuBulatReportService
             }
 
             $years[$year]['total'] += $ton;
+        }
+
+        foreach ($years as $year => $yearRow) {
+            $monthlyValues = array_values(array_filter(
+                $yearRow['months'],
+                static fn (float $value): bool => $value > 0,
+            ));
+
+            $years[$year]['average'] = $monthlyValues === [] ? null : array_sum($monthlyValues) / count($monthlyValues);
+            $years[$year]['min'] = $monthlyValues === [] ? null : min($monthlyValues);
+            $years[$year]['max'] = $monthlyValues === [] ? null : max($monthlyValues);
         }
 
         ksort($years);
