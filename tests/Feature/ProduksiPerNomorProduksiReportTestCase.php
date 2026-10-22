@@ -89,7 +89,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertSame(['R.000002'], array_column($report['afkir_rows'], 'no_label'));
     }
 
-    public function test_repair_rows_are_partitioned_into_repair_bucket(): void
+    public function test_output_repair_rows_are_partitioned_into_repair_bucket(): void
     {
         $report = $this->build([
             $this->spRow('Input', 'R.000001'),
@@ -171,6 +171,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $rows = [
             $this->spRow('Input', 'R.000001'),
             $this->spRow('Input', 'R.000002', ['IsReject' => '1']),
+            $this->spRow('Input', 'R.000003', ['IsRepair' => '1']),
             $this->spRow('Output', 'S.000001'),
             $this->spRow('Output', 'S.000002', ['IsRepair' => '1']),
             $this->spRow('Output', 'S.000003', ['IsReject' => '1']),
@@ -192,7 +193,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             array_column($report['afkir_rows'], 'no_label'),
         );
 
-        $this->assertCount(5, array_unique($labels), 'Label harus muncul tepat satu kali di seluruh bucket.');
+        $this->assertCount(6, array_unique($labels), 'Label harus muncul tepat satu kali di seluruh bucket.');
     }
 
     public function test_rendemen_uses_output_plus_repair_over_input(): void
@@ -216,7 +217,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertEqualsWithDelta(90.0, $report['totals']['rendemen'], 0.0001);
     }
 
-    public function test_rendemen_counts_repair_coming_from_an_input_row(): void
+    public function test_repair_flag_on_an_input_row_is_ignored(): void
     {
         $report = $this->build([
             $this->spRow('Input', 'R.000001', ['Kubik' => 10.0]),
@@ -224,10 +225,15 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             $this->spRow('Output', 'S.000001', ['Kubik' => 8.0]),
         ]);
 
-        // Baris repair keluar dari tabel Input, tapi tetap masuk numerator.
-        $this->assertSame(10.0, $report['totals']['input']['kubik']);
-        $this->assertSame(1.0, $report['totals']['repair']['kubik']);
-        $this->assertEqualsWithDelta(90.0, $report['totals']['rendemen'], 0.0001);
+        // Hanya repair dari baris Output yang diakui. Baris input yang ber-flag repair
+        // sudah diperbaiki di proses sebelumnya, jadi tetap tampil dan dihitung sebagai input.
+        $this->assertSame(['R.000001', 'R.000002'], array_column($report['input_rows'], 'no_label'));
+        $this->assertSame([], $report['repair_rows']);
+        $this->assertSame(11.0, $report['totals']['input']['kubik']);
+        $this->assertSame(0.0, $report['totals']['repair']['kubik']);
+
+        // Rendemen = (8 + 0) / 11 * 100.
+        $this->assertEqualsWithDelta(72.727272, $report['totals']['rendemen'], 0.0001);
     }
 
     public function test_pdf_view_prints_output_plus_repair_in_the_rendemen_line(): void

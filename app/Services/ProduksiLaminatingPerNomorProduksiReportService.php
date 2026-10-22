@@ -66,7 +66,7 @@ class ProduksiLaminatingPerNomorProduksiReportService
 
         foreach ($rows as $row) {
             foreach ($this->extractCandidates($row) as [$detail, $direction, $label]) {
-                $bucket = $this->resolveFlagBucket($row) ?? $direction;
+                $bucket = $this->resolveFlagBucket($row, $direction) ?? $direction;
 
                 if ($bucket === null) {
                     continue;
@@ -204,11 +204,14 @@ class ProduksiLaminatingPerNomorProduksiReportService
      * Menentukan bucket baris berdasarkan flag SP, tanpa mengubah bucket asal (input/output).
      * IsRepair lebih didahulukan karena repair adalah perbaikan, bukan pembuangan.
      *
+     * Repair hanya diakui pada baris output: dokumen repair yang masuk sebagai input
+     * sudah diperbaiki di proses sebelumnya, jadi tetap dihitung sebagai input.
+     *
      * @param  array<string, mixed>  $row
      */
-    private function resolveFlagBucket(array $row): ?string
+    private function resolveFlagBucket(array $row, ?string $direction): ?string
     {
-        if ($this->isFlagSet($row, 'IsRepair')) {
+        if ($direction === 'output' && $this->isFlagSet($row, 'IsRepair')) {
             return 'repair';
         }
 
