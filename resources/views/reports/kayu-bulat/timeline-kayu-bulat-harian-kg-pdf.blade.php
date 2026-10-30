@@ -98,7 +98,10 @@
 
         td.number {
             text-align: right;
+            font-size: 9px;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
+            white-space: nowrap;
+            padding: 2px 1px;
         }
 
         .headers-row th {
@@ -114,6 +117,10 @@
 
         .totals-row td {
             font-weight: bold;
+        }
+
+        .totals-row td.number {
+            font-size: 9px;
         }
 
         .row-odd td {
@@ -155,38 +162,85 @@
         $data = is_array($reportData ?? null) ? $reportData : [];
         $periods = is_array($data['periods'] ?? null) ? $data['periods'] : [];
         $summary = is_array($data['summary'] ?? null) ? $data['summary'] : [];
-        $fmt = static fn(float $value): string => number_format($value, 2, '.', ',');
+        // Sama seperti laporan bulanan: tanpa desimal, dibulatkan (1234.56 -> 1,235).
         $fmtBlankZero = static fn(float $value): string => abs($value) < 0.0000001
             ? ''
-            : number_format($value, 2, '.', ',');
+            : number_format($value, 0, '.', ',');
         $start = \Carbon\Carbon::parse($startDate)->locale('id')->translatedFormat('d-M-y');
         $end = \Carbon\Carbon::parse($endDate)->locale('id')->translatedFormat('d-M-y');
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i');
 
+        $normalizeDateKey = static function ($raw): string {
+            $raw = trim((string) ($raw ?? ''));
+            if ($raw === '') {
+                return '';
+            }
+
+            try {
+                return \Carbon\Carbon::parse($raw)->format('Y-m-d');
+            } catch (\Throwable) {
+                return $raw;
+            }
+        };
+
+        // Tanggal yang tidak punya data dari SP tetap masuk sebagai kolom.
         $dateKeys = [];
         foreach ($periods as $period) {
-            $raw = (string) ($period['key'] ?? ($period['label'] ?? ''));
-            if ($raw !== '') {
-                $dateKeys[] = $raw;
+            $key = $normalizeDateKey($period['key'] ?? ($period['label'] ?? ''));
+            if ($key !== '') {
+                $dateKeys[] = $key;
             }
         }
+
+        // Tampilkan SEMUA tanggal dalam rentang periode, termasuk hari kosong.
+        try {
+            $cursorDate = \Carbon\Carbon::parse($startDate)->startOfDay();
+            $endDateDay = \Carbon\Carbon::parse($endDate)->startOfDay();
+            while ($cursorDate->lessThanOrEqualTo($endDateDay)) {
+                $dateKeys[] = $cursorDate->format('Y-m-d');
+                $cursorDate->addDay();
+            }
+        } catch (\Throwable) {
+            // Rentang tidak valid: pakai hanya tanggal yang ada datanya.
+        }
+
         $dateKeys = array_values(array_unique($dateKeys));
         sort($dateKeys);
 
-        $dateLabels = [];
+        // Header 2 baris: grup bulan di atas, nomor hari di bawah.
+        $dayLabels = [];
+        $monthGroups = [];
         foreach ($dateKeys as $dateKey) {
             try {
-                $dateLabels[$dateKey] = \Carbon\Carbon::parse($dateKey)->locale('id')->translatedFormat('d-M');
-            } catch (\Throwable $e) {
-                $dateLabels[$dateKey] = $dateKey;
+                $month = \Carbon\Carbon::parse($dateKey)->startOfMonth();
+                $monthKey = $month->format('Y-m');
+                $monthLabel = $month->locale('id')->translatedFormat('M Y');
+                $day = \Carbon\Carbon::parse($dateKey)->format('j');
+            } catch (\Throwable) {
+                $monthKey = $dateKey;
+                $monthLabel = $dateKey;
+                $day = '';
+            }
+
+            $dayLabels[$dateKey] = $day;
+            $lastIndex = count($monthGroups) - 1;
+            if ($lastIndex >= 0 && $monthGroups[$lastIndex]['key'] === $monthKey) {
+                $monthGroups[$lastIndex]['count']++;
+            } else {
+                $monthGroups[] = ['key' => $monthKey, 'label' => $monthLabel, 'count' => 1];
             }
         }
 
+        // Lebar kolom dalam % agar No + Supplier + tanggal + Total selalu tepat 100%.
+        $dateCount = count($dateKeys);
+        $supplierWidthPct = $dateCount >= 8 ? 18 : 22;
+        $dateWidthPct = $dateCount > 0 ? round((100 - 3 - $supplierWidthPct - 10) / $dateCount, 2) : 0;
+
         $matrix = [];
         foreach ($periods as $period) {
-            $dateKey = (string) ($period['key'] ?? ($period['label'] ?? ''));
+            $dateKey = $normalizeDateKey($period['key'] ?? ($period['label'] ?? ''));
             foreach ($period['rows'] ?? [] as $row) {
                 $supplier = trim((string) ($row['NmSupplier'] ?? 'Tanpa Supplier'));
                 $ton = (float) ($row['TonBerat'] ?? 0.0);
@@ -228,12 +282,19 @@
             <table class="report-table">
                 <thead>
                     <tr class="headers-row">
-                        <th class="col-left" style="width: 36px;">No</th>
-                        <th class="col-left" style="width: 190px; text-align: left;">Nama Supplier</th>
-                        @foreach ($dateKeys as $dateKey)
-                            <th>{{ $dateLabels[$dateKey] ?? $dateKey }}</th>
+                        <th rowspan="2" style="width: 3%;">No</th>
+                        <th rowspan="2" style="width: {{ $supplierWidthPct }}%; text-align: center;">Nama Supplier</th>
+                        @foreach ($monthGroups as $group)
+                            <th colspan="{{ $group['count'] }}" style="width: {{ round($dateWidthPct * $group['count'], 2) }}%;">
+                                {{ $group['label'] }}
+                            </th>
                         @endforeach
-                        <th class="col-total" style="width: 72px;">Total</th>
+                        <th rowspan="2" style="width: 10%;">Total</th>
+                    </tr>
+                    <tr class="headers-row">
+                        @foreach ($dateKeys as $dateKey)
+                            <th style="width: {{ $dateWidthPct }}%; font-size: 9px;">{{ $dayLabels[$dateKey] ?? $dateKey }}</th>
+                        @endforeach
                     </tr>
                 </thead>
                 <tbody>
@@ -256,7 +317,7 @@
 
                     @if ($supplierRows !== [])
                         <tr class="totals-row">
-                            <td colspan="2" class="center col-left">Total</td>
+                            <td colspan="2" class="center col-left">Grand Total :</td>
                             @foreach ($dateKeys as $dateKey)
                                 <td class="number">{{ $fmtBlankZero((float) ($columnTotals[$dateKey] ?? 0.0)) }}</td>
                             @endforeach

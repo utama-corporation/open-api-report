@@ -102,7 +102,9 @@
 
         td.number-right {
             text-align: right;
+            font-size: 9px;
             font-family: "Calibri", "DejaVu Sans", sans-serif;
+            white-space: nowrap;
         }
 
         .row-odd td {
@@ -126,20 +128,8 @@
             border-bottom: 1px solid #000;
         }
 
-        .number-column {
-            width: 34px;
-        }
-
-        .supplier-column {
-            width: 170px;
-        }
-
-        .month-column {
-            width: 38px;
-        }
-
-        .total-column {
-            width: 60px;
+        .totals-row td.number-right {
+            font-size: 9px;
         }
 
         .report-table tbody tr.data-row td.data-cell {
@@ -291,20 +281,13 @@
             }
         };
 
-        $formatMonthLabel = static function (string $monthKey): string {
-            try {
-                return \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M y');
-            } catch (\Throwable $exception) {
-                return $monthKey;
-            }
-        };
-
         $formatNumber = static function (?float $value): string {
             if ($value === null || abs($value) < 0.0000001) {
                 return '';
             }
 
-            return number_format($value, 2, '.', ',');
+            // Tanpa desimal, dibulatkan (1234.56 -> 1,235).
+            return number_format($value, 0, '.', ',');
         };
 
         $columns = array_keys($rowsData[0] ?? []);
@@ -429,6 +412,12 @@
             }
         }
 
+        // Column widths in % so No + Supplier + months + Total always sums to 100%
+        // regardless of how many months the period spans.
+        $monthCount = count($monthHeaders);
+        $supplierWidthPct = $monthCount >= 8 ? 18 : 22;
+        $monthWidthPct = $monthCount > 0 ? round((100 - 3 - $supplierWidthPct - 10) / $monthCount, 2) : 0;
+
         $pivotRows = array_values($pivotRows);
         usort($pivotRows, static function (array $a, array $b): int {
             $totalCompare = ((float) ($b['total'] ?? 0)) <=> ((float) ($a['total'] ?? 0));
@@ -450,17 +439,20 @@
         <table class="report-table">
             <thead>
                 <tr class="headers-row">
-                    <th rowspan="2">No</th>
-                    <th rowspan="2" style="text-align: center;">Nama Supplier</th>
+                    <th rowspan="2" style="width: 3%;">No</th>
+                    <th rowspan="2" style="width: {{ $supplierWidthPct }}%; text-align: center;">Nama Supplier</th>
                     @foreach ($headerYearGroups as $year => $yearMonthCount)
-                        <th colspan="{{ $yearMonthCount }}">{{ $year }}</th>
+                        <th colspan="{{ $yearMonthCount }}" style="width: {{ round($monthWidthPct * $yearMonthCount, 2) }}%;">
+                            {{ $year }}
+                        </th>
                     @endforeach
-                    <th rowspan="2">Total</th>
+                    <th rowspan="2" style="width: 10%;">Total</th>
                 </tr>
                 <tr class="headers-row">
                     @foreach ($monthHeaders as $monthKey)
-                        <th style="width: 8%">
-                            {{ \Carbon\Carbon::createFromFormat('Y-m', $monthKey)->locale('id')->translatedFormat('M') }}
+                        <th style="width: {{ $monthWidthPct }}%;">
+                            {{-- Append -01: createFromFormat('Y-m') inherits today's day and 30-Feb rolls over to March. --}}
+                            {{ \Carbon\Carbon::parse($monthKey.'-01')->locale('id')->translatedFormat('M') }}
                         </th>
                     @endforeach
                 </tr>
@@ -479,12 +471,12 @@
                     </tr>
                 @empty
                     <tr class="data-row">
-                        <td colspan="{{ count($monthHeaders) + 4 }}" class="center data-cell">Tidak ada data.</td>
+                        <td colspan="{{ count($monthHeaders) + 3 }}" class="center data-cell">Tidak ada data.</td>
                     </tr>
                 @endforelse
                 @if ($pivotRows !== [])
                     <tr class="totals-row">
-                        <td colspan="2">Total :</td>
+                        <td colspan="2">Grand Total :</td>
                         @foreach ($monthHeaders as $monthKey)
                             <td class="number-right">{{ $formatNumber($grandByMonth[$monthKey] ?? null) }}</td>
                         @endforeach
