@@ -82,6 +82,7 @@ use App\Http\Controllers\PenerimaanKayuBulatPerSupplierBulananGrafikController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierGroupController;
 use App\Http\Controllers\PenerimaanKayuBulatPerSupplierKgController;
 use App\Http\Controllers\PenerimaanStHasilSawmillController;
+use App\Http\Controllers\PenerimaanStPembelianTonController;
 use App\Http\Controllers\PenerimaanStSawmillKgController;
 use App\Http\Controllers\PenjualanBarangJadiM3Controller;
 use App\Http\Controllers\PenjualanLokalController;
@@ -1369,6 +1370,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/sawn-timber/st-hidup-kering', 'api.reports.sawn-timber.st-hidup-kering', StHidupKeringController::class],
         ['/reports/sawn-timber/penerimaan-st-dari-sawmill-kg', 'api.reports.sawn-timber.penerimaan-st-dari-sawmill-kg', PenerimaanStSawmillKgController::class],
         ['/reports/sawn-timber/penerimaan-st-hasil-sawmill', 'api.reports.sawn-timber.penerimaan-st-hasil-sawmill', PenerimaanStHasilSawmillController::class],
+        ['/reports/sawn-timber/penerimaan-st-pembelian-ton', 'api.reports.sawn-timber.penerimaan-st-pembelian-ton', PenerimaanStPembelianTonController::class],
         ['/reports/sawn-timber/rekap-penerimaan-st-dari-sawmill-non-rambung', 'api.reports.sawn-timber.rekap-penerimaan-st-dari-sawmill-non-rambung', RekapPenerimaanSTDariSawmillNonRambungController::class],
         ['/reports/sawn-timber/lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.lembar-tally-hasil-sawmill', LembarTallyHasilSawmillController::class],
         ['/reports/sawn-timber/detail-lembar-tally-hasil-sawmill', 'api.reports.sawn-timber.detail-lembar-tally-hasil-sawmill', DetailLembarTallyHasilSawmillController::class],

@@ -1232,6 +1232,9 @@ return [
             'IdGradeKB,NamaGrade,Berat'
         )))),
     ],
+    'penerimaan_st_pembelian_ton' => [
+        'database_connection' => env('PENERIMAAN_ST_PEMBELIAN_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+    ],
     'rekap_penerimaan_st_dari_sawmill_non_rambung' => [
         'database_connection' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_PROCEDURE', 'SPWps_LapRekapPenSTDariSawmill'),
