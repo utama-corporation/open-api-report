@@ -157,7 +157,7 @@
         }
 
         .signature-table td {
-            width: 14.28%;
+            width: 33.333%;
             text-align: center;
             vertical-align: top;
             padding: 0 2px;
@@ -309,64 +309,16 @@
     <table class="signature-table">
         <tr class="signature-label-row">
             <td>
-                <div class="signature-label">Ukur 1 ;</div>
-            </td>
-            <td>
-                <div class="signature-label">Ukur 2 ;</div>
-            </td>
-            <td>
-                <div class="signature-label">Tally Tulis ;</div>
+                <div class="signature-label">Ukur ;</div>
             </td>
             <td>
                 <div class="signature-label">Diperiksa Oleh ;</div>
             </td>
             <td>
-                <div class="signature-label">QC Oleh ;</div>
-            </td>
-            <td>
                 <div class="signature-label">Diinput Oleh ;</div>
-            </td>
-            <td>
-                <div class="signature-label">Supir ;</div>
             </td>
         </tr>
         <tr class="signature-placeholder-row">
-            <td>
-                <table class="signature-placeholder-table">
-                    <tr>
-                        <td class="signature-bracket">(</td>
-                        <td class="signature-space"></td>
-                        <td class="signature-bracket">)</td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <table class="signature-placeholder-table">
-                    <tr>
-                        <td class="signature-bracket">(</td>
-                        <td class="signature-space"></td>
-                        <td class="signature-bracket">)</td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <table class="signature-placeholder-table">
-                    <tr>
-                        <td class="signature-bracket">(</td>
-                        <td class="signature-space"></td>
-                        <td class="signature-bracket">)</td>
-                    </tr>
-                </table>
-            </td>
-            <td>
-                <table class="signature-placeholder-table">
-                    <tr>
-                        <td class="signature-bracket">(</td>
-                        <td class="signature-space"></td>
-                        <td class="signature-bracket">)</td>
-                    </tr>
-                </table>
-            </td>
             <td>
                 <table class="signature-placeholder-table">
                     <tr>
