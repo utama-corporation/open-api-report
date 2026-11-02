@@ -206,8 +206,9 @@ class RekapProduksiS4SConsolidatedController extends Controller
      */
     private function computeTotals(array $rows): array
     {
-        $sumCols = ['CCAkhir', 'FJ', 'Reproses', 'S4S', 'ST', 'TotalInput', 'OutputS4S', 'Jam'];
+        $sumCols = ['CCAkhir', 'FJ', 'Reproses', 'S4S', 'ST', 'TotalInput', 'OutputS4S', 'Jam', 'HourMeter'];
         $totals = array_fill_keys($sumCols, 0.0);
+        $hkDates = [];
         $orgSum = 0.0;
         $personHoursSum = 0.0;
         $m3JamSum = 0.0;
@@ -218,6 +219,7 @@ class RekapProduksiS4SConsolidatedController extends Controller
             foreach ($sumCols as $col) {
                 $totals[$col] += (float) ($row[$col] ?? 0.0);
             }
+            $hkDates[(string) ($row['Tanggal'] ?? '')] = true;
 
             $org = (float) ($row['Org'] ?? 0.0);
             $orgSum += $org;
@@ -237,6 +239,7 @@ class RekapProduksiS4SConsolidatedController extends Controller
             'M3Jam' => $m3Jam,
             'M3JamOrg' => $m3JamOrg,
             'Rend' => $rend,
+            'HK' => count(array_filter($hkDates, fn (string $d): bool => $d !== '')),
         ]);
     }
 

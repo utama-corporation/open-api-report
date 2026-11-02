@@ -47,6 +47,7 @@ class RekapProduksiBarangJadiConsolidatedReportService
                 'M3Jam' => $m3PerJam,
                 'M3JamOrg' => $m3PerJamOrg,
                 'Rend' => $rend,
+                'HourMeter' => $this->toFloat($item['HourMeter'] ?? null),
             ];
         }, $rows);
 
@@ -71,7 +72,7 @@ class RekapProduksiBarangJadiConsolidatedReportService
         $raw = $this->runProcedureQuery($startDate, $endDate);
         $first = (array) ($raw[0] ?? []);
         $detected = array_keys($first);
-        $required = ['Tanggal', 'Shift', 'NamaMesin', 'JamKerja', 'JmlhAnggota', 'BJ', 'Moulding', 'Sanding', 'WIP', 'OutputPacking', 'OutputReproses'];
+        $required = ['Tanggal', 'Shift', 'NamaMesin', 'JamKerja', 'JmlhAnggota', 'BJ', 'Moulding', 'Sanding', 'WIP', 'OutputPacking', 'OutputReproses', 'HourMeter'];
 
         return [
             'is_healthy' => empty(array_diff($required, $detected)),

@@ -156,8 +156,9 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
 
     private function computeTotals(array $rows): array
     {
-        $sumCols = ['BJ', 'Moulding', 'Sanding', 'Wip', 'TotalInput', 'OutputPacking', 'OutputReproses', 'TotalOutput'];
+        $sumCols = ['BJ', 'Moulding', 'Sanding', 'Wip', 'TotalInput', 'OutputPacking', 'OutputReproses', 'TotalOutput', 'HourMeter'];
         $totals = array_fill_keys($sumCols, 0.0);
+        $hkDates = [];
         $jamSum = 0.0;
         $orgSum = 0.0;
         $m3JamSum = 0.0;
@@ -166,6 +167,7 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
             foreach ($sumCols as $col) {
                 $totals[$col] += (float) ($row[$col] ?? 0.0);
             }
+            $hkDates[(string) ($row['Tanggal'] ?? '')] = true;
             $jamSum += (float) ($row['Jam'] ?? 0.0);
             $orgSum += (float) ($row['Org'] ?? 0.0);
             $m3JamSum += (float) ($row['M3Jam'] ?? 0.0);
@@ -181,6 +183,7 @@ class RekapProduksiBarangJadiConsolidatedController extends Controller
             'M3Jam' => $m3JamSum,
             'M3JamOrg' => $m3JamOrgSum,
             'Rend' => $rend,
+            'HK' => count(array_filter($hkDates, fn (string $d): bool => $d !== '')),
         ]);
     }
 }

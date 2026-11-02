@@ -63,6 +63,7 @@ class RekapProduksiLaminatingConsolidatedReportService
                 'M3Jam' => $m3PerJam,
                 'M3JamOrg' => $m3PerJamOrg,
                 'Rend' => $rend,
+                'HourMeter' => $this->toFloat($item['HourMeter'] ?? null),
                 '_person_hours' => $personHours,
             ];
         }, $rows);
@@ -105,6 +106,7 @@ class RekapProduksiLaminatingConsolidatedReportService
             'Reproses',
             'Sanding',
             'OutputLaminating',
+            'HourMeter',
         ];
 
         $missing = array_values(array_diff($required, $detected));

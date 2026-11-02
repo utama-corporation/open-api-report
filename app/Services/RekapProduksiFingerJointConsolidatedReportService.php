@@ -61,6 +61,7 @@ class RekapProduksiFingerJointConsolidatedReportService
                 'M3Jam' => $m3PerJam,
                 'M3JamOrg' => $m3PerJamOrg,
                 'Rend' => $rend,
+                'HourMeter' => $this->toFloat($item['HourMeter'] ?? null),
                 // For totals row: keep person-hours sum.
                 '_person_hours' => $personHours,
             ];
@@ -101,6 +102,7 @@ class RekapProduksiFingerJointConsolidatedReportService
             'JmlhAnggota',
             'CCAkhir',
             'S4S',
+            'HourMeter',
         ];
 
         $missing = array_values(array_diff($required, $detected));

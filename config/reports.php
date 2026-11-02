@@ -1405,7 +1405,7 @@ return [
         'parameter_count' => (int) env('REKAP_PRODUKSI_CROSS_CUT_AKHIR_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_PRODUKSI_CROSS_CUT_AKHIR_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
-            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,FJ,Laminating,Moulding,Reproses,Wip,OutputCCAkhir'
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,FJ,Laminating,Moulding,Reproses,Wip,OutputCCAkhir,HourMeter'
         )))),
     ],
     'umur_sanding_detail' => [
@@ -1438,7 +1438,7 @@ return [
         'parameter_count' => (int) env('REKAP_PRODUKSI_SANDING_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_PRODUKSI_SANDING_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
-            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,FJ,Moulding,Reproses,Wip,OutputSanding'
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,FJ,Moulding,Reproses,Wip,OutputSanding,HourMeter'
         )))),
     ],
     'rekap_produksi_laminating_consolidated' => [
@@ -1452,7 +1452,7 @@ return [
         'parameter_count' => (int) env('REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_PRODUKSI_LAMINATING_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
-            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,Moulding,Reproses,Sanding,OutputLaminating'
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,Moulding,Reproses,Sanding,OutputLaminating,HourMeter'
         )))),
     ],
     'laminating_hidup_detail' => [
@@ -1502,7 +1502,7 @@ return [
         'parameter_count' => (int) env('REKAP_PRODUKSI_MOULDING_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_PRODUKSI_MOULDING_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
-            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,OutputMoulding,OutputReproses'
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,OutputMoulding,OutputReproses,HourMeter'
         )))),
     ],
     'moulding_hidup_detail' => [
@@ -1552,7 +1552,7 @@ return [
         'parameter_count' => (int) env('REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_PRODUKSI_FINGER_JOINT_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
-            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,CCAkhir,S4S,OutputFJ'
+            'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,CCAkhir,S4S,OutputFJ,HourMeter'
         )))),
     ],
     'rekap_produksi_finger_joint_per_jenis_per_grade' => [
@@ -1637,7 +1637,7 @@ return [
         'parameter_count' => (int) env('REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'REKAP_PRODUKSI_S4S_CONSOLIDATED_REPORT_EXPECTED_COLUMNS',
-            'NoProduksi,Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,CCAkhir,Reproses,S4S,ST,WIP,OutputS4S'
+            'NoProduksi,Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,CCAkhir,Reproses,S4S,ST,WIP,OutputS4S,HourMeter'
         )))),
     ],
     'st_sawmill_masuk_per_group' => [

@@ -175,6 +175,9 @@
         $fmtPercentBlank = static fn(?float $v): string => $v === null || !is_finite($v) || abs($v) < $eps
             ? ''
             : number_format($v, 1, '.', '');
+        $fmtHourMeter = static fn(?float $v): string => $v === null
+            ? ''
+            : number_format(round($v, 2), 2, '.', '');
     @endphp
 
     <h1 class="report-title">Laporan Rekap Produksi Finger Joint Consolidated</h1>
@@ -203,6 +206,7 @@
                     <th rowspan="2" style="width: 49px;">M3/Jam</th>
                     <th rowspan="2" style="width: 49px;">M3/jam/<br>Org</th>
                     <th rowspan="2" style="width: 49px;">Rend<br>(%)</th>
+                    <th rowspan="2" style="width: 49px;">Hour Meter</th>
                 </tr>
                 <tr>
                     <th style="width: 49px;">CCAkhir</th>
@@ -229,6 +233,7 @@
                         <td class="number">{{ $fmtRatioBlank($row['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($row['M3JamOrg'] ?? null) }}</td>
                         <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($row['Rend'] ?? null) }}</td>
+                        <td class="number">{{ $fmtHourMeter($row['HourMeter'] ?? null) }}</td>
                     </tr>
                 @endforeach
 
@@ -267,6 +272,7 @@
                         <td class="number">{{ $fmtRatioBlank($totals['M3JamOrg'] ?? null) }}</td>
                         <td class="number" style="font-weight: bold;">{{ $fmtPercentBlank($totals['Rend'] ?? null) }}
                         </td>
+                        <td class="number">{{ $fmtHourMeter($totals['HourMeter'] ?? null) }}</td>
                     </tr>
 
                     <tr class="bounded-row totals-row">
@@ -277,6 +283,7 @@
                         <td class="number">{{ $fmtBlank($jmlhPerHk((float) ($totals['TotalInput'] ?? 0.0))) }}</td>
                         <td class="number">
                             {{ $fmtBlank($jmlhPerActive((float) ($totals['OutputFJ'] ?? 0.0), 'OutputFJ')) }}</td>
+                        <td class="number"></td>
                         <td class="number"></td>
                         <td class="number"></td>
                         <td class="number"></td>
@@ -296,6 +303,7 @@
                         <td class="number">{{ $fmtRatioBlank($grandTotals['M3Jam'] ?? null) }}</td>
                         <td class="number">{{ $fmtRatioBlank($grandTotals['M3JamOrg'] ?? null) }}</td>
                         <td class="number">{{ $fmtPercentBlank($grandTotals['Rend'] ?? null) }}</td>
+                        <td class="number">{{ $fmtHourMeter(($grandTotals['HK'] ?? 0) > 0 ? (($grandTotals['HourMeter'] ?? 0.0) / (float) $grandTotals['HK']) : null) }}</td>
                     </tr>
                 @endif
             </tbody>

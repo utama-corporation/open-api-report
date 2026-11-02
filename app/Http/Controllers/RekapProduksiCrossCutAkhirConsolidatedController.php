@@ -215,8 +215,10 @@ class RekapProduksiCrossCutAkhirConsolidatedController extends Controller
             'TotalInput',
             'OutputCCAkhir',
             'Jam',
+            'HourMeter',
         ];
         $totals = array_fill_keys($sumCols, 0.0);
+        $hkDates = [];
         $orgSum = 0.0;
         $m3JamSum = 0.0;
         $m3JamOrgSum = 0.0;
@@ -226,6 +228,7 @@ class RekapProduksiCrossCutAkhirConsolidatedController extends Controller
             foreach ($sumCols as $col) {
                 $totals[$col] += (float) ($row[$col] ?? 0.0);
             }
+            $hkDates[(string) ($row['Tanggal'] ?? '')] = true;
 
             $orgSum += (float) ($row['Org'] ?? 0.0);
             $m3JamSum += (float) ($row['M3Jam'] ?? 0.0);
@@ -242,6 +245,7 @@ class RekapProduksiCrossCutAkhirConsolidatedController extends Controller
             'M3Jam' => $rowCount > 0 ? ($m3JamSum / $rowCount) : 0.0,
             'M3JamOrg' => $rowCount > 0 ? ($m3JamOrgSum / $rowCount) : 0.0,
             'Rend' => $rend,
+            'HK' => count(array_filter($hkDates, fn (string $d): bool => $d !== '')),
         ]);
     }
 }
