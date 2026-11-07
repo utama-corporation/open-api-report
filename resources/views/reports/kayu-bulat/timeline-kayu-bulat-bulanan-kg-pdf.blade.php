@@ -397,11 +397,27 @@
             }
         }
 
-        // Column widths in % so No + Supplier + months + Total always sums to 100%
-        // regardless of how many months the period spans.
+        // Column widths: supplier sedikit diperkecil, stat columns proporsional,
+        // sisa dialokasikan ke bulan agar angka tiap bulan muat satu baris.
         $monthCount = count($monthHeaders);
-        $supplierWidthPct = $monthCount >= 8 ? 18 : 22;
-        $monthWidthPct = $monthCount > 0 ? round((100 - 3 - $supplierWidthPct - 10) / $monthCount, 2) : 0;
+        $noWidthPct = 3;
+        $supplierWidthPct = $monthCount >= 8 ? 15 : 19;
+        $statWidthPct = 6;
+        $totalWidthPct = 7;
+        $fixedPct = $noWidthPct + $supplierWidthPct + $totalWidthPct + ($statWidthPct * 3);
+        $monthWidthPct = $monthCount > 0 ? round((100 - $fixedPct) / $monthCount, 2) : 0;
+
+        $statsForValues = static function (array $values): array {
+            if ($values === []) {
+                return ['min' => null, 'max' => null, 'avg' => null];
+            }
+            $sum = array_sum($values);
+            return [
+                'min' => min($values),
+                'max' => max($values),
+                'avg' => $sum / count($values),
+            ];
+        };
 
         $pivotRows = array_values($pivotRows);
         usort($pivotRows, static function (array $a, array $b): int {
@@ -412,6 +428,34 @@
 
             return strcmp((string) ($a['supplier'] ?? ''), (string) ($b['supplier'] ?? ''));
         });
+
+        foreach ($pivotRows as $index => $pivotRow) {
+            $monthlyQtys = [];
+            foreach ($monthHeaders as $monthKey) {
+                if (! isset($pivotRow['months'][$monthKey])) {
+                    continue;
+                }
+                $monthlyQty = (float) ($pivotRow['months'][$monthKey] ?? 0.0);
+                if (abs($monthlyQty) < 0.0000001) {
+                    continue;
+                }
+                $monthlyQtys[] = $monthlyQty;
+            }
+            $pivotRows[$index]['stats'] = $statsForValues($monthlyQtys);
+        }
+
+        $monthlyGrandQtys = [];
+        foreach ($monthHeaders as $monthKey) {
+            if (! isset($grandByMonth[$monthKey])) {
+                continue;
+            }
+            $monthlyGrandQty = (float) ($grandByMonth[$monthKey] ?? 0.0);
+            if (abs($monthlyGrandQty) < 0.0000001) {
+                continue;
+            }
+            $monthlyGrandQtys[] = $monthlyGrandQty;
+        }
+        $grandStats = $statsForValues($monthlyGrandQtys);
     @endphp
 
     <h1 class="report-title">Laporan Timeline KB - Bulanan (Rambung) </h1>
@@ -431,7 +475,10 @@
                             {{ $year }}
                         </th>
                     @endforeach
-                    <th rowspan="2" style="width: 10%;">Total</th>
+                    <th rowspan="2" style="width: {{ $totalWidthPct }}%;">Total</th>
+                    <th rowspan="2" style="width: {{ $statWidthPct }}%;">Min</th>
+                    <th rowspan="2" style="width: {{ $statWidthPct }}%;">Max</th>
+                    <th rowspan="2" style="width: {{ $statWidthPct }}%;">Avg</th>
                 </tr>
                 <tr class="headers-row">
                     @foreach ($monthHeaders as $monthKey)
@@ -455,10 +502,13 @@
                         <td class="number-right data-cell" style="font-weight: bold">
                             {{ $formatNumber($row['total'] ?? null) }}
                         </td>
+                        <td class="number-right data-cell">{{ $formatNumber($row['stats']['min'] ?? null) }}</td>
+                        <td class="number-right data-cell">{{ $formatNumber($row['stats']['max'] ?? null) }}</td>
+                        <td class="number-right data-cell">{{ $formatNumber($row['stats']['avg'] ?? null) }}</td>
                     </tr>
                 @empty
                     <tr class="data-row">
-                        <td colspan="{{ count($monthHeaders) + 3 }}" class="center data-cell">Tidak ada data.</td>
+                        <td colspan="{{ count($monthHeaders) + 6 }}" class="center data-cell">Tidak ada data.</td>
                     </tr>
                 @endforelse
                 @if ($pivotRows !== [])
@@ -468,6 +518,9 @@
                             <td class="number-right">{{ $formatNumber($grandByMonth[$monthKey] ?? null) }}</td>
                         @endforeach
                         <td class="number-right">{{ $formatNumber($grandTotal) }}</td>
+                        <td class="number-right">{{ $formatNumber($grandStats['min'] ?? null) }}</td>
+                        <td class="number-right">{{ $formatNumber($grandStats['max'] ?? null) }}</td>
+                        <td class="number-right">{{ $formatNumber($grandStats['avg'] ?? null) }}</td>
                     </tr>
                 @endif
             </tbody>

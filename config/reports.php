@@ -575,10 +575,10 @@ return [
         'stored_procedure' => env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_PROCEDURE', 'SP_LapTimelineKBBulananKG'),
         'call_syntax' => env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_CALL_SYNTAX', 'exec'),
         'query' => env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_QUERY'),
-        'parameter_count' => (int) env('TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_PARAMETER_COUNT', 2),
+        'parameter_count' => (int) env('TIMELINE_KAYU_BULANAN_KG_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'TIMELINE_KAYU_BULAT_BULANAN_KG_REPORT_EXPECTED_COLUMNS',
-            'Tahun,Bulan,NmSupplier,TonBerat,Ranking'
+            'Tahun,Bulan,NmSupplier,TonBerat,Harga,Ranking'
         )))),
     ],
     'timeline_kayu_bulat_harian_kg' => [

@@ -221,6 +221,7 @@ use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
 use App\Http\Controllers\TimelineKayuBulatBulananKgController;
+use App\Http\Controllers\TimelineKbBulananMgntController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
@@ -1427,6 +1428,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/proses-produksi/produksi-sanding-per-nomor-produksi', 'api.reports.proses-produksi.produksi-sanding-per-nomor-produksi', ProduksiSandingPerNomorProduksiController::class],
         ['/reports/management/label-perhari', 'api.reports.management.label-perhari', LabelPerhariController::class],
         ['/reports/management/rekap-stock-on-hand', 'api.reports.management.rekap-stock-on-hand', RekapStockOnHandController::class],
+        ['/reports/management/timeline-kb-bulanan-mgnt', 'api.reports.management.timeline-kb-bulanan-mgnt', TimelineKbBulananMgntController::class],
         ['/reports/verifikasi/rangkuman-bongkar-susun', 'api.reports.verifikasi.rangkuman-bongkar-susun', RangkumanBongkarSusunController::class],
         ['/reports/verifikasi/bahan-yang-dihasilkan', 'api.reports.verifikasi.bahan-yang-dihasilkan', BahanYangDihasilkanController::class],
         ['/reports/verifikasi/kapasitas-racip-kayu-bulat-hidup', 'api.reports.verifikasi.kapasitas-racip-kayu-bulat-hidup', KapasitasRacipKayuBulatHidupController::class],

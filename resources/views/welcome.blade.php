@@ -1809,6 +1809,12 @@
                                     Laporan Rekap Stock On Hand
                                 </a>
                             </div>
+                            <div class="col-12 col-md-6">
+                                <a href="{{ route('reports.management.timeline-kb-bulanan-mgnt.index') }}"
+                                    class="btn btn-outline-primary w-100 text-start">
+                                    Laporan Timeline KB - Bulanan (Rambung) MGNT
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

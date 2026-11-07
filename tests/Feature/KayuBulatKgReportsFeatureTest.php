@@ -11,6 +11,7 @@ use App\Services\RekapProduktivitasSawmillRpReportService;
 use App\Services\SaldoHidupKayuBulatKgReportService;
 use App\Services\TimelineKayuBulatBulananKgReportService;
 use App\Services\TimelineKayuBulatHarianKgReportService;
+use App\Services\TimelineKbBulananMgntReportService;
 use Mockery;
 use Tests\TestCase;
 
@@ -42,6 +43,7 @@ class KayuBulatKgReportsFeatureTest extends TestCase
         $this->get('/reports/kayu-bulat/perbandingan-kb-masuk-periode-1-dan-2-kg')->assertOk()->assertSee('Laporan Perbanding KB Masuk Periode 1 dan 2 - Timbang KG');
         $this->get('/reports/kayu-bulat/timeline-kayu-bulat-bulanan-kg')->assertOk()->assertSee('Laporan Time Line KB - Bulanan (Rambung)');
         $this->get('/reports/kayu-bulat/timeline-kayu-bulat-harian-kg')->assertOk()->assertSee('Laporan Time Line KB - Harian (Rambung)');
+        $this->get('/reports/management/timeline-kb-bulanan-mgnt')->assertOk()->assertSee('Laporan Timeline KB - Bulanan (Rambung) MGNT');
     }
 
     public function test_saldo_hidup_kg_preview_returns_main_and_sub_data(): void
@@ -195,6 +197,27 @@ class KayuBulatKgReportsFeatureTest extends TestCase
             ->assertOk()
             ->assertJsonPath('meta.total_periods', 1)
             ->assertJsonPath('grouped_data.0.label', '2026-01-02');
+    }
+
+    public function test_timeline_kb_bulanan_mgnt_preview_returns_rows_with_harga(): void
+    {
+        $user = User::factory()->make(['id' => 1]);
+
+        $service = Mockery::mock(TimelineKbBulananMgntReportService::class);
+        $service->shouldReceive('fetch')->once()->with('2026-01-01', '2026-01-31')->andReturn([
+            ['Tahun' => 2026, 'Bulan' => 1, 'NmSupplier' => 'A', 'TonBerat' => 5.25, 'Harga' => 100000, 'Ranking' => 1],
+        ]);
+        $this->app->instance(TimelineKbBulananMgntReportService::class, $service);
+
+        $this->withHeaders($this->authJsonHeaders($user))
+            ->postJson('/api/reports/management/timeline-kb-bulanan-mgnt', [
+                'TglAwal' => '2026-01-01',
+                'TglAkhir' => '2026-01-31',
+            ])
+            ->assertOk()
+            ->assertJsonPath('meta.total_rows', 1)
+            ->assertJsonPath('data.0.NmSupplier', 'A')
+            ->assertJsonPath('data.0.Harga', 100000);
     }
 
     public function test_new_pdf_download_endpoints_return_pdf(): void

@@ -217,6 +217,7 @@ use App\Http\Controllers\TargetMasukBBBulananController;
 use App\Http\Controllers\TargetMasukBBController;
 use App\Http\Controllers\TimelineKayuBulatBulananController;
 use App\Http\Controllers\TimelineKayuBulatBulananKgController;
+use App\Http\Controllers\TimelineKbBulananMgntController;
 use App\Http\Controllers\TimelineKayuBulatHarianController;
 use App\Http\Controllers\TimelineKayuBulatHarianKgController;
 use App\Http\Controllers\TimelineRekapPenjualanPerProdukController;
@@ -1234,6 +1235,14 @@ Route::prefix('reports/management')->name('reports.management.')->group(function
         Route::post('/preview-pdf', [RekapStockOnHandController::class, 'download'])->name('preview-pdf');
         Route::post('/preview', [RekapStockOnHandController::class, 'preview'])->name('preview');
         Route::post('/health', [RekapStockOnHandController::class, 'health'])->name('health');
+    });
+
+    Route::prefix('timeline-kb-bulanan-mgnt')->name('timeline-kb-bulanan-mgnt.')->group(function (): void {
+        Route::get('/', [TimelineKbBulananMgntController::class, 'index'])->name('index');
+        Route::post('/download', [TimelineKbBulananMgntController::class, 'download'])->name('download');
+        Route::post('/preview-pdf', [TimelineKbBulananMgntController::class, 'previewPdf'])->name('preview-pdf');
+        Route::post('/preview', [TimelineKbBulananMgntController::class, 'preview'])->name('preview');
+        Route::post('/health', [TimelineKbBulananMgntController::class, 'health'])->name('health');
     });
 });
 
