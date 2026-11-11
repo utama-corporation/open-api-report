@@ -1235,6 +1235,14 @@ return [
     'penerimaan_st_pembelian_ton' => [
         'database_connection' => env('PENERIMAAN_ST_PEMBELIAN_TON_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
     ],
+    'penerimaan_st_upah' => [
+        'database_connection' => env('PENERIMAAN_ST_UPAH_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env('PENERIMAAN_ST_UPAH_REPORT_PROCEDURE', 'SPWps_LapPenSTSawmilUpah'),
+        'sub_stored_procedure' => env('PENERIMAAN_ST_UPAH_SUB_REPORT_PROCEDURE', 'SPWps_LapPenSTSawmilUpahSub'),
+        'call_syntax' => env('PENERIMAAN_ST_UPAH_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('PENERIMAAN_ST_UPAH_REPORT_QUERY'),
+        'parameter_count' => (int) env('PENERIMAAN_ST_UPAH_REPORT_PARAMETER_COUNT', 1),
+    ],
     'rekap_penerimaan_st_dari_sawmill_non_rambung' => [
         'database_connection' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('REKAP_PENERIMAAN_ST_DARI_SAWMILL_NON_RAMBUNG_REPORT_PROCEDURE', 'SPWps_LapRekapPenSTDariSawmill'),

@@ -3500,5 +3500,97 @@ class OpenApiController extends Controller
                 ],
             ];
         }
+
+        $upahReportBase = '/api/reports/sawn-timber/penerimaan-st-upah';
+        $upahRequestSchema = 'PenerimaanStUpahRequest';
+        $schemas[$upahRequestSchema] = [
+            'type' => 'object',
+            'required' => ['NoUpah'],
+            'properties' => [
+                'NoUpah' => [
+                    'type' => 'string',
+                    'maxLength' => 13,
+                    'example' => 'O.000057',
+                    'description' => 'Nomor upah penerimaan ST.',
+                ],
+            ],
+        ];
+
+        $upahReportDataSchema = 'PenerimaanStUpahReportData';
+        $schemas[$upahReportDataSchema] = [
+            'type' => 'object',
+            'additionalProperties' => true,
+            'required' => ['returned_materials'],
+            'properties' => [
+                'returned_materials' => [
+                    'type' => 'object',
+                    'required' => ['rows', 'summary'],
+                    'properties' => [
+                        'rows' => [
+                            'type' => 'array',
+                            'items' => [
+                                'type' => 'object',
+                                'additionalProperties' => true,
+                                'required' => ['no', 'tebal', 'lebar', 'uom_tbl_lebar', 'panjang', 'pcs', 'uom_panjang', 'ton'],
+                                'properties' => [
+                                    'no' => ['type' => 'integer'],
+                                    'tebal' => ['type' => 'number', 'nullable' => true],
+                                    'lebar' => ['type' => 'number', 'nullable' => true],
+                                    'uom_tbl_lebar' => ['type' => 'string'],
+                                    'panjang' => ['type' => 'number', 'nullable' => true],
+                                    'pcs' => ['type' => 'integer'],
+                                    'uom_panjang' => ['type' => 'string'],
+                                    'ton' => ['type' => 'number'],
+                                ],
+                            ],
+                        ],
+                        'summary' => [
+                            'type' => 'object',
+                            'required' => ['total_pcs', 'total_ton'],
+                            'properties' => [
+                                'total_pcs' => ['type' => 'integer'],
+                                'total_ton' => ['type' => 'number'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ];
+        $upahPreviewResponseSchema = 'PenerimaanStUpahPreviewResponse';
+        $schemas[$upahPreviewResponseSchema] = [
+            'allOf' => [
+                ['$ref' => '#/components/schemas/GenericReportPreviewResponse'],
+                [
+                    'type' => 'object',
+                    'properties' => [
+                        'report_data' => ['$ref' => '#/components/schemas/'.$upahReportDataSchema],
+                    ],
+                ],
+            ],
+        ];
+
+        if (isset($paths[$upahReportBase]['post']['responses']['200']['content']['application/json']['schema'])) {
+            $paths[$upahReportBase]['post']['responses']['200']['content']['application/json']['schema'] = [
+                '$ref' => '#/components/schemas/'.$upahPreviewResponseSchema,
+            ];
+        }
+
+        foreach ([$upahReportBase, $upahReportBase.'/pdf', $upahReportBase.'/health'] as $path) {
+            if (! isset($paths[$path]['post'])) {
+                continue;
+            }
+
+            $paths[$path]['post']['requestBody'] = [
+                'required' => true,
+                'content' => [
+                    'application/json' => [
+                        'schema' => ['$ref' => '#/components/schemas/'.$upahRequestSchema],
+                    ],
+                    'application/x-www-form-urlencoded' => [
+                        'schema' => ['$ref' => '#/components/schemas/'.$upahRequestSchema],
+                    ],
+                ],
+            ];
+        }
     }
 }
