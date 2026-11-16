@@ -8929,12 +8929,7 @@ class AscendXmlTestController extends Controller
                 throw new RuntimeException('File XML (xml_file) wajib dikirim.');
             }
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'UC');
 
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
@@ -8976,12 +8971,7 @@ class AscendXmlTestController extends Controller
                 throw new RuntimeException('File XML (xml_file) wajib dikirim.');
             }
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'RU');
 
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
@@ -9023,12 +9013,7 @@ class AscendXmlTestController extends Controller
                 throw new RuntimeException('File XML (xml_file) wajib dikirim.');
             }
 
-            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
-            if ($dbCompanyName === '') {
-                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
-            }
-
-            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+            $company = $this->resolveSharedHrmCompany($request, $xmlPayload, 'GSU');
 
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
