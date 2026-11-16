@@ -1576,3 +1576,6 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         Route::post('/health', [RekapProduksiInjectController::class, 'health'])->name('health-explicit');
     });
 });
+
+// Company report routes stay last so existing ascends routes keep precedence.
+require __DIR__.'/ascends-company.php';
