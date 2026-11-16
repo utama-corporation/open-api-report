@@ -53,14 +53,30 @@ class CompanyReportRegistryTest extends TestCase
     public function test_registry_covers_every_shared_route_after_suffix_normalization(): void
     {
         $paths = $this->sharedRoutePaths();
-        $expected = count($paths);
+        sort($paths);
 
         // 180 shared route paths collapse to 163 slugs once company suffixes are stripped.
-        $this->assertSame(163, $expected);
-        $this->assertSame($expected, count(CompanyReportRegistry::all()));
+        $this->assertSame(163, count($paths));
+        $this->assertSame($paths, array_keys(CompanyReportRegistry::all()));
         $this->assertNotNull(CompanyReportRegistry::get('general_ledger.trial_balance_monthly.arus-kas'));
         $this->assertSame(['ru'], CompanyReportRegistry::allowedCompanies('finance.receivable-summary.umur-piutang'));
         $this->assertNull(CompanyReportRegistry::get('finance.receivable-summary.umur-piutang-ru'));
+    }
+
+    public function test_family_overrides_keep_per_company_pdf_and_filename(): void
+    {
+        $labaKotor = CompanyReportRegistry::get('general_ledger.journal_details.laba-kotor');
+
+        $this->assertNotNull($labaKotor);
+        $this->assertSame('landscape', $labaKotor->pdfFor('gsu')['orientation']);
+        $this->assertSame('portrait', $labaKotor->pdfFor('ru')['orientation']);
+        $this->assertSame('A4', $labaKotor->pdfFor('ru')['format']);
+
+        $bunga = CompanyReportRegistry::get('general_ledger.journal_details.perhitungan-bunga');
+
+        $this->assertNotNull($bunga);
+        $this->assertStringNotContainsString('GSU', $bunga->filenameFor([], 'ru'));
+        $this->assertStringContainsString('Bunga RU', $bunga->filenameFor([], 'ru'));
     }
 
     public function test_registry_key_equals_definition_slug(): void

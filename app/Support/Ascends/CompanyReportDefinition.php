@@ -12,7 +12,7 @@ final class CompanyReportDefinition
     /**
      * @param  array<string, mixed>  $pdf
      * @param  array<string, mixed>  $filters
-     * @param  array<string, string|array{service?: string, view?: string}>  $overrides
+     * @param  array<string, string|array{service?: string, view?: string, pdf?: array<string, mixed>, filename?: string|Closure}>  $overrides
      */
     public function __construct(
         public readonly string $slug,
@@ -34,18 +34,30 @@ final class CompanyReportDefinition
         return $this->overrideFor($company)['view'] ?? $this->view;
     }
 
+    /**
+     * PDF options are merged so an override may change only the orientation.
+     *
+     * @return array<string, mixed>
+     */
+    public function pdfFor(string $company): array
+    {
+        return array_merge($this->pdf, $this->overrideFor($company)['pdf'] ?? []);
+    }
+
     public function filenameFor(array $reportData, string $company): string
     {
+        $filename = $this->overrideFor($company)['filename'] ?? $this->filename;
+
         // Company label is always uppercase on the printed report.
-        return $this->filename instanceof Closure
-            ? ($this->filename)($reportData, strtoupper($company))
-            : $this->filename;
+        return $filename instanceof Closure
+            ? $filename($reportData, strtoupper($company))
+            : $filename;
     }
 
     /**
-     * A company override is either a service FQCN or a service/view pair.
+     * A company override is either a service FQCN or a set of per-company values.
      *
-     * @return array{service?: string, view?: string}
+     * @return array{service?: string, view?: string, pdf?: array<string, mixed>, filename?: string|Closure}
      */
     private function overrideFor(string $company): array
     {

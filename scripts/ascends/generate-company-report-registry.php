@@ -225,12 +225,19 @@ foreach ($routeDefinitions as $route) {
     }
 
     $record = resolveRecord($route, $methodBodies, $services, $wildcardReports, $filenameOverrides);
+    $record['filenameSource'] = filenameSource($record['filename']);
 
     if ($suffix === null) {
         foreach ($companies as $company) {
+            if (isset($records[$slug][$company]) && $records[$slug][$company] !== $record) {
+                throw new RuntimeException("Conflicting shared records for {$slug} ({$company})");
+            }
             $records[$slug][$company] ??= $record;
         }
     } else {
+        if (isset($records[$slug][$suffix]) && $records[$slug][$suffix] !== $record) {
+            throw new RuntimeException("Conflicting shared records for {$slug} ({$suffix})");
+        }
         $records[$slug][$suffix] = $record;
     }
 }
@@ -254,6 +261,12 @@ foreach ($records as $slug => $byCompany) {
         }
         if ($byCompany[$company]['view'] !== $base['view']) {
             $override['view'] = $byCompany[$company]['view'];
+        }
+        if ($byCompany[$company]['pdf'] !== $base['pdf']) {
+            $override['pdf'] = $byCompany[$company]['pdf'];
+        }
+        if ($byCompany[$company]['filenameSource'] !== $base['filenameSource']) {
+            $override['filename'] = $byCompany[$company]['filenameSource'];
         }
         if ($override !== []) {
             $overrides[$company] = $override;
@@ -281,6 +294,19 @@ function filenameSource(array $filename): string
     return $filename['company']
         ? "fn (array \$data, string \$company): string => '{$title} ('.\$company.').pdf'"
         : "'{$title}.pdf'";
+}
+
+/**
+ * @param  array<string, string>  $pdf
+ */
+function pdfSource(array $pdf): string
+{
+    $parts = [];
+    foreach ($pdf as $key => $value) {
+        $parts[] = "'{$key}' => '{$value}'";
+    }
+
+    return '['.implode(', ', $parts).']';
 }
 
 $imports = [];
@@ -355,11 +381,8 @@ foreach ($entries as $slug => $entry) {
     $lines[] = "                view: '{$base['view']}',";
 
     $pdfParts = [];
-    foreach ($base['pdf'] as $key => $value) {
-        $pdfParts[] = "'{$key}' => '{$value}'";
-    }
-    $lines[] = '                pdf: ['.implode(', ', $pdfParts).'],';
-    $lines[] = '                filename: '.filenameSource($base['filename']).',';
+    $lines[] = '                pdf: '.pdfSource($base['pdf']).',';
+    $lines[] = '                filename: '.$base['filenameSource'].',';
 
     if ($entry['overrides'] !== []) {
         $lines[] = '                overrides: [';
@@ -371,6 +394,12 @@ foreach ($entries as $slug => $entry) {
             }
             if (isset($override['view'])) {
                 $parts[] = "'view' => '{$override['view']}'";
+            }
+            if (isset($override['pdf'])) {
+                $parts[] = "'pdf' => ".pdfSource($override['pdf']);
+            }
+            if (isset($override['filename'])) {
+                $parts[] = "'filename' => ".$override['filename'];
             }
             $lines[] = "                    '{$company}' => [".implode(', ', $parts).'],';
         }

@@ -629,7 +629,7 @@ final class CompanyReportRegistry
                 pdf: ['format' => 'A4', 'orientation' => 'landscape'],
                 filename: fn (array $data, string $company): string => 'Journal Details - Laporan Laba Kotor Tahunan ('.$company.').pdf',
                 overrides: [
-                    'ru' => ['service' => LabaKotorRuReportService::class, 'view' => 'ascends.shared.general_ledger.journal_details.laba_kotor_ru.pdf'],
+                    'ru' => ['service' => LabaKotorRuReportService::class, 'view' => 'ascends.shared.general_ledger.journal_details.laba_kotor_ru.pdf', 'pdf' => ['format' => 'A4', 'orientation' => 'portrait'], 'filename' => fn (array $data, string $company): string => 'Journal Details - Laporan Laba Kotor RU ('.$company.').pdf'],
                 ],
             ),
             'general_ledger.journal_details.laba-kotor-per-kategori' => new CompanyReportDefinition(
@@ -678,7 +678,7 @@ final class CompanyReportRegistry
                 pdf: ['format' => 'A4', 'orientation' => 'portrait'],
                 filename: fn (array $data, string $company): string => 'Journal Details - Laporan Piutang & Perhitungan Bunga GSU ('.$company.').pdf',
                 overrides: [
-                    'ru' => ['service' => PerhitunganBungaRuReportService::class, 'view' => 'ascends.shared.general_ledger.journal_details.perhitungan_bunga_ru.pdf'],
+                    'ru' => ['service' => PerhitunganBungaRuReportService::class, 'view' => 'ascends.shared.general_ledger.journal_details.perhitungan_bunga_ru.pdf', 'filename' => fn (array $data, string $company): string => 'Journal Details - Laporan Piutang & Perhitungan Bunga RU ('.$company.').pdf'],
                 ],
             ),
             'general_ledger.journal_details.pinjaman-karyawan' => new CompanyReportDefinition(
@@ -763,7 +763,7 @@ final class CompanyReportRegistry
                 filename: fn (array $data, string $company): string => 'Laporan Financial Ratio ('.$company.').pdf',
                 overrides: [
                     'ru' => ['service' => FinancialRasioRuReportService::class, 'view' => 'ascends.shared.general_ledger.trial_balance_monthly.financial_rasio_ru.pdf'],
-                    'uc' => ['service' => FinancialRasioUcReportService::class, 'view' => 'ascends.shared.general_ledger.trial_balance_monthly.financial_rasio_uc.pdf'],
+                    'uc' => ['service' => FinancialRasioUcReportService::class, 'view' => 'ascends.shared.general_ledger.trial_balance_monthly.financial_rasio_uc.pdf', 'filename' => fn (array $data, string $company): string => 'Laporan Financial Rasio ('.$company.').pdf'],
                 ],
             ),
             'general_ledger.trial_balance_monthly.laba-rugi-multi-periode' => new CompanyReportDefinition(
