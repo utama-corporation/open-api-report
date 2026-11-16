@@ -43,7 +43,8 @@ class CompanyReportController extends Controller
         string $company,
         string $report,
     ): Response|JsonResponse {
-        $definition = CompanyReportRegistry::get($report);
+        // The shared dynamic hrm endpoint passes the bare report name; registry keys carry the hrm. prefix.
+        $definition = CompanyReportRegistry::get($report) ?? CompanyReportRegistry::get('hrm.'.$report);
         if ($definition === null) {
             abort(404);
         }

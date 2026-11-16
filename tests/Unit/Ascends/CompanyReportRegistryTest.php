@@ -7,6 +7,7 @@ use App\Services\Ascends\Shared\GeneralLedger\TrialBalanceMonthly\ArusKasGsuRepo
 use App\Services\Ascends\Shared\GeneralLedger\TrialBalanceMonthly\ArusKasRuReportService;
 use App\Support\Ascends\CompanyReportDefinition;
 use App\Support\Ascends\CompanyReportRegistry;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class CompanyReportRegistryTest extends TestCase
@@ -147,6 +148,14 @@ class CompanyReportRegistryTest extends TestCase
         }
     }
 
+    public function test_hrm_reports_constant_matches_shared_dynamic_route_where_in(): void
+    {
+        $shared = Route::getRoutes()->getByName('api.internal.ascends.shared.hrm.report.pdf');
+
+        $this->assertNotNull($shared);
+        $this->assertSame(CompanyReportRegistry::HRM_REPORTS, explode('|', $shared->wheres['report']));
+    }
+
     /**
      * Normalized shared report slugs parsed from routes/api.php: the wildcard HRM
      * route expands to its whereIn list and company suffixes are stripped.
@@ -174,7 +183,11 @@ class CompanyReportRegistryTest extends TestCase
 
             preg_match("/->whereIn\('report',\s*\[(.*?)\]\)/s", substr($routes, $offset), $whereIn);
             preg_match_all("/'([^']+)'/", $whereIn[1] ?? '', $reports);
-            foreach ($reports[1] as $report) {
+
+            // The list now lives in the registry constant.
+            $reportNames = $reports[1] === [] ? CompanyReportRegistry::HRM_REPORTS : $reports[1];
+
+            foreach ($reportNames as $report) {
                 $paths[] = str_replace('{report}', $report, $path);
             }
         }

@@ -196,6 +196,31 @@ final class CompanyReportRegistry
     private const COMPANIES = ['gsu', 'ru', 'uc'];
 
     /**
+     * Short report names of the shared dynamic hrm endpoint; the single source
+     * for both its whereIn list and the per-company dynamic route whitelist.
+     *
+     * @var list<string>
+     */
+    public const HRM_REPORTS = [
+        'list-karyawan',
+        'daftar-karyawan',
+        'daftar-karyawan-berdasarkan-abjad',
+        'data-karyawan-status-kerja',
+        'karyawan-aktif-per-departemen',
+        'karyawan-masuk-per-departemen-per-tanggal-masuk',
+        'karyawan-per-agama',
+        'karyawan-per-departemen-per-jabatan',
+        'karyawan-per-etnis',
+        'karyawan-per-level',
+        'karyawan-per-masa-kerja',
+        'karyawan-per-umur',
+        'kehadiran-kk-kt-st',
+        'list-karyawan-habis-kontrak',
+        'perbandingan-jumlah-karyawan-tahunan-per-bulan',
+        'usia-generasi-tahun-kelahiran-masa-kerja',
+    ];
+
+    /**
      * Slugs published to only some companies; every other slug goes to all three.
      *
      * @var array<string, list<string>>

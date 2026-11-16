@@ -13,28 +13,18 @@ use Illuminate\Support\Facades\Route;
  */
 
 // Reports served by the shared dynamic /internal/ascends/shared/hrm/{report}/pdf route.
-$hrmReports = [
-    'list-karyawan',
-    'daftar-karyawan',
-    'daftar-karyawan-berdasarkan-abjad',
-    'data-karyawan-status-kerja',
-    'karyawan-aktif-per-departemen',
-    'karyawan-masuk-per-departemen-per-tanggal-masuk',
-    'karyawan-per-agama',
-    'karyawan-per-departemen-per-jabatan',
-    'karyawan-per-etnis',
-    'karyawan-per-level',
-    'karyawan-per-masa-kerja',
-    'karyawan-per-umur',
-    'kehadiran-kk-kt-st',
-    'list-karyawan-habis-kontrak',
-    'perbandingan-jumlah-karyawan-tahunan-per-bulan',
-    'usia-generasi-tahun-kelahiran-masa-kerja',
-];
+// A single {company} route may only whitelist reports published to every company;
+// restricted ones are covered by their own static routes.
+$hrmReports = array_values(array_filter(
+    CompanyReportRegistry::HRM_REPORTS,
+    static fn (string $report): bool => CompanyReportRegistry::allowedCompanies('hrm.'.$report) === CompanyReportRegistry::companies()
+));
 
-$registeredUris = [];
+$registeredRoutes = [];
 foreach (Route::getRoutes() as $route) {
-    $registeredUris[$route->uri()] = true;
+    foreach ($route->methods() as $method) {
+        $registeredRoutes[$method.' '.$route->uri()] = true;
+    }
 }
 
 foreach (array_keys(CompanyReportRegistry::all()) as $slug) {
@@ -45,7 +35,7 @@ foreach (array_keys(CompanyReportRegistry::all()) as $slug) {
 
         // Already owned by routes/api.php, e.g. /internal/ascends/ru/hrm/list-karyawan/pdf.
         // These routes are registered inside api.php, so their URI carries the api prefix.
-        if (isset($registeredUris['api/'.$uri])) {
+        if (isset($registeredRoutes['POST api/'.$uri])) {
             continue;
         }
 
@@ -58,7 +48,9 @@ foreach (array_keys(CompanyReportRegistry::all()) as $slug) {
     }
 }
 
-// Mirrors the shared hrm endpoint, keeping the same report list and adding the company prefix.
+// Mirrors the shared hrm endpoint (same report list, plus the company prefix).
+// Route name: api.internal.ascends.company.hrm.report.pdf — one route serves all
+// three companies, so it cannot carry a per-company name.
 Route::post('/internal/ascends/{company}/hrm/{report}/pdf', [CompanyReportController::class, 'pdf'])
     ->whereIn('company', ['gsu', 'ru', 'uc'])
     ->whereIn('report', $hrmReports)
