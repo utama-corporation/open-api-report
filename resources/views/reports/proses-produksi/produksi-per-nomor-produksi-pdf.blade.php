@@ -58,12 +58,17 @@
         }
 
         .meta-pane-left {
-            width: 50%;
+            width: 40%;
             padding-right: 6px;
         }
 
+        .meta-pane-middle {
+            width: 30%;
+            padding: 0 6px;
+        }
+
         .meta-pane-right {
-            width: 26%;
+            width: 30%;
             padding-left: 6px;
         }
 
@@ -82,6 +87,38 @@
         .meta-sep {
             width: 10px;
             text-align: center;
+        }
+
+        .summary-table {
+            margin-top: 16px;
+            border: 1px solid #000;
+        }
+
+        .summary-table td {
+            border: 0;
+            padding: 2px 4px;
+            text-align: left;
+            vertical-align: top;
+            font-size: 10px;
+        }
+
+        .summary-title {
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .summary-label {
+            width: 18%;
+            font-weight: bold;
+        }
+
+        .summary-table .meta-sep {
+            width: 3%;
+        }
+
+        .summary-value {
+            width: 29%;
         }
 
         .section-title-grid {
@@ -188,6 +225,7 @@
 
         $fmtInt = static fn($value): string => $value === null ? '' : number_format((float) $value, 0, '.', ',');
         $fmt4 = static fn($value): string => $value === null ? '' : number_format((float) $value, 4, '.', '');
+        $fmt2 = static fn($value): string => $value === null ? '' : number_format(round((float) $value, 2), 2, '.', '');
         $fmtPercent = static fn($value): string => $value === null
             ? '-'
             : number_format((float) $value, 2, '.', '') . '%';
@@ -200,7 +238,8 @@
         $rendemen = $totals['rendemen'] ?? null;
 
         $pageHeightMm = 297 - 16 - 18;
-        $reservedHeightMm = 34;
+        // Tinggi tetap: header/total tiap tabel, 2 baris meta tambahan, dan section Rangkuman di halaman terakhir.
+        $reservedHeightMm = 96;
         $rowHeightMm = 4.9;
 
         // Tabel Repair dan Afkir ditumpuk di bawah Input/Output pada halaman yang sama,
@@ -265,8 +304,7 @@
                             </tr>
                         </table>
                     </td>
-                    <td></td>
-                    <td class="meta-pane-right">
+                    <td class="meta-pane-middle">
                         <table class="meta-table">
                             <tr>
                                 <td class="meta-label">Shift</td>
@@ -282,6 +320,20 @@
                                 <td class="meta-label">Anggota</td>
                                 <td class="meta-sep">:</td>
                                 <td>{{ $fmtInt($meta['anggota'] ?? null) }}</td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td class="meta-pane-right">
+                        <table class="meta-table">
+                            <tr>
+                                <td class="meta-label">Jam Lembur</td>
+                                <td class="meta-sep">:</td>
+                                <td>{{ $fmtInt($meta['jam_lembur'] ?? 0) }} Jam</td>
+                            </tr>
+                            <tr>
+                                <td class="meta-label">Hour Meter</td>
+                                <td class="meta-sep">:</td>
+                                <td>{{ $fmt2($meta['hour_meter'] ?? null) }}</td>
                             </tr>
                         </table>
                     </td>
@@ -372,6 +424,38 @@
                     </td>
                 </tr>
             </table>
+
+            @if ($isLastPage)
+                <table class="summary-table">
+                    <tr>
+                        <td class="summary-title" colspan="6">Rangkuman</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Jam Kerja</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmtInt($meta['jam_kerja'] ?? null) }} Jam</td>
+                        <td class="summary-label">Jam Lembur</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmtInt($meta['jam_lembur'] ?? 0) }} Jam</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Total Input</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmt4($inputTotals['kubik'] ?? 0) }} m&sup3;</td>
+                        <td class="summary-label">Total Repair</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmt4($repairTotals['kubik'] ?? 0) }} m&sup3;</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Total Output</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmt4($outputTotals['kubik'] ?? 0) }} m&sup3;</td>
+                        <td class="summary-label">Total Afkir</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmt4($afkirTotals['kubik'] ?? 0) }} m&sup3;</td>
+                    </tr>
+                </table>
+            @endif
         </div>
     @endfor
 

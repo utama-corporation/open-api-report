@@ -251,7 +251,7 @@ return [
         'single_parameter_name' => env('PRODUKSI_PER_NOMOR_PRODUKSI_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PRODUKSI_PER_NOMOR_PRODUKSI_REPORT_EXPECTED_COLUMNS',
-            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
+            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,JamLembur,HourMeter,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
         )))),
     ],
     'produksi_fj_per_nomor_produksi' => [
@@ -263,7 +263,7 @@ return [
         'single_parameter_name' => env('PRODUKSI_FJ_PER_NOMOR_PRODUKSI_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PRODUKSI_FJ_PER_NOMOR_PRODUKSI_REPORT_EXPECTED_COLUMNS',
-            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
+            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,JamLembur,HourMeter,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
         )))),
     ],
     'produksi_laminating_per_nomor_produksi' => [
@@ -275,7 +275,7 @@ return [
         'single_parameter_name' => env('PRODUKSI_LAMINATING_PER_NOMOR_PRODUKSI_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PRODUKSI_LAMINATING_PER_NOMOR_PRODUKSI_REPORT_EXPECTED_COLUMNS',
-            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
+            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,JamLembur,HourMeter,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
         )))),
     ],
     'produksi_moulding_per_nomor_produksi' => [
@@ -287,7 +287,7 @@ return [
         'single_parameter_name' => env('PRODUKSI_MOULDING_PER_NOMOR_PRODUKSI_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PRODUKSI_MOULDING_PER_NOMOR_PRODUKSI_REPORT_EXPECTED_COLUMNS',
-            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
+            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,JamLembur,HourMeter,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
         )))),
     ],
     'produksi_packing_per_nomor_produksi' => [
@@ -299,7 +299,7 @@ return [
         'single_parameter_name' => env('PRODUKSI_PACKING_PER_NOMOR_PRODUKSI_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PRODUKSI_PACKING_PER_NOMOR_PRODUKSI_REPORT_EXPECTED_COLUMNS',
-            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
+            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,JamLembur,HourMeter,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
         )))),
     ],
     'produksi_s4s_per_nomor_produksi' => [
@@ -311,7 +311,7 @@ return [
         'single_parameter_name' => env('PRODUKSI_S4S_PER_NOMOR_PRODUKSI_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PRODUKSI_S4S_PER_NOMOR_PRODUKSI_REPORT_EXPECTED_COLUMNS',
-            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
+            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,JamLembur,HourMeter,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
         )))),
     ],
     'produksi_sanding_per_nomor_produksi' => [
@@ -323,7 +323,7 @@ return [
         'single_parameter_name' => env('PRODUKSI_SANDING_PER_NOMOR_PRODUKSI_REPORT_SINGLE_PARAMETER_NAME', 'NoProduksi'),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'PRODUKSI_SANDING_PER_NOMOR_PRODUKSI_REPORT_EXPECTED_COLUMNS',
-            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
+            'NoProduksi,Tanggal,Shift,Mesin,Operator,JamKerja,Anggota,JamLembur,HourMeter,Tipe,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik'
         )))),
     ],
     'hasil_produksi_mesin_lembur_dan_non_lembur' => [

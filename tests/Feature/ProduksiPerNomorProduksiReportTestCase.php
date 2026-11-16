@@ -295,6 +295,41 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertStringContainsString('2026-13', $html);
     }
 
+    public function test_meta_reads_jam_lembur_and_hour_meter_from_header_row(): void
+    {
+        $report = $this->build([
+            $this->spRow('Input', 'R.000001', ['JamLembur' => 3, 'HourMeter' => 1234.567]),
+        ]);
+
+        $this->assertSame(3, $report['meta']['jam_lembur']);
+        $this->assertEqualsWithDelta(1234.567, $report['meta']['hour_meter'], 0.0001);
+    }
+
+    public function test_pdf_view_shows_rangkuman_with_lembur_hour_meter_and_kubik_totals(): void
+    {
+        $report = $this->build([
+            $this->spRow('Input', 'R.000001', ['Kubik' => 10.0, 'JamLembur' => 3, 'HourMeter' => 1234.567]),
+            $this->spRow('Output', 'S.000001', ['Kubik' => 8.0]),
+            $this->spRow('Output', 'S.000002', ['IsRepair' => '1', 'Kubik' => 1.0]),
+            $this->spRow('Output', 'S.000003', ['IsReject' => '1', 'Kubik' => 2.0]),
+        ]);
+
+        $html = view($this->pdfView(), [
+            'report' => $report,
+            'generatedBy' => null,
+            'generatedAt' => now(),
+            'pdf_simple_tables' => false,
+        ])->render();
+
+        $this->assertStringContainsString('Rangkuman', $html);
+        $this->assertStringContainsString('Jam Lembur', $html);
+        $this->assertStringContainsString('1234.57', $html);
+        $this->assertStringContainsString('10.0000', $html, 'Total Input memakai kubik input.');
+        $this->assertStringContainsString('8.0000', $html, 'Total Output memakai kubik output.');
+        $this->assertStringContainsString('1.0000', $html, 'Total Repair memakai kubik repair.');
+        $this->assertStringContainsString('2.0000', $html, 'Total Afkir memakai kubik afkir.');
+    }
+
     public function test_pdf_view_paginates_when_second_table_pair_has_data(): void
     {
         $rows = [];
