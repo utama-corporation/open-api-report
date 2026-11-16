@@ -128,12 +128,12 @@
         }
 
         $groupLogos = [
-            'MERONA' => public_path('storage/images/Merona.png'),
-            'MERONA 2' => public_path('storage/images/Merona.png'),
-            'MORE 1' => public_path('storage/images/More.png'),
-            'MORE 2' => public_path('storage/images/More.png'),
-            'MODELUX' => public_path('storage/images/Modelux.png'),
-            'GRANDE' => public_path('storage/images/Grande.png'),
+            'MERONA' => public_path('image/Merona.png'),
+            'MERONA 2' => public_path('image/Merona.png'),
+            'MORE 1' => public_path('image/More.png'),
+            'MORE 2' => public_path('image/More.png'),
+            'MODELUX' => public_path('image/Modelux.png'),
+            'GRANDE' => public_path('image/Grande.png'),
         ];
     @endphp
 

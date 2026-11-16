@@ -127,7 +127,7 @@
         }
 
         $groupLogos = [
-            'Sekar1' => public_path('storage/images/Sekar.png'),
+            'Sekar1' => public_path('image/Sekar.png'),
         ];
     @endphp
 
@@ -170,8 +170,7 @@
                                 @endif
                             </th>
                             <th style="width: 10%;">{{ $ketLabel }} <br> ({{ $ketUnit }})</th>
-                            <th style="width: 20%;">Harga Konsumen</th>
-                            <th style="width: 20%;">Retail<br>Diskon 3%</th>
+                            <th style="width: 40%;">Price List</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -181,7 +180,6 @@
                         <td class="center nowrap">{{ $rowNo }}{{ ($item['bnt'] ?? 0) === 1 ? '*' : '' }}</td>
                         <td>{{ $item['description'] }}</td>
                         <td class="center">{{ rtrim(rtrim(number_format($item['per_dus'], 2, '.', ''), '0'), '.') }}</td>
-                        <td class="number">{{ fmtNum_daftar_harga_enamel_retail($item['harga_konsumen']) }}</td>
                         <td class="number">{{ fmtNum_daftar_harga_enamel_retail($item['retail']) }}</td>
                     </tr>
         @endforeach

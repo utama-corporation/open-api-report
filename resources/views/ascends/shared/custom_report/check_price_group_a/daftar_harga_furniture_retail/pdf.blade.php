@@ -128,11 +128,11 @@
         }
 
         $groupLogos = [
-            'MERONA' => public_path('storage/images/Merona.png'),
-            'MO.RE' => public_path('storage/images/More.png'),
-            'MODELUX' => public_path('storage/images/Modelux.png'),
-            'GRANDE' => public_path('storage/images/Grande.png'),
-            '' => public_path('storage/images/Panen Hana.png'),
+            'MERONA' => public_path('image/Merona.png'),
+            'MO.RE' => public_path('image/More.png'),
+            'MODELUX' => public_path('image/Modelux.png'),
+            'GRANDE' => public_path('image/Grande.png'),
+            '' => public_path('image/Panen Hana.png'),
         ];
     @endphp
 
@@ -175,8 +175,7 @@
                                 @endif
                             </th>
                             <th style="width: 10%;">{{ $ketLabel }} <br> ({{ $ketUnit }})</th>
-                            <th style="width: 20%;">Harga Konsumen</th>
-                            <th style="width: 20%;">Retail<br>Diskon 5%</th>
+                            <th style="width: 40%;">Price List</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -186,7 +185,6 @@
                         <td class="center">{{ $rowNo }}</td>
                         <td>{{ $item['description'] }}</td>
                         <td class="center">{{ rtrim(rtrim(number_format($item['per_dus'], 2, '.', ''), '0'), '.') }}</td>
-                        <td class="number">{{ fmtNum_daftar_harga_furniture_retail($item['harga_konsumen']) }}</td>
                         <td class="number">{{ fmtNum_daftar_harga_furniture_retail($item['retail_diskon_5']) }}</td>
                     </tr>
         @endforeach

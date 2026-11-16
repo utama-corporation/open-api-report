@@ -127,7 +127,7 @@
         }
 
         $groupLogos = [
-            'Sekar1' => public_path('storage/images/Sekar.png'),
+            'Sekar1' => public_path('image/Sekar.png'),
         ];
     @endphp
 
