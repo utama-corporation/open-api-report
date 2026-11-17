@@ -156,7 +156,7 @@
         $headerTitle = trim((string) ($title ?? $reportData['title'] ?? $fallbackTitle ?? ''));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function formatAmount($value)
+        function formatAmount_general_ledger_journal_details_beban($value)
         {
             $value = (float) $value;
             if ($value < 0) {
@@ -225,42 +225,42 @@
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                             <td>{{ (string) ($account['account_name'] ?? '') }}</td>
                             @foreach ($months as $mk => $ml)
-                                <td class="number nowrap">{{ formatAmount($account['monthly_amounts'][$mk] ?? 0) }}</td>
+                                <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($account['monthly_amounts'][$mk] ?? 0) }}</td>
                                 <td class="number nowrap">{{ formatPct($account['monthly_pcts'][$mk] ?? 0) }}</td>
                             @endforeach
-                            <td class="number nowrap">{{ formatAmount($account['total_amount'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($account['total_amount'] ?? 0) }}</td>
                             <td class="number nowrap">{{ formatPct($account['total_pct'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($account['terendah'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($account['tertinggi'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($account['rata_rata'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($account['terendah'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($account['tertinggi'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($account['rata_rata'] ?? 0) }}</td>
                         </tr>
                     @endforeach
 
                     <tr class="category-subtotal">
                         <td>{{ $category['name'] }}</td>
                         @foreach ($months as $mk => $ml)
-                            <td class="number nowrap">{{ formatAmount($category['monthly_subtotals'][$mk] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($category['monthly_subtotals'][$mk] ?? 0) }}</td>
                             <td class="number nowrap">{{ formatPct($category['monthly_pcts'][$mk] ?? 0) }}</td>
                         @endforeach
-                        <td class="number nowrap">{{ formatAmount($category['total_amount'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($category['total_amount'] ?? 0) }}</td>
                         <td class="number nowrap">{{ formatPct($category['total_pct'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($category['terendah'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($category['tertinggi'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($category['rata_rata'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($category['terendah'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($category['tertinggi'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($category['rata_rata'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-row">
                     <td class="center">Grand Total</td>
                     @foreach ($months as $mk => $ml)
-                        <td class="number nowrap">{{ formatAmount($grandTotalMonthly[$mk] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($grandTotalMonthly[$mk] ?? 0) }}</td>
                         <td></td>
                     @endforeach
-                    <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($grandTotal) }}</td>
                     <td></td>
-                    <td class="number nowrap">{{ formatAmount($grandTotalTerendah) }}</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotalTertinggi) }}</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotalRataRata) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($grandTotalTerendah) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($grandTotalTertinggi) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban($grandTotalRataRata) }}</td>
                 </tr>
             </tbody>
         </table>

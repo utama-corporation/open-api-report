@@ -171,7 +171,7 @@
             ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function formatAmount($value)
+        function formatAmount_general_ledger_journal_details_laba_kotor_per_kategori($value)
         {
             $value = (float) $value;
             if ($value < 0) {
@@ -180,7 +180,7 @@
             return number_format($value, 0, '.', ',');
         }
 
-        function formatRasio($value)
+        function formatRasio_general_ledger_journal_details_laba_kotor_per_kategori($value)
         {
             $v = (float) $value;
             $formatted = number_format(abs($v), 2, '.', ',') . '%';
@@ -234,11 +234,11 @@
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} subsection-row">
                             <td>{{ (string) ($item['account_name'] ?? '') }}</td>
                             <td class="number nowrap {{ $currAmt < 0 ? 'number-negative' : '' }}">
-                                {{ formatAmount($currAmt) }}
+                                {{ formatAmount_general_ledger_journal_details_laba_kotor_per_kategori($currAmt) }}
                             </td>
                             <td class="number nowrap">-</td>
                             <td class="number nowrap {{ $prevAmt < 0 ? 'number-negative' : '' }}">
-                                {{ formatAmount($prevAmt) }}
+                                {{ formatAmount_general_ledger_journal_details_laba_kotor_per_kategori($prevAmt) }}
                             </td>
                             <td class="number nowrap">-</td>
                             <td></td>
@@ -255,16 +255,16 @@
                     <tr class="group-total-row">
                         <td>LABA (RUGI) KOTOR PENJUALAN {{ $groupName }}</td>
                         <td class="number nowrap {{ $currTotal < 0 ? 'number-negative' : '' }}">
-                            {{ formatAmount($currTotal) }}
+                            {{ formatAmount_general_ledger_journal_details_laba_kotor_per_kategori($currTotal) }}
                         </td>
                         <td class="number nowrap {{ $currRasio < 0 ? 'number-negative' : '' }}">
-                            {{ $currRasio != 0 ? formatRasio($currRasio) : '0.00%' }}
+                            {{ $currRasio != 0 ? formatRasio_general_ledger_journal_details_laba_kotor_per_kategori($currRasio) : '0.00%' }}
                         </td>
                         <td class="number nowrap {{ $prevTotal < 0 ? 'number-negative' : '' }}">
-                            {{ formatAmount($prevTotal) }}
+                            {{ formatAmount_general_ledger_journal_details_laba_kotor_per_kategori($prevTotal) }}
                         </td>
                         <td class="number nowrap {{ $prevRasio < 0 ? 'number-negative' : '' }}">
-                            {{ $prevRasio != 0 ? formatRasio($prevRasio) : '0.00%' }}
+                            {{ $prevRasio != 0 ? formatRasio_general_ledger_journal_details_laba_kotor_per_kategori($prevRasio) : '0.00%' }}
                         </td>
                         <td class="number nowrap {{ $beda < 0 ? 'number-negative' : '' }}">
                             {{ $beda != 0 ? formatBeda($beda) : '0.00%' }}
@@ -275,11 +275,11 @@
                 <tr class="grand-row">
                     <td>TOTAL LABA (RUGI) KOTOR</td>
                     <td class="number nowrap {{ $grandCurrent < 0 ? 'number-negative' : '' }}">
-                        {{ formatAmount($grandCurrent) }}
+                        {{ formatAmount_general_ledger_journal_details_laba_kotor_per_kategori($grandCurrent) }}
                     </td>
                     <td></td>
                     <td class="number nowrap {{ $grandPrevious < 0 ? 'number-negative' : '' }}">
-                        {{ formatAmount($grandPrevious) }}
+                        {{ formatAmount_general_ledger_journal_details_laba_kotor_per_kategori($grandPrevious) }}
                     </td>
                     <td></td>
                     <td></td>

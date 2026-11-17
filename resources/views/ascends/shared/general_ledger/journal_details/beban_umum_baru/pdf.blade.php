@@ -157,7 +157,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function formatAmount($value)
+        function formatAmount_general_ledger_journal_details_beban_umum_baru($value)
         {
             $value = (float) $value;
             if ($value < 0) {
@@ -189,17 +189,17 @@
                     <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                         <td>{{ (string) ($item['account_code'] ?? '') }}</td>
                         <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                        <td class="number nowrap">{{ formatAmount($item['amount_db'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($item['amount_cr'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($item['amount'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_umum_baru($item['amount_db'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_umum_baru($item['amount_cr'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_umum_baru($item['amount'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-row">
                     <td colspan="2" class="center">Grand Total :</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotalDb) }}</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotalCr) }}</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_umum_baru($grandTotalDb) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_umum_baru($grandTotalCr) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_umum_baru($grandTotal) }}</td>
                 </tr>
             </tbody>
         </table>

@@ -177,7 +177,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_hutang_lainnya($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -222,19 +222,19 @@
                         <td class="center">{{ $globalRow }}</td>
                         <td>{{ (string) ($item['account_code'] ?? '') }} {{ (string) ($item['account_name'] ?? '') }}
                         </td>
-                        <td class="number nowrap">{{ fmtAmount($item['beginning'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($item['debit'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($item['credit'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($item['ending'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_hutang_lainnya($item['beginning'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_hutang_lainnya($item['debit'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_hutang_lainnya($item['credit'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_hutang_lainnya($item['ending'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-total-row">
                     <td colspan="2" class="center">Total :</td>
-                    <td class="number nowrap">{{ fmtAmount($grandBeginning) }}</td>
-                    <td class="number nowrap">{{ fmtAmount($grandDebit) }}</td>
-                    <td class="number nowrap">{{ fmtAmount($grandCredit) }}</td>
-                    <td class="number nowrap">{{ fmtAmount($grandEnding) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_hutang_lainnya($grandBeginning) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_hutang_lainnya($grandDebit) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_hutang_lainnya($grandCredit) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_hutang_lainnya($grandEnding) }}</td>
                 </tr>
             @else
                 <tr class="empty-row">

@@ -213,7 +213,7 @@
         }
 
         if (! function_exists('fmtPct')) {
-            function fmtPct($value)
+            function fmtPct_custom_report_penjualan_per_kategori_barang_bulanan($value)
             {
                 return number_format((float) $value, 2, ',', '.') . '%';
             }
@@ -378,10 +378,10 @@
                                 <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($waRow['target']) }}</td>
                                 @foreach ($weeks as $w)
                                     <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($waRow['weeks'][$w]['penjualan']) }}</td>
-                                    <td class="number">{{ fmtPct($waRow['weeks'][$w]['pct']) }}</td>
+                                    <td class="number">{{ fmtPct_custom_report_penjualan_per_kategori_barang_bulanan($waRow['weeks'][$w]['pct']) }}</td>
                                 @endforeach
                                 <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($weekSum) }}</td>
-                                <td class="number">{{ fmtPct($totalPct) }}</td>
+                                <td class="number">{{ fmtPct_custom_report_penjualan_per_kategori_barang_bulanan($totalPct) }}</td>
                             </tr>
                         @endforeach
                     </tbody>
@@ -533,10 +533,10 @@
                                 <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($waRow['target']) }}</td>
                                 @foreach ($weeks as $w)
                                     <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($waRow['weeks'][$w]['penjualan']) }}</td>
-                                    <td class="number">{{ fmtPct($waRow['weeks'][$w]['pct']) }}</td>
+                                    <td class="number">{{ fmtPct_custom_report_penjualan_per_kategori_barang_bulanan($waRow['weeks'][$w]['pct']) }}</td>
                                 @endforeach
                                 <td class="number">{{ fmtNum_penjualan_per_kategori_barang_bulanan($weekSum) }}</td>
-                                <td class="number">{{ fmtPct($totalPct) }}</td>
+                                <td class="number">{{ fmtPct_custom_report_penjualan_per_kategori_barang_bulanan($totalPct) }}</td>
                             </tr>
                         @endforeach
                     </tbody>

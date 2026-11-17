@@ -122,7 +122,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_receivable_details_piutang_tak_tertagih_90_hari($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -134,13 +134,13 @@
             return number_format($v, 2, ',', '.');
         }
 
-        function fmtUmur($value)
+        function fmtUmur_finance_receivable_details_piutang_tak_tertagih_90_hari($value)
         {
             $v = (int) $value;
             return number_format($v, 0, ',', '.') . ' Hari';
         }
 
-        function fmtPersen($value)
+        function fmtPersen_finance_receivable_details_piutang_tak_tertagih_90_hari($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -174,11 +174,11 @@
                     <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                         <td class="center">{{ $globalRow }}</td>
                         <td>{{ $item['customer_name'] ?? '' }}</td>
-                        <td class="center">{{ fmtUmur($item['umur'] ?? 0) }}</td>
+                        <td class="center">{{ fmtUmur_finance_receivable_details_piutang_tak_tertagih_90_hari($item['umur'] ?? 0) }}</td>
                         <td>{{ $item['status'] ?? '' }}</td>
-                        <td class="number nowrap">{{ fmtPersen($item['persen'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtPersen_finance_receivable_details_piutang_tak_tertagih_90_hari($item['persen'] ?? 0) }}</td>
                         <td class="number nowrap {{ ($item['balance_local'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($item['balance_local'] ?? 0) }}
+                            {{ fmtAmount_finance_receivable_details_piutang_tak_tertagih_90_hari($item['balance_local'] ?? 0) }}
                         </td>
                     </tr>
                 @endforeach
@@ -186,7 +186,7 @@
                 <tr class="total-row">
                     <td colspan="5" style="text-align: center;">Total :</td>
                     <td class="number nowrap {{ $totalBalance < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($totalBalance) }}
+                        {{ fmtAmount_finance_receivable_details_piutang_tak_tertagih_90_hari($totalBalance) }}
                     </td>
                 </tr>
             </tbody>

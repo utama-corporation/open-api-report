@@ -220,7 +220,7 @@
         $monthName = trim((string) ($reportData['month_name'] ?? ''));
         $yearName = trim((string) ($reportData['year_name'] ?? ''));
 
-        function formatAmount($value)
+        function formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($value)
         {
             $value = (float) $value;
             if ($value < 0) {
@@ -249,10 +249,10 @@
             </thead>
             <tbody>
                 <tr class="saldo-awal-row">
-                    <td colspan="3">Saldo Awal = {{ formatAmount($saldoAwal) }}</td>
+                    <td colspan="3">Saldo Awal = {{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($saldoAwal) }}</td>
                     <td></td>
                     <td></td>
-                    <td class="number nowrap">{{ formatAmount($saldoAwal) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($saldoAwal) }}</td>
                 </tr>
 
                 @php $globalRow = 0; @endphp
@@ -262,18 +262,18 @@
                         <td>{{ (string) ($row['date'] ?? '') }}</td>
                         <td>{{ (string) ($row['voucher_number'] ?? '') }}</td>
                         <td>{{ (string) ($row['remark'] ?? '') }}</td>
-                        <td class="number nowrap">{{ $row['debet'] > 0 ? formatAmount($row['debet']) : '0,00' }}</td>
-                        <td class="number nowrap">{{ $row['kredit'] > 0 ? formatAmount($row['kredit']) : '0,00' }}</td>
-                        <td class="number nowrap">{{ formatAmount($row['saldo'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ $row['debet'] > 0 ? formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($row['debet']) : '0,00' }}</td>
+                        <td class="number nowrap">{{ $row['kredit'] > 0 ? formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($row['kredit']) : '0,00' }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($row['saldo'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-row">
                     <td colspan="3" class="center">TOTAL Pinjaman RU Bulan {{ $monthName }} - {{ $yearName }}
                     </td>
-                    <td class="number nowrap">{{ formatAmount($totalDebet) }}</td>
-                    <td class="number nowrap">{{ formatAmount($totalKredit) }}</td>
-                    <td class="number nowrap">{{ formatAmount($saldoAwal) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($totalDebet) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($totalKredit) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($saldoAwal) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -310,15 +310,15 @@
                     <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                         <td>{{ (string) ($row['date'] ?? '') }}</td>
                         <td class="center">{{ (int) ($row['hari'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($row['saldo'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($row['bunga'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($row['saldo'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($row['bunga'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-row">
 
                     <td colspan="3" class="center">Total Bunga RU Bulan {{ $monthName }} {{ $yearName }} </td>
-                    <td class="number nowrap">{{ formatAmount($totalBunga) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_perhitungan_bunga_ru($totalBunga) }}</td>
                 </tr>
             </tbody>
         </table>

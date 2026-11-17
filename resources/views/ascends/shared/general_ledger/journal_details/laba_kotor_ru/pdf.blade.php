@@ -184,7 +184,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_journal_details_laba_kotor_ru($value)
         {
             $value = (float) $value;
             if ($value == 0) {
@@ -196,7 +196,7 @@
             return number_format($value, 2, '.', ',');
         }
 
-        function fmtPct($value)
+        function fmtPct_general_ledger_journal_details_laba_kotor_ru($value)
         {
             $v = (float) $value;
             $formatted = number_format(abs($v), 2, '.', ',') . '%';
@@ -238,9 +238,9 @@
                         @php $globalRow++; @endphp
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} subsection-row">
                             <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                            <td class="number nowrap">{{ fmtAmount($item['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laba_kotor_ru($item['amount_b'] ?? 0) }}</td>
                             <td></td>
-                            <td class="number nowrap">{{ fmtAmount($item['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laba_kotor_ru($item['amount_a'] ?? 0) }}</td>
                             <td></td>
                             <td></td>
                         </tr>
@@ -250,9 +250,9 @@
                         @php $globalRow++; @endphp
                         <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} subsection-row">
                             <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                            <td class="number nowrap">{{ fmtAmount(-(float) ($item['amount_b'] ?? 0)) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laba_kotor_ru(-(float) ($item['amount_b'] ?? 0)) }}</td>
                             <td></td>
-                            <td class="number nowrap">{{ fmtAmount(-(float) ($item['amount_a'] ?? 0)) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laba_kotor_ru(-(float) ($item['amount_a'] ?? 0)) }}</td>
                             <td></td>
                             <td></td>
                         </tr>
@@ -260,19 +260,19 @@
 
                     <tr class="margin-row">
                         <td>LABA (RUGI) KOTOR {{ $group['name'] }}</td>
-                        <td class="number nowrap">{{ fmtAmount($group['amount_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtPct($group['rasio_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($group['amount_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtPct($group['rasio_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtPct($group['selisih'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laba_kotor_ru($group['amount_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtPct_general_ledger_journal_details_laba_kotor_ru($group['rasio_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laba_kotor_ru($group['amount_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtPct_general_ledger_journal_details_laba_kotor_ru($group['rasio_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtPct_general_ledger_journal_details_laba_kotor_ru($group['selisih'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-row">
                     <td>TOTAL LABA (RUGI) KOTOR</td>
-                    <td class="number nowrap">{{ fmtAmount($grandTotalB) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laba_kotor_ru($grandTotalB) }}</td>
                     <td></td>
-                    <td class="number nowrap">{{ fmtAmount($grandTotalA) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laba_kotor_ru($grandTotalA) }}</td>
                     <td></td>
                     <td></td>
                 </tr>

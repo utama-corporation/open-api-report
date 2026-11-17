@@ -172,7 +172,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_monthly_financial_rasio_gsu($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -184,7 +184,7 @@
             return number_format($v, 0, '.', ',');
         }
 
-        function fmtRasio($value)
+        function fmtRasio_general_ledger_trial_balance_monthly_financial_rasio_gsu($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -228,16 +228,16 @@
                                 <td class="center">{{ $row['no'] }}</td>
                                 <td>{{ $row['bulan'] }}</td>
                                 <td class="number nowrap {{ $nilaiX < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($nilaiX) }}
+                                    {{ fmtAmount_general_ledger_trial_balance_monthly_financial_rasio_gsu($nilaiX) }}
                                 </td>
                                 <td class="number nowrap {{ $nilaiY < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($nilaiY) }}
+                                    {{ fmtAmount_general_ledger_trial_balance_monthly_financial_rasio_gsu($nilaiY) }}
                                 </td>
                                 <td class="number nowrap {{ $rasio < 0 ? 'number-negative' : '' }}">
                                     @if ($columnFormat === 'amount')
-                                        {{ fmtAmount($rasio) }}
+                                        {{ fmtAmount_general_ledger_trial_balance_monthly_financial_rasio_gsu($rasio) }}
                                     @else
-                                        {{ fmtRasio($rasio) }}
+                                        {{ fmtRasio_general_ledger_trial_balance_monthly_financial_rasio_gsu($rasio) }}
                                     @endif
                                 </td>
                             </tr>

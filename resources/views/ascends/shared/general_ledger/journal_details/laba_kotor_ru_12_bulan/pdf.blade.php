@@ -181,7 +181,7 @@
             ->locale('id')->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtPct($value)
+        function fmtPct_general_ledger_journal_details_laba_kotor_ru_12_bulan($value)
         {
             if ($value === null)
                 return '- %';
@@ -250,16 +250,16 @@
                         @foreach ($months as $mk => $ml)
                             @php $margin = $group['monthly_margin'][$mk] ?? null; @endphp
                             <td class="number nowrap {{ $margin !== null && $margin < 0 ? 'number-negative' : '' }}">
-                                {{ fmtPct($margin) }}
+                                {{ fmtPct_general_ledger_journal_details_laba_kotor_ru_12_bulan($margin) }}
                             </td>
                         @endforeach
                         <td class="number nowrap {{ ($group['rata_rata'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtPct($group['rata_rata'] ?? null) }}
+                            {{ fmtPct_general_ledger_journal_details_laba_kotor_ru_12_bulan($group['rata_rata'] ?? null) }}
                         </td>
                         <td class="number nowrap {{ ($group['terendah'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtPct($group['terendah'] ?? null) }}
+                            {{ fmtPct_general_ledger_journal_details_laba_kotor_ru_12_bulan($group['terendah'] ?? null) }}
                         </td>
-                        <td class="number nowrap">{{ fmtPct($group['tertinggi'] ?? null) }}</td>
+                        <td class="number nowrap">{{ fmtPct_general_ledger_journal_details_laba_kotor_ru_12_bulan($group['tertinggi'] ?? null) }}</td>
                     </tr>
                 @endforeach
 
@@ -278,7 +278,7 @@
                     @foreach ($months as $mk => $ml)
                         @php $hpp = $hppGlobal[$mk] ?? null; @endphp
                         <td class="number nowrap {{ $hpp !== null ? 'number-negative' : '' }}">
-                            {{ $hpp !== null ? fmtPct(-$hpp) : '- %' }}
+                            {{ $hpp !== null ? fmtPct_general_ledger_journal_details_laba_kotor_ru_12_bulan(-$hpp) : '- %' }}
                         </td>
                     @endforeach
                     <td></td>

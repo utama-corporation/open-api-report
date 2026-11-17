@@ -135,7 +135,7 @@
             }
         }
 
-        function fmtPersen($value, $hasil)
+        function fmtPersen_custom_report_penjualan_per_item_analisa_sku($value, $hasil)
         {
             if ((float) $hasil == 0.0) {
                 return '-';
@@ -186,7 +186,7 @@
                         @foreach ($row['cells'] ?? [] as $cell)
                             <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku($cell['sku'] ?? 0) }}</td>
                             <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku($cell['hasil'] ?? 0) }}</td>
-                            <td class="number">{{ fmtPersen($cell['percent'] ?? 0, $cell['hasil'] ?? 0) }}</td>
+                            <td class="number">{{ fmtPersen_custom_report_penjualan_per_item_analisa_sku($cell['percent'] ?? 0, $cell['hasil'] ?? 0) }}</td>
                         @endforeach
                     </tr>
                 @endforeach
@@ -197,7 +197,7 @@
                         @foreach ($totals['cells'] ?? [] as $cell)
                             <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku($cell['sku'] ?? 0) }}</td>
                             <td class="number">{{ fmtNum_penjualan_per_item_analisa_sku($cell['hasil'] ?? 0) }}</td>
-                            <td class="number">{{ fmtPersen($cell['percent'] ?? 0, $cell['hasil'] ?? 0) }}</td>
+                            <td class="number">{{ fmtPersen_custom_report_penjualan_per_item_analisa_sku($cell['percent'] ?? 0, $cell['hasil'] ?? 0) }}</td>
                         @endforeach
                     </tr>
                 @endif

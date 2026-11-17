@@ -170,7 +170,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode_tahunan($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -219,30 +219,30 @@
                             <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} item-row">
                                 <td></td>
                                 <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                                <td class="number nowrap">{{ fmtAmount($itemAmount) }}</td>
+                                <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode_tahunan($itemAmount) }}</td>
                             </tr>
                         @endforeach
 
                         <tr class="subtotal-row">
                             <td colspan="2">Total</td>
-                            <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode_tahunan($subtotal) }}</td>
                         </tr>
                     @else
                         <tr class="section-header">
                             <td>{{ $sectionCode }}</td>
                             <td>{{ $sectionName }}</td>
-                            <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode_tahunan($subtotal) }}</td>
                         </tr>
                         <tr class="subtotal-row">
                             <td colspan="2">Total</td>
-                            <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode_tahunan($subtotal) }}</td>
                         </tr>
                     @endif
                 @endforeach
 
                 <tr class="grand-total-row">
                     <td colspan="2">Total</td>
-                    <td class="number nowrap">{{ fmtAmount($grandTotal) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode_tahunan($grandTotal) }}</td>
                 </tr>
             </tbody>
         </table>

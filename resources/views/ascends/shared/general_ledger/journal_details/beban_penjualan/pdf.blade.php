@@ -223,7 +223,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function formatAmount($value)
+        function formatAmount_general_ledger_journal_details_beban_penjualan($value)
         {
             $value = (float) $value;
             if ($value < 0) {
@@ -263,24 +263,24 @@
                             <td>{{ $itemIndex === 1 ? (string) ($group['account_code'] ?? '') . ' ' . (string) ($group['account_name'] ?? '') : '' }}
                             </td>
                             <td>{{ (string) ($item['description'] ?? '') }}</td>
-                            <td class="number nowrap">{{ formatAmount($item['amount_db'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($item['amount_cr'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($item['amount'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($item['amount_db'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($item['amount_cr'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($item['amount'] ?? 0) }}</td>
                         </tr>
                     @endforeach
                     <tr class="account-subtotal">
                         <td colspan="3" class="center">Sub Total </td>
-                        <td class="number nowrap">{{ formatAmount($group['subtotal_db'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($group['subtotal_cr'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatAmount($group['subtotal'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($group['subtotal_db'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($group['subtotal_cr'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($group['subtotal'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-row">
                     <td colspan="3" class="center" style="font-size: 11px;">Grand Total</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotalDb) }}</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotalCr) }}</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($grandTotalDb) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($grandTotalCr) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($grandTotal) }}</td>
                 </tr>
             </tbody>
         </table>
@@ -303,12 +303,12 @@
                         <tr class="{{ $summaryRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                             <td>{{ (string) ($s['account_code'] ?? '') }}</td>
                             <td>{{ (string) ($s['account_name'] ?? '') }}</td>
-                            <td class="number nowrap">{{ formatAmount($s['subtotal'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($s['subtotal'] ?? 0) }}</td>
                         </tr>
                     @endforeach
                     <tr class="grand-row">
                         <td colspan="2" class="center" style="font-size: 11px;">Grand Total </td>
-                        <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_beban_penjualan($grandTotal) }}</td>
                     </tr>
                 </tbody>
             </table>

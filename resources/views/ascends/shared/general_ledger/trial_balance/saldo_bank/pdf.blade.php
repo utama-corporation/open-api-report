@@ -168,7 +168,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_saldo_bank($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -212,13 +212,13 @@
                         <td class="center">{{ $globalRow }}</td>
                         <td>{{ (string) ($item['account_code'] ?? '') }}</td>
                         <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                        <td class="number nowrap">{{ fmtAmount($saldo) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_saldo_bank($saldo) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-total-row">
                     <td colspan="3" class="center">Total</td>
-                    <td class="number nowrap">{{ fmtAmount($grandTotal) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_saldo_bank($grandTotal) }}</td>
                 </tr>
             </tbody>
         </table>

@@ -163,7 +163,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -223,28 +223,28 @@
                             <td class="center">{{ $globalRow }}</td>
                             <td>{{ (string) ($item['account_code'] ?? '') }}</td>
                             <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                            <td class="number nowrap">{{ fmtAmount($item['beginning'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmount($item['debit'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmount($item['credit'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmount($item['ending'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($item['beginning'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($item['debit'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($item['credit'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($item['ending'] ?? 0) }}</td>
                         </tr>
                     @endforeach
 
                     <tr class="group-subtotal">
                         <td colspan="3" class="center">{{ $group['name'] }}</td>
-                        <td class="number nowrap">{{ fmtAmount($group['subtotal_beginning'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($group['subtotal_debit'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($group['subtotal_credit'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($group['subtotal_ending'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($group['subtotal_beginning'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($group['subtotal_debit'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($group['subtotal_credit'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($group['subtotal_ending'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-total-row">
                     <td colspan="3" class="center">Grand Total</td>
-                    <td class="number nowrap">{{ fmtAmount($grandBeginning) }}</td>
-                    <td class="number nowrap">{{ fmtAmount($grandDebit) }}</td>
-                    <td class="number nowrap">{{ fmtAmount($grandCredit) }}</td>
-                    <td class="number nowrap">{{ fmtAmount($grandEnding) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($grandBeginning) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($grandDebit) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($grandCredit) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_trial_balance_ringkasan_hutang_bank($grandEnding) }}</td>
                 </tr>
             </tbody>
         </table>

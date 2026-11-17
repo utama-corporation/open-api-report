@@ -131,7 +131,7 @@
             'Over 28 days',
         ];
 
-        function fmtAmount($value)
+        function fmtAmount_finance_receivable_summary_umur_piutang_ru($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -172,10 +172,10 @@
                         <td>{{ $row['customer_name'] }}</td>
                         @foreach ($bucketFields as $bucket)
                             <td class="number nowrap">
-                                {{ fmtAmount($row['buckets'][$bucket] ?? 0) }}
+                                {{ fmtAmount_finance_receivable_summary_umur_piutang_ru($row['buckets'][$bucket] ?? 0) }}
                             </td>
                         @endforeach
-                        <td class="number nowrap">{{ fmtAmount($row['total_akhir'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_finance_receivable_summary_umur_piutang_ru($row['total_akhir'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
@@ -183,10 +183,10 @@
                     <td class="center" colspan="2">GRAND TOTAL</td>
                     @foreach ($bucketFields as $bucket)
                         <td class="number nowrap">
-                            {{ fmtAmount($grandTotals[$bucket] ?? 0) }}
+                            {{ fmtAmount_finance_receivable_summary_umur_piutang_ru($grandTotals[$bucket] ?? 0) }}
                         </td>
                     @endforeach
-                    <td class="number nowrap">{{ fmtAmount($grandTotals['total_akhir'] ?? 0) }}
+                    <td class="number nowrap">{{ fmtAmount_finance_receivable_summary_umur_piutang_ru($grandTotals['total_akhir'] ?? 0) }}
                     </td>
                 </tr>
             </tbody>
