@@ -41,13 +41,13 @@ class ArusKasUcReportService
 
         $openingBalance = $this->calculateCashBalance($allRows, $periodStart);
         $closingBalance = $this->calculateCashBalance($allRows, $periodEnd);
-        $crossCek = $closingBalance;
-        $selisih = $closingBalance - $totalKeseluruhan - $openingBalance;
+        $crossCek = $totalKeseluruhan;
+        $selisih = $crossCek + $openingBalance;
 
         return [
             'title' => self::TITLE,
             'company' => '',
-            'period_label' => 'Periode : '.$endLabel,
+            'period_label' => 'Periode : ' . $endLabel,
             'period_start_label' => $startLabel,
             'period_end_label' => $endLabel,
             'sections' => $sections,
@@ -171,7 +171,7 @@ class ArusKasUcReportService
         }
 
         try {
-            $date = Carbon::parse($period.'-01');
+            $date = Carbon::parse($period . '-01');
 
             return $date->locale('id')->isoFormat('MMM-YY');
         } catch (Throwable) {
@@ -181,7 +181,7 @@ class ArusKasUcReportService
 
     private function applyTampilKas(array $rows): array
     {
-        return array_values(array_filter($rows, fn (array $row): bool => $this->tampilKas(
+        return array_values(array_filter($rows, fn(array $row): bool => $this->tampilKas(
             (string) ($row['AccountCode1'] ?? '')
         )));
     }
@@ -383,12 +383,38 @@ class ArusKasUcReportService
         return 0.0;
     }
 
-    private function cashFlowImpact(array $rows, string $ac1, string $periodStart, string $periodEnd, bool $liability = false): float
+    private function cashFlowImpact(array $rows, string $ac1, string $periodStart, string $periodEnd, bool $kenaikan = true): float
     {
         $startVal = $this->getEndingForPeriod($rows, $ac1, $periodStart);
-        $endVal = $this->getEndingForPeriod($rows, $ac1, $periodEnd);
 
-        return $liability ? $endVal - $startVal : $startVal - $endVal;
+        $sumRest = 0.0;
+        $months = [];
+        foreach ($rows as $row) {
+            if ((string) ($row['AccountCode1'] ?? '') !== $ac1) {
+                continue;
+            }
+            try {
+                $months[] = Carbon::parse((string) ($row['PeriodDate'] ?? ''))->format('Y-m');
+            } catch (Throwable) {
+                continue;
+            }
+        }
+        $months = array_unique($months);
+        sort($months);
+
+        foreach ($months as $month) {
+            if ($month === $periodStart) {
+                continue;
+            }
+            if ($periodEnd !== '' && $month > $periodEnd) {
+                continue;
+            }
+            $sumRest += $this->getEndingForPeriod($rows, $ac1, $month);
+        }
+
+        $raw = $startVal - $sumRest;
+
+        return $kenaikan ? $raw : -$raw;
     }
 
     private function getEndingForPeriodRaw(array $rows, string $ac1, string $period): float
@@ -402,7 +428,9 @@ class ArusKasUcReportService
 
         $ac1Sections['1.2'] = ['111.200', '111.300'];
         $ac1Sections['1.3'] = ['112.200'];
-        $ac1Sections['1.4'] = ['112.100'];
+        $ac1Sections['1.4'] = ['112.100.111', '112.100.112', '112.100.115', '112.100.116', '112.100.121', '112.100.122', '112.100.131', '112.100.132', '112.100.161', '112.100.163', '112.100.164', '112.100.166', '112.100.167', '112.100.168'];
+        $ac1Sections['1.5'] = ['112.100.3'];
+        $ac1Sections['1.6'] = ['112.100.2'];
         $ac1Sections['1.7'] = ['211.100'];
         $ac1Sections['1.8'] = ['211.300'];
         $ac1Sections['1.9'] = ['212.100'];
@@ -413,12 +441,14 @@ class ArusKasUcReportService
         $ac1Sections['3.2'] = ['311.100'];
 
         $sections = [];
-        $sectionCodes = ['1.2', '1.3', '1.4', '1.7', '1.8', '1.9', '2.1', '2.2', '2.3', '3.1', '3.2'];
+        $sectionCodes = ['1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '1.8', '1.9', '2.1', '2.2', '2.3', '3.1', '3.2'];
 
         $sectionLabels = [
             '1.2' => 'Penurunan (Kenaikan) Piutang Dagang',
             '1.3' => 'Penurunan (Kenaikan) Biaya Dibayar Dimuka',
             '1.4' => 'Penurunan (Kenaikan) PL Hubungan Istimewa',
+            '1.5' => 'Penurunan (Kenaikan) PL Karyawan',
+            '1.6' => 'Penurunan (Kenaikan) PL Pihak Ketiga',
             '1.7' => 'Kenaikan (Penurunan) Hutang Dagang',
             '1.8' => 'Kenaikan (Penurunan) Beban Yang Masih Harus Dibayar',
             '1.9' => 'Kenaikan (Penurunan) Kewajiban Lancar Lainnya',
@@ -433,6 +463,8 @@ class ArusKasUcReportService
             '1.2' => 'Total Arus Kas Dari Penurunan (Kenaikan) Piutang Dagang',
             '1.3' => 'Total Arus Kas Dari Penurunan (Kenaikan) Biaya Dibayar Dimuka',
             '1.4' => 'Total Arus Kas Dari Penurunan (Kenaikan) PL Hubungan Istimewa',
+            '1.5' => 'Total Arus Kas Dari Penurunan (Kenaikan) PL Karyawan',
+            '1.6' => 'Total Arus Kas Dari Penurunan (Kenaikan) PL Pihak Ketiga',
             '1.7' => 'Total Arus Kas Dari Kenaikan (Penurunan) Hutang Dagang',
             '1.8' => 'Total Arus Kas Dari Kenaikan (Penurunan) Beban Yang Masih Harus Dibayar',
             '1.9' => 'Total Arus Kas Dari Kenaikan (Penurunan) Kewajiban Lancar Lainnya',
@@ -471,9 +503,8 @@ class ArusKasUcReportService
                 }
 
                 if (! $already) {
-                    $liabilitySections = ['1.7', '1.8', '1.9', '3.1', '3.2'];
-                    $isLiability = in_array($code, $liabilitySections, true);
-                    $impact = $this->cashFlowImpact($filtered, $ac1, $periodStart, $periodEnd, $isLiability);
+                    $isKenaikan = $this->isKenaikan($code, $ac1);
+                    $impact = $this->cashFlowImpact($filtered, $ac1, $periodStart, $periodEnd, $isKenaikan);
                     $name = (string) ($row['AccountName1'] ?? '');
                     $items[] = [
                         'account_code' => $ac1,
@@ -501,7 +532,7 @@ class ArusKasUcReportService
     {
         $sectionGroups = $this->groupItemsBySection($filtered, $periodStart, $periodEnd);
 
-        $labaBersih = $this->getEndingForPeriod($allRows, '313.000.000', $periodEnd);
+        $labaBersih = $this->getEndingForPeriod($allRows, '312.000.001', $periodEnd);
         $penyusutan = $this->calculatePenyusutan($allRows, $periodStart, $periodEnd);
         $deviden = 0.0;
 
@@ -526,7 +557,7 @@ class ArusKasUcReportService
         ];
         $operasiSubtotal = $labaBersih + $penyusutan + $deviden;
 
-        $subSections = ['1.2', '1.3', '1.4', '1.7', '1.8', '1.9'];
+        $subSections = ['1.2', '1.3', '1.4', '1.5', '1.6', '1.7', '1.8', '1.9'];
         foreach ($subSections as $code) {
             if (! isset($sectionGroups[$code])) {
                 continue;
@@ -535,7 +566,7 @@ class ArusKasUcReportService
             $sec = $sectionGroups[$code];
             $operasiItems[] = [
                 'type' => 'sub_header',
-                'label' => $code.' '.$sec['label'],
+                'label' => $code . ' ' . $sec['label'],
                 'code' => $code,
             ];
 
@@ -568,7 +599,7 @@ class ArusKasUcReportService
             $sec = $sectionGroups[$code];
             $investasiItems[] = [
                 'type' => 'sub_header',
-                'label' => $code.' '.$sec['label'],
+                'label' => $code . ' ' . $sec['label'],
                 'code' => $code,
             ];
 
@@ -599,7 +630,7 @@ class ArusKasUcReportService
             $sec = $sectionGroups[$code];
             $pendanaanItems[] = [
                 'type' => 'sub_header',
-                'label' => $code.' '.$sec['label'],
+                'label' => $code . ' ' . $sec['label'],
                 'code' => $code,
             ];
 
@@ -629,7 +660,7 @@ class ArusKasUcReportService
             'subtotal' => $operasiSubtotal,
         ];
 
-        $investasiTotal = array_sum(array_map(fn ($s) => $sectionGroups[$s]['total'] ?? 0, $investasiSubSections));
+        $investasiTotal = array_sum(array_map(fn($s) => $sectionGroups[$s]['total'] ?? 0, $investasiSubSections));
         $sections[] = [
             'header' => '2 Arus Kas Dari Aktivitas Investasi',
             'code' => '2',
@@ -638,7 +669,7 @@ class ArusKasUcReportService
             'subtotal' => $investasiTotal,
         ];
 
-        $pendanaanTotal = array_sum(array_map(fn ($s) => $sectionGroups[$s]['total'] ?? 0, $pendanaanSubSections));
+        $pendanaanTotal = array_sum(array_map(fn($s) => $sectionGroups[$s]['total'] ?? 0, $pendanaanSubSections));
         $sections[] = [
             'header' => '3 Arus Kas Dari Aktivitas Pendanaan',
             'code' => '3',
@@ -659,6 +690,63 @@ class ArusKasUcReportService
         }
 
         return 0.0;
+    }
+
+    private function isKenaikan(string $code, string $ac1): bool
+    {
+        $left7 = substr($ac1, 0, 7);
+        $left9 = substr($ac1, 0, 9);
+        $left11 = substr($ac1, 0, 11);
+
+        if (in_array($left7, ['111.200', '111.300'], true)) {
+            return true;
+        }
+
+        if ($left7 === '112.200') {
+            return true;
+        }
+
+        $plIstimewa = [
+            '112.100.111',
+            '112.100.112',
+            '112.100.115',
+            '112.100.116',
+            '112.100.121',
+            '112.100.122',
+            '112.100.131',
+            '112.100.132',
+            '112.100.161',
+            '112.100.163',
+            '112.100.164',
+            '112.100.166',
+            '112.100.167',
+            '112.100.168',
+        ];
+        if (in_array($left11, $plIstimewa, true)) {
+            return true;
+        }
+
+        if ($left11 === '112.100.3Y1' || $left9 === '112.100.3') {
+            return true;
+        }
+
+        if (in_array($left11, ['112.100.201', '112.100.203', '112.100.204'], true)) {
+            return true;
+        }
+
+        if (in_array($left7, ['121.101', '121.102'], true)) {
+            return true;
+        }
+
+        if ($left7 === '121.201') {
+            return true;
+        }
+
+        if ($left7 === '121.202') {
+            return true;
+        }
+
+        return false;
     }
 
     private function calculatePenyusutan(array $rows, string $periodStart, string $periodEnd): float
