@@ -276,7 +276,7 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('combined-chart-wrapper', $html);
+        $this->assertStringContainsString('alt="Diagram Level"', $html);
         $this->assertStringContainsString('page-break-after: always', $html);
         $this->assertStringContainsString('Laporan Karyawan Per Level (Diagram)', $html);
     }

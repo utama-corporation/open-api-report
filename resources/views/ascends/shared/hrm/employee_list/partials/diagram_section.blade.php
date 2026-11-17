@@ -15,69 +15,32 @@
 @endphp
 
 @if (! empty($reportData['diagram']))
-    <style>
-        .combined-chart-wrapper {
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        .combined-chart-wrapper img {
-            width: 320px;
-            height: 320px;
-        }
-
-        .combined-labels {
-            width: 100%;
-            margin: 8px 0;
-            font-size: 10px;
-        }
-
-        .combined-labels td {
-            padding: 1px 6px;
-            vertical-align: top;
-            width: 50%;
-        }
-
-        .combined-label-box {
-            display: inline-block;
-            width: 14px;
-            height: 14px;
-            margin-right: 4px;
-            border: 1px solid #000;
-            vertical-align: middle;
-        }
-
-        .combined-total-row td {
-            font-weight: bold;
-            border-top: 1px solid #000;
-        }
-    </style>
-
     @if ($diagramChart !== '')
-        <div class="combined-chart-wrapper">
-            <img src="{{ $diagramChart }}" alt="Diagram {{ $diagramLabel }}">
+        <div style="text-align: center; margin: 4px 0 0 0;">
+            <img src="{{ $diagramChart }}" alt="Diagram {{ $diagramLabel }}"
+                style="width: 250px; height: 250px;">
         </div>
     @endif
 
     @if (count($diagramLeft) > 0 || count($diagramRight) > 0)
-        <table class="combined-labels">
+        <table align="center" style="width: 82%; margin: 4px auto 10px auto; border-collapse: collapse; font-size: 10px;">
             <tr>
-                <td>
+                <td style="width: 50%; vertical-align: top; padding: 0 8px; line-height: 1.35;">
                     @foreach ($diagramLeft as $i => $item)
                         @php $color = $diagramColors[$i % 12] ?? [0, 0, 0]; @endphp
-                        <div>
-                            <span class="combined-label-box"
-                                style="background: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});"></span>
+                        <div style="margin: 0 0 2px 0;">
+                            <span
+                                style="display: inline-block; width: 12px; height: 12px; margin-right: 4px; border: 1px solid #000; background-color: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
                             {{ $item['name'] }} ({{ $item['count'] }}) - {{ number_format((float) $item['percent'], 1) }}%
                         </div>
                     @endforeach
                 </td>
-                <td>
+                <td style="width: 50%; vertical-align: top; padding: 0 8px; line-height: 1.35;">
                     @foreach ($diagramRight as $i => $item)
                         @php $color = $diagramColors[($diagramMid + $i) % 12] ?? [0, 0, 0]; @endphp
-                        <div>
-                            <span class="combined-label-box"
-                                style="background: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});"></span>
+                        <div style="margin: 0 0 2px 0;">
+                            <span
+                                style="display: inline-block; width: 12px; height: 12px; margin-right: 4px; border: 1px solid #000; background-color: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
                             {{ $item['name'] }} ({{ $item['count'] }}) - {{ number_format((float) $item['percent'], 1) }}%
                         </div>
                     @endforeach
@@ -104,10 +67,12 @@
                     <td class="center nowrap">{{ number_format((float) $item['percent'], 1) }}%</td>
                 </tr>
             @endforeach
-            <tr class="combined-total-row">
-                <td class="center" colspan="2">Total :</td>
-                <td class="center">{{ $diagramTotal }}</td>
-                <td class="center nowrap">{{ $diagramTotal > 0 ? '100.0%' : '0.0%' }}</td>
+            <tr style="font-weight: bold;">
+                <td class="center" colspan="2" style="border-top: 1px solid #000;">Total :</td>
+                <td class="center" style="border-top: 1px solid #000;">{{ $diagramTotal }}</td>
+                <td class="center nowrap" style="border-top: 1px solid #000;">
+                    {{ $diagramTotal > 0 ? '100.0%' : '0.0%' }}
+                </td>
             </tr>
         </tbody>
     </table>
