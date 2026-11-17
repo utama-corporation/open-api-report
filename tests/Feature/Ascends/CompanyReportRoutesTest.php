@@ -68,7 +68,13 @@ class CompanyReportRoutesTest extends TestCase
         $this->assertNotNull($route);
         $this->assertSame('api/internal/ascends/{company}/hrm/{report}/pdf', $route->uri());
         $this->assertSame('gsu|ru|uc', $route->wheres['company']);
-        $this->assertSame(CompanyReportRegistry::HRM_REPORTS, explode('|', $route->wheres['report']));
+
+        $publishedToAll = array_values(array_filter(
+            CompanyReportRegistry::HRM_REPORTS,
+            static fn (string $report): bool => CompanyReportRegistry::allowedCompanies('hrm.'.$report) === CompanyReportRegistry::companies()
+        ));
+
+        $this->assertSame($publishedToAll, explode('|', $route->wheres['report']));
     }
 
     public function test_dynamic_hrm_route_resolves_bare_report_keys(): void

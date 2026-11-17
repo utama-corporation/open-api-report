@@ -17,7 +17,8 @@ $companies = ['gsu', 'ru', 'uc'];
 
 /*
  * The wildcard HRM route dispatches on {report}; its service, view and title live
- * in match expressions, so they are enumerated here instead of parsed.
+ * in match expressions, so they are enumerated here instead of parsed. These keys
+ * are also emitted as CompanyReportRegistry::HRM_REPORTS.
  */
 $wildcardReports = [
     'list-karyawan' => ['EmployeeListReportService', 'ascends.shared.hrm.employee_list.list_karyawan.pdf', 'Employee List - List Karyawan'],
@@ -61,6 +62,8 @@ $filenameOverrides = [
     'apiSharedFinanceReceiptVoucherDetailsGiroCashTransferPdf' => "'Laporan Pembayaran '.((\$data['payment_method'] ?? '') !== '' ? ucfirst(strtolower((string) \$data['payment_method'])).' - ' : '').\$company.'.pdf'",
 ];
 
+$wildcardNames = array_keys($wildcardReports);
+
 $routes = file_get_contents($routesPath);
 $controller = file_get_contents($controllerPath);
 
@@ -81,9 +84,16 @@ foreach ($routeMatches[1] as $index => [$path, $offset]) {
         continue;
     }
 
-    preg_match("/->whereIn\('report',\s*\[(.*?)\]\)/s", substr($routes, $offset), $whereIn);
+    // The report list is either an inline array or CompanyReportRegistry::HRM_REPORTS;
+    // in both cases it must match the enumeration above.
+    preg_match("/->whereIn\('report',\s*(?:\[(.*?)\]|CompanyReportRegistry::HRM_REPORTS)\)/s", substr($routes, $offset), $whereIn);
     preg_match_all("/'([^']+)'/", $whereIn[1] ?? '', $reports);
-    foreach ($reports[1] as $report) {
+
+    if ($reports[1] !== [] && $reports[1] !== $wildcardNames) {
+        throw new RuntimeException('hrm whereIn list does not match $wildcardReports');
+    }
+
+    foreach ($wildcardNames as $report) {
         $routeDefinitions[] = [
             'path' => str_replace('{report}', $report, $path),
             'method' => $method,
@@ -350,6 +360,18 @@ $lines[] = ' */';
 $lines[] = 'final class CompanyReportRegistry';
 $lines[] = '{';
 $lines[] = '    private const COMPANIES = [\'gsu\', \'ru\', \'uc\'];';
+$lines[] = '';
+$lines[] = '    /**';
+$lines[] = '     * Short report names of the shared dynamic hrm endpoint; the single source';
+$lines[] = '     * for both its whereIn list and the per-company dynamic route whitelist.';
+$lines[] = '     *';
+$lines[] = '     * @var list<string>';
+$lines[] = '     */';
+$lines[] = '    public const HRM_REPORTS = [';
+foreach ($wildcardNames as $report) {
+    $lines[] = "        '{$report}',";
+}
+$lines[] = '    ];';
 $lines[] = '';
 $lines[] = '    /**';
 $lines[] = '     * Slugs published to only some companies; every other slug goes to all three.';
