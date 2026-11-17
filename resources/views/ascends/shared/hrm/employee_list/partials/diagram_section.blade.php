@@ -28,21 +28,31 @@
                 <td style="width: 50%; vertical-align: top; padding: 0 8px; line-height: 1.35;">
                     @foreach ($diagramLeft as $i => $item)
                         @php $color = $diagramColors[$i % 12] ?? [0, 0, 0]; @endphp
-                        <div style="margin: 0 0 2px 0;">
-                            <span
-                                style="display: inline-block; width: 12px; height: 12px; margin-right: 4px; border: 1px solid #000; background-color: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
-                            {{ $item['name'] }} ({{ $item['count'] }}) - {{ number_format((float) $item['percent'], 1) }}%
-                        </div>
+                        <table style="border-collapse: collapse; margin: 0 0 4px 0;">
+                            <tr>
+                                <td
+                                    style="width: 12px; height: 12px; padding: 0; border: 1px solid #000; font-size: 1px; line-height: 1px; background-color: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">
+                                    &nbsp;</td>
+                                <td style="padding: 0 0 0 5px; vertical-align: middle;">
+                                    {{ $item['name'] }} ({{ $item['count'] }}) - {{ number_format((float) $item['percent'], 1) }}%
+                                </td>
+                            </tr>
+                        </table>
                     @endforeach
                 </td>
                 <td style="width: 50%; vertical-align: top; padding: 0 8px; line-height: 1.35;">
                     @foreach ($diagramRight as $i => $item)
                         @php $color = $diagramColors[($diagramMid + $i) % 12] ?? [0, 0, 0]; @endphp
-                        <div style="margin: 0 0 2px 0;">
-                            <span
-                                style="display: inline-block; width: 12px; height: 12px; margin-right: 4px; border: 1px solid #000; background-color: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
-                            {{ $item['name'] }} ({{ $item['count'] }}) - {{ number_format((float) $item['percent'], 1) }}%
-                        </div>
+                        <table style="border-collapse: collapse; margin: 0 0 4px 0;">
+                            <tr>
+                                <td
+                                    style="width: 12px; height: 12px; padding: 0; border: 1px solid #000; font-size: 1px; line-height: 1px; background-color: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">
+                                    &nbsp;</td>
+                                <td style="padding: 0 0 0 5px; vertical-align: middle;">
+                                    {{ $item['name'] }} ({{ $item['count'] }}) - {{ number_format((float) $item['percent'], 1) }}%
+                                </td>
+                            </tr>
+                        </table>
                     @endforeach
                 </td>
             </tr>
