@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Ascends;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
+use App\Services\Concerns\ResolvesFilterAliases;
 use App\Services\PdfGenerator;
 use App\Support\Ascends\CompanyReportDefinition;
 use App\Support\Ascends\CompanyReportRegistry;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use RuntimeException;
+use Throwable;
 
 /**
  * Generic PDF endpoint for the gsu, ru and uc company report prefixes.
@@ -21,6 +24,8 @@ use RuntimeException;
  */
 class CompanyReportController extends Controller
 {
+    use ResolvesFilterAliases;
+
     /**
      * Fixed column counts of reports whose service exposes no headers, so
      * PdfGenerator cannot infer them. Keyed by slug then lowercase company.
@@ -30,6 +35,40 @@ class CompanyReportController extends Controller
     private const PINNED_COLUMN_COUNTS = [
         'custom-report.cek-produksi' => ['gsu' => 7],
         'general_ledger.journal_details.laba-kotor' => ['ru' => 6],
+    ];
+
+    /**
+     * Canonical filter keys mapped to the alias families the shared endpoints
+     * accept. Without this the raw request never reaches services that read
+     * only the canonical key, printing a wrong period without any error.
+     *
+     * @var array<string, list<string>>
+     */
+    private const CANONICAL_FILTER_ALIASES = [
+        'start_date' => [
+            'start_date', 'StartDate', 'TglAwal', 'tgl_awal', 'date_start', 'DateStart', 'dari_tanggal',
+            'Date.StartDate', 'DateRange.StartDate', 'AdjustmentDate.StartDate',
+            'AttendanceDate.StartDate', 'ItemDate.StartDate', 'ProductionDate.StartDate',
+            'PurchaseDate.StartDate', 'PurchaseOrderDate.StartDate',
+            'ReceiptVoucherDate.StartDate', 'ReceivableSummaryDate.StartDate',
+            'PayableSummaryDate.StartDate', 'SalesDate.StartDate',
+        ],
+        'end_date' => [
+            'end_date', 'EndDate', 'TglAkhir', 'tgl_akhir', 'date_end', 'DateEnd', 'sampai_tanggal',
+            'Date.EndDate', 'DateRange.EndDate', 'AdjustmentDate.EndDate',
+            'AttendanceDate.EndDate', 'ItemDate.EndDate', 'ProductionDate.EndDate',
+            'PurchaseDate.EndDate', 'PurchaseOrderDate.EndDate',
+            'ReceiptVoucherDate.EndDate', 'ReceivableSummaryDate.EndDate',
+            'PayableSummaryDate.EndDate', 'SalesDate.EndDate',
+        ],
+        'per_date' => [
+            'per_date', 'PerDate', 'Per Date', 'tanggal', 'Tanggal', 'date', 'Date',
+            'report_date', 'ReportDate', 'Report Date',
+        ],
+        'PerDate' => [
+            'per_date', 'PerDate', 'Per Date', 'tanggal', 'Tanggal', 'date', 'Date',
+            'report_date', 'ReportDate', 'Report Date',
+        ],
     ];
 
     public function __construct(private readonly PdfGenerator $pdfGenerator) {}
@@ -58,7 +97,7 @@ class CompanyReportController extends Controller
             }
 
             // Client DB_CompanyName is ignored; the route prefix decides the company.
-            $filters = $request->all();
+            $filters = $this->canonicalizeFilters($request->all());
             unset($filters['DB_CompanyName'], $filters['company']);
             $filters['company'] = $companyCode;
             $filters['DB_CompanyName'] = $companyCode;
@@ -70,6 +109,12 @@ class CompanyReportController extends Controller
             );
 
             $reportData['company'] = $companyCode;
+
+            if ($definition->slug === 'hrm.usia-generasi-tahun-kelahiran-masa-kerja') {
+                $reportData['per_date'] = $this->perDateLabel(
+                    (string) ($filters['per_date'] ?? $filters['PerDate'] ?? '')
+                );
+            }
 
             $username = trim((string) ($request->input('Sys_Username') ?? $request->input('Sys_UserName', '')));
             if ($username !== '') {
@@ -85,6 +130,7 @@ class CompanyReportController extends Controller
             'company' => $companyCode,
             'reportData' => $reportData,
             'generatedAt' => now(),
+            'generatedByName' => $reportData['printed_by'] ?? 'sistem',
             'pdf_format' => $pdfOptions['format'] ?? 'A4',
             'pdf_orientation' => $pdfOptions['orientation'] ?? null,
             'pdf_simple_tables' => false,
@@ -95,6 +141,45 @@ class CompanyReportController extends Controller
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="'.$definition->filenameFor($reportData, $company).'"',
         ]);
+    }
+
+    /**
+     * Fill canonical date keys from their alias families before the service
+     * runs. A value the client already sent under the canonical key wins.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function canonicalizeFilters(array $filters): array
+    {
+        foreach (self::CANONICAL_FILTER_ALIASES as $canonical => $aliases) {
+            $explicit = $filters[$canonical] ?? null;
+            if (is_array($explicit) || trim((string) $explicit) !== '') {
+                continue;
+            }
+
+            $value = self::resolveFilterValue($filters, $aliases);
+            if ($value !== '') {
+                $filters[$canonical] = $value;
+            }
+        }
+
+        return $filters;
+    }
+
+    /**
+     * Period label for the usia generasi report, matching the shared endpoint.
+     * An empty or unparsable PerDate falls back to today instead of 500ing.
+     */
+    private function perDateLabel(string $value): string
+    {
+        try {
+            $date = trim($value) !== '' ? Carbon::parse($value) : now();
+        } catch (Throwable) {
+            $date = now();
+        }
+
+        return $date->locale('id')->translatedFormat('d-M-y');
     }
 
     /**
