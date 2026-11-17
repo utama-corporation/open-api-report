@@ -1,0 +1,133 @@
+# Dokumentasi Endpoint API Ascend UC Penjualan Per Item Barang & Analisa SKU
+
+Dokumen ini berisi endpoint internal untuk test/render laporan **Penjualan Per Item Barang & Analisa SKU** Ascend yang memakai Blade shared.
+
+- Base host: `http://192.168.10.100:5006`
+- Prefix API: `/api`
+
+## Company
+
+Company ditentukan dari segmen URL (`uc`), bukan dari request. Client cukup mengirim XML.
+Sebagian URL sudah dimiliki route statis lama dan tetap memakai route tersebut.
+
+## Konsep
+
+Template shared ini dipakai supaya struktur Blade laporan bisa digunakan lintas perusahaan:
+
+- `RU`
+- `GSU`
+- `UC`
+
+Company pada title dan filename berasal dari segmen URL `/uc/`. Client cukup mengirim XML.
+Nama user print pada footer dibaca dari parameter field `Sys_Username`.
+
+## Endpoints
+
+### 1. Penjualan Per Item Barang & Analisa SKU
+
+`POST /api/internal/ascends/uc/custom-report/penjualan-per-item-analisa-sku/pdf`
+
+**Route name:** `api.internal.ascends.uc.custom-report.penjualan-per-item-analisa-sku.pdf`
+
+**Controller:** `CompanyReportController::pdf`
+
+**Deskripsi:** Laporan analisa SKU per item barang per bulan. Setiap baris menampilkan jumlah SKU, capaian, dan persentase per bulan per family barang.
+
+### 2. Penjualan Per Item Barang & Analisa SKU (Detail)
+
+`POST /api/internal/ascends/uc/custom-report/penjualan-per-item-analisa-sku-detail/pdf`
+
+**Route name:** `api.internal.ascends.uc.custom-report.penjualan-per-item-analisa-sku-detail.pdf`
+
+**Controller:** `CompanyReportController::pdf`
+
+**Deskripsi:** Laporan penjualan per item barang detail. Setiap family memiliki section header, diikuti item-item dengan Qty dan Penjualan per bulan, serta grand total.
+
+## Input
+
+Parameter field utama:
+
+- `xml_file`: file XML dari Ascend.
+- `Sys_Username`: nama user print, contoh `Ridho`.
+- `StartDate`: tanggal awal periode (contoh `2026-01-01`).
+- `EndDate`: tanggal akhir periode (contoh `2026-12-31`).
+
+Input XML alternatif yang tetap diterima:
+
+- field `xml` berisi string XML
+- raw XML body dengan `Content-Type: application/xml`
+
+Fallback kompatibilitas lama:
+
+- `Sys_UserName`: alias lama untuk nama user print jika `Sys_Username` belum dikirim.
+- `start_date` + `end_date`: alias untuk `StartDate` + `EndDate`.
+
+Jika tanggal tidak dikirim, sistem memakai semua data yang tersedia di XML.
+
+Contoh `multipart/form-data`:
+
+```text
+Sys_Username=Ridho
+StartDate=2026-01-01
+EndDate=2026-12-31
+xml_file=penjualan_per_item.xml
+```
+
+## Response Sukses
+
+- `200 application/pdf`
+- `Content-Disposition: attachment`
+
+Title yang tampil di halaman PDF:
+
+```text
+Laporan Penjualan Per Item Barang & Analisa SKU (UC)
+Laporan Penjualan Per Item Barang (UC)
+```
+
+Filename PDF:
+
+```text
+Laporan Penjualan Per Item Barang & Analisa SKU (UC).pdf
+Laporan Penjualan Per Item Barang (UC).pdf
+```
+
+## Response Gagal
+
+- `422 application/json` jika XML kosong, tidak valid, atau tidak bisa diproses.
+
+## Struktur Laporan (Analisa SKU)
+
+Laporan menampilkan data per **Family Name** dengan 3 kolom per bulan:
+
+| Kolom     | Deskripsi                       |
+| --------- | ------------------------------- |
+| **SKU**   | Jumlah SKU (Item) yang terjual  |
+| **Capai** | Jumlah capaian                  |
+| **%**     | Persentase capaian terhadap SKU |
+
+Baris total di bagian bawah menjumlahkan seluruh family.
+
+## Struktur Laporan (Detail)
+
+Laporan dikelompokkan berdasarkan **Family Name** dengan urutan:
+
+1. **Section Header** — Nama family (bold italic, warna `#9c111d`)
+2. **Item Rows** — Detail per item barang dengan kolom:
+   - Nama Barang
+   - Qty per bulan
+   - Penjualan per bulan
+   - Total Qty (seluruh bulan)
+   - Total Penjualan (seluruh bulan)
+3. **Grand Total Row** — Total keseluruhan Qty dan Penjualan
+
+Format landscape A4 dengan jumlah kolom menyesuaikan jumlah bulan.
+
+## Template Blade
+
+Template Blade berada di:
+
+```
+resources/views/ascends/shared/custom_report/penjualan_per_item_analisa_sku/pdf.blade.php
+resources/views/ascends/shared/custom_report/penjualan_per_item_analisa_sku_detail/pdf.blade.php
+```
