@@ -124,14 +124,14 @@ XML;
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list.xml')
+            ->with($xml, 'request upload: employee-list.xml', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.list_karyawan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -145,7 +145,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan RU');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan (RU)');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -156,14 +156,14 @@ XML;
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request raw xml body')
+            ->with($xml, 'request raw xml body', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.hrm.list_karyawan.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.list_karyawan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -187,7 +187,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan RU');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan (RU)');
     }
 
     public function test_internal_ascend_api_can_render_uc_list_karyawan_pdf_without_jwt(): void
@@ -198,14 +198,14 @@ XML;
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list-uc.xml')
+            ->with($xml, 'request upload: employee-list-uc.xml', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.uc.hrm.list_karyawan.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.list_karyawan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -219,7 +219,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan UC');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan (UC)');
     }
 
     public function test_internal_ascend_api_can_render_gsu_list_karyawan_pdf_without_jwt(): void
@@ -230,14 +230,14 @@ XML;
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list-gsu.xml')
+            ->with($xml, 'request upload: employee-list-gsu.xml', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.gsu.hrm.list_karyawan.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.list_karyawan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -251,7 +251,7 @@ XML;
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan GSU');
+        $this->assertPdfDisposition($response, 'attachment', 'List Karyawan (GSU)');
     }
 
     public function test_ascend_test_upload_form_can_preview_gsu_list_karyawan_pdf(): void
@@ -334,7 +334,7 @@ XML;
 
         $this->postJson('/api/internal/ascends/ru/hrm/list-karyawan/pdf', [])
             ->assertUnprocessable()
-            ->assertJsonPath('message', 'Data XML wajib dikirim dari Ascend saat request print PDF.');
+            ->assertJsonPath('message', 'File XML (xml_file) wajib dikirim.');
     }
 
     public function test_employee_list_xml_parser_accepts_lowercase_ascend_record_tag(): void

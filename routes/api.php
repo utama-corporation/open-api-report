@@ -245,16 +245,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/openapi.json', [OpenApiController::class, 'index'])->name('api.openapi');
 
 Route::post(
-    '/internal/ascends/ru/hrm/list-karyawan/pdf',
-    [AscendXmlTestController::class, 'apiPdf']
-)->name('api.internal.ascends.ru.hrm.list-karyawan.pdf');
-
-Route::post(
-    '/internal/ascends/uc/hrm/list-karyawan/pdf',
-    [AscendXmlTestController::class, 'apiUcListKaryawanPdf']
-)->name('api.internal.ascends.uc.hrm.list-karyawan.pdf');
-
-Route::post(
     '/internal/ascends/uc/hrm/karyawan-aktif-per-departemen/pdf',
     [AscendXmlTestController::class, 'apiUcKaryawanAktifPerDepartemenPdf']
 )->name('api.internal.ascends.uc.hrm.karyawan-aktif-per-departemen.pdf');
@@ -662,11 +652,6 @@ Route::post(
 )
     ->whereIn('report', CompanyReportRegistry::HRM_REPORTS)
     ->name('api.internal.ascends.shared.hrm.report.pdf');
-
-Route::post(
-    '/internal/ascends/gsu/hrm/list-karyawan/pdf',
-    [AscendXmlTestController::class, 'apiGsuListKaryawanPdf']
-)->name('api.internal.ascends.gsu.hrm.list-karyawan.pdf');
 
 Route::post(
     '/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf',
