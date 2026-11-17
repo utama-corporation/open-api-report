@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\KeterlambatanKehadiranBriefingHarianReportService;
+use App\Services\Ascends\Shared\Hrm\KeterlambatanKehadiranBriefingHarianReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
 use Mockery;
@@ -70,8 +70,8 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
             ]);
 
         $this->assertSame('Laporan Keterlambatan Kehadiran Briefing Harian', $reportData['title']);
-        $this->assertSame('Dari 01/04/2026 Sampai 31/05/2026', $reportData['period']['label']);
-        $this->assertSame(['2026-04' => 'Apr', '2026-05' => 'May'], $reportData['month_labels']);
+        $this->assertSame('Dari 01-Apr-26 Sampai 31-Mei-26', $reportData['period']['label']);
+        $this->assertSame(['2026-04' => 'Apr', '2026-05' => 'Mei'], $reportData['month_labels']);
         $this->assertCount(2, $reportData['rows']);
 
         $this->assertSame('Staff A', $reportData['rows'][0]['Nama']);
@@ -166,7 +166,7 @@ class AscendsKeterlambatanKehadiranBriefingHarianReportFeatureTest extends TestC
             'title' => 'Laporan Keterlambatan Kehadiran Briefing Harian',
             'headers' => ['Kode', 'Nama', 'Jabatan', 'Apr', 'May'],
             'month_keys' => ['2026-04', '2026-05'],
-            'month_labels' => ['2026-04' => 'Apr', '2026-05' => 'May'],
+            'month_labels' => ['2026-04' => 'Apr', '2026-05' => 'Mei'],
             'rows' => [],
             'totals' => ['2026-04' => 0, '2026-05' => 0],
             'total_rows' => 0,

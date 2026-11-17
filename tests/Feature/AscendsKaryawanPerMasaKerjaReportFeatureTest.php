@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\KaryawanPerMasaKerjaReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanPerMasaKerjaReportService;
 use App\Services\PdfGenerator;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
@@ -49,7 +49,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Masa Kerja (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Karyawan Per Masa Kerja');
     }
 
     public function test_ascend_test_upload_form_can_preview_karyawan_per_masa_kerja_pdf(): void
@@ -68,7 +68,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_masa_kerja.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Masa Kerja (RU)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Karyawan Per Masa Kerja'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -82,7 +82,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Masa Kerja (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Karyawan Per Masa Kerja');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -101,7 +101,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.ru.hrm.karyawan_per_masa_kerja.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Masa Kerja (RU)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Karyawan Per Masa Kerja'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -124,7 +124,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Per Masa Kerja (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Karyawan Per Masa Kerja');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -222,8 +222,8 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             'company' => 'RU',
             'module' => 'hrm',
             'sub_report' => 'karyawan_per_masa_kerja',
-            'label' => 'Laporan Karyawan Per Masa Kerja (RU)',
-            'title' => 'Laporan Karyawan Per Masa Kerja (RU)',
+            'label' => 'Karyawan Per Masa Kerja',
+            'title' => 'Karyawan Per Masa Kerja',
             'source_file' => 'request field: xml',
             'headers' => [
                 'No',

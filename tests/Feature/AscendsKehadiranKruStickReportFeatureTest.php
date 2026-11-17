@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\KehadiranKruStickReportService;
+use App\Services\Ascends\Shared\Hrm\KehadiranKruStickReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
 use Mockery;
@@ -154,7 +154,7 @@ class AscendsKehadiranKruStickReportFeatureTest extends TestCase
             'generatedAt' => now(),
         ])->render();
 
-        $this->assertStringContainsString('<h1 class="report-title">RU</h1>', $html);
+        $this->assertStringContainsString('<h1 class="report-companyTitle">RU</h1>', $html);
         $this->assertStringContainsString('Laporan Kehadiran Kru Stick', $html);
         $this->assertStringContainsString('Karyawan', $html);
         $this->assertStringContainsString('Masa Kerja', $html);

@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->api(append: [
             LogUserActivity::class,
+            ForceattachmentPdfPreview::class,
             NormalizePdfDownloadFilename::class,
         ]);
 

@@ -1337,9 +1337,9 @@ class AscendXmlTestController extends Controller
         } catch (RuntimeException $exception) {
             return response()->json(['message' => $exception->getMessage()], 422);
         }
-        $companyShort = $reportData['company'] ?? '';
-        $companySuffix = $companyShort !== '' ? ' '.$companyShort : '';
-        $filename = 'Laporan List Karyawan'.$companySuffix.'.pdf';
+        $companyShort = 'UC';
+        $reportData['company'] = $companyShort;
+        $filename = 'Laporan List Karyawan '.$companyShort.'.pdf';
 
         $pdf = $pdfGenerator->render('ascends.uc.hrm.list_karyawan.pdf', [
             'reportData' => $reportData,
@@ -1437,9 +1437,9 @@ class AscendXmlTestController extends Controller
             return response()->json(['message' => $exception->getMessage()], 422);
         }
 
-        $companyShort = $reportData['company'] ?? '';
-        $companySuffix = $companyShort !== '' ? ' '.$companyShort : '';
-        $filename = 'Laporan List Karyawan'.$companySuffix.'.pdf';
+        $companyShort = 'GSU';
+        $reportData['company'] = $companyShort;
+        $filename = 'Laporan List Karyawan '.$companyShort.'.pdf';
 
         $pdf = $pdfGenerator->render('ascends.gsu.hrm.list_karyawan.pdf', [
             'reportData' => $reportData,

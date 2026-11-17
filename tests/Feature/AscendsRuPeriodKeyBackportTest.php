@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\PersentaseKehadiranBulananReportService;
+use App\Services\Ascends\Shared\Hrm\PersentaseKehadiranBulananReportService;
 use Tests\TestCase;
 
 class AscendsRuPeriodKeyBackportTest extends TestCase
