@@ -262,6 +262,42 @@ class CompanyReportControllerTest extends TestCase
     /**
      * @return array<string, mixed>
      */
+    public function test_removes_company_marker_from_report_title(): void
+    {
+        $xml = '<root/>';
+
+        $service = Mockery::mock(PiutangDiatas60HariReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->andReturn([
+                'title' => 'List Karyawan RU',
+                'label' => 'List Karyawan RU',
+                'company' => 'RU',
+                'headers' => ['Nama'],
+                'rows' => [],
+                'printed_by' => '',
+            ]);
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator
+            ->shouldReceive('render')
+            ->once()
+            ->with('ascends.shared.finance.receivable_details.piutang_diatas_60_hari.pdf', Mockery::on(
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'List Karyawan'
+                && ($data['reportData']['label'] ?? null) === 'List Karyawan'
+                && ($data['company'] ?? null) === 'UC'
+            ))
+            ->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(PiutangDiatas60HariReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $this->post('/api/internal/ascends/uc/finance/receivable_details/piutang-diatas-60-hari/pdf', [
+            'xml' => $xml,
+        ])->assertOk();
+    }
+
     private function reportData(): array
     {
         return [

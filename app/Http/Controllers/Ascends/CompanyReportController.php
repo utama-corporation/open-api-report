@@ -110,6 +110,14 @@ class CompanyReportController extends Controller
 
             $reportData['company'] = $companyCode;
 
+            // The company is printed in the header; keep it out of the report title.
+            if (isset($reportData['title'])) {
+                $reportData['title'] = $this->stripCompanyFromTitle((string) $reportData['title']);
+            }
+            if (isset($reportData['label'])) {
+                $reportData['label'] = $this->stripCompanyFromTitle((string) $reportData['label']);
+            }
+
             if ($definition->slug === 'hrm.usia-generasi-tahun-kelahiran-masa-kerja') {
                 $reportData['per_date'] = $this->perDateLabel(
                     (string) ($filters['per_date'] ?? $filters['PerDate'] ?? '')
@@ -180,6 +188,18 @@ class CompanyReportController extends Controller
         }
 
         return $date->locale('id')->translatedFormat('d-M-y');
+    }
+
+    /**
+     * Remove a company marker from a report title; the header already prints it.
+     */
+    private function stripCompanyFromTitle(string $title): string
+    {
+        $cleaned = preg_replace('/\s*\((?:GSU|RU|UC)\)\s*/i', ' ', $title) ?? $title;
+        $cleaned = preg_replace('/\s+(?:GSU|RU|UC)\s*$/i', '', $cleaned) ?? $cleaned;
+        $cleaned = trim(preg_replace('/\s{2,}/', ' ', $cleaned) ?? $cleaned);
+
+        return $cleaned !== '' ? $cleaned : $title;
     }
 
     /**
