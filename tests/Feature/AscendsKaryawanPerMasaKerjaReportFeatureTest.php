@@ -101,7 +101,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
             ->shouldReceive('render')
             ->once()
             ->with('ascends.shared.hrm.employee_list.karyawan_per_masa_kerja.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Karyawan Per Masa Kerja'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Per Masa Kerja (Diagram)'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 

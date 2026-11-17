@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerLevelReportService;
 use App\Services\Ascends\Shared\Hrm\KaryawanPerLevelReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
@@ -258,6 +259,26 @@ class AscendsKaryawanPerLevelReportFeatureTest extends TestCase
             'grand_summary' => ['subtotal' => 1],
             'total_rows' => 1,
         ];
+    }
+
+    public function test_combined_view_renders_diagram_before_the_list(): void
+    {
+        $xml = $this->employeeListXml();
+
+        $reportData = app(KaryawanPerLevelReportService::class)->buildReportDataFromXml($xml, 'test xml');
+        $reportData['diagram'] = app(DiagramKaryawanPerLevelReportService::class)
+            ->buildReportDataFromXml($xml, 'test xml');
+        $reportData['title'] = 'Laporan Karyawan Per Level (Diagram)';
+
+        $html = view('ascends.shared.hrm.employee_list.karyawan_per_level.pdf', [
+            'company' => 'UC',
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+        ])->render();
+
+        $this->assertStringContainsString('combined-chart-wrapper', $html);
+        $this->assertStringContainsString('page-break-after: always', $html);
+        $this->assertStringContainsString('Laporan Karyawan Per Level (Diagram)', $html);
     }
 
     private function employeeListXml(string $recordTag = 'Employees'): string

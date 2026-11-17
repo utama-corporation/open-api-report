@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Ascends;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\GenerateAscendsEmployeeListReportRequest;
+use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDepartemenReportService;
+use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerLevelReportService;
+use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerMasaKerjaReportService;
+use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerUsiaGenerasiReportService;
 use App\Services\Concerns\ResolvesFilterAliases;
 use App\Services\PdfGenerator;
 use App\Support\Ascends\CompanyReportDefinition;
@@ -35,6 +39,30 @@ class CompanyReportController extends Controller
     private const PINNED_COLUMN_COUNTS = [
         'custom-report.cek-produksi' => ['gsu' => 7],
         'general_ledger.journal_details.laba-kotor' => ['ru' => 6],
+    ];
+
+    /**
+     * Employee-list reports whose first page is a diagram.
+     *
+     * @var array<string, class-string>
+     */
+    private const DIAGRAM_SERVICES = [
+        'hrm.karyawan-per-departemen-per-jabatan' => DiagramKaryawanPerDepartemenReportService::class,
+        'hrm.karyawan-per-level' => DiagramKaryawanPerLevelReportService::class,
+        'hrm.karyawan-per-masa-kerja' => DiagramKaryawanPerMasaKerjaReportService::class,
+        'hrm.usia-generasi-tahun-kelahiran-masa-kerja' => DiagramKaryawanPerUsiaGenerasiReportService::class,
+    ];
+
+    /**
+     * Combined diagram + list titles.
+     *
+     * @var array<string, string>
+     */
+    private const DIAGRAM_TITLES = [
+        'hrm.karyawan-per-departemen-per-jabatan' => 'Laporan Karyawan Per Departemen Per Jabatan (Diagram)',
+        'hrm.karyawan-per-level' => 'Laporan Karyawan Per Level (Diagram)',
+        'hrm.karyawan-per-masa-kerja' => 'Laporan Karyawan Per Masa Kerja (Diagram)',
+        'hrm.usia-generasi-tahun-kelahiran-masa-kerja' => 'Laporan Karyawan Berdasarkan Generasi, Usia, Tahun Kelahiran dan Masa Kerja (Diagram)',
     ];
 
     /**
@@ -116,6 +144,17 @@ class CompanyReportController extends Controller
             }
             if (isset($reportData['label'])) {
                 $reportData['label'] = $this->stripCompanyFromTitle((string) $reportData['label']);
+            }
+
+            $diagramService = self::DIAGRAM_SERVICES[$definition->slug] ?? null;
+            if ($diagramService !== null) {
+                $reportData['diagram'] = app($diagramService)->buildReportDataFromXml(
+                    $xmlPayload,
+                    $request->xmlSourceLabel() ?? 'request xml payload',
+                    $filters,
+                );
+                $reportData['title'] = self::DIAGRAM_TITLES[$definition->slug] ?? $reportData['title'];
+                $reportData['label'] = $reportData['title'];
             }
 
             if ($definition->slug === 'hrm.usia-generasi-tahun-kelahiran-masa-kerja') {

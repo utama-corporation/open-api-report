@@ -262,6 +262,7 @@
     @endphp
 
     @include('ascends.shared.partials.report-header', ['subtitle' => 'Per : ' . $printedAt])
+    @include('ascends.shared.hrm.employee_list.partials.diagram_section', ['diagramLabel' => 'Masa Kerja'])
 
     <table class="data-table">
         <thead>

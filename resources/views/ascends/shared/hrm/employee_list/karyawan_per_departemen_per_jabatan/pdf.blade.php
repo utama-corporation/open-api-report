@@ -191,6 +191,7 @@
     @endphp
 
     @include('ascends.shared.partials.report-header')
+    @include('ascends.shared.hrm.employee_list.partials.diagram_section', ['diagramLabel' => 'Departemen'])
     {{-- <p class="report-subtitle">Per Tanggal {{ $printedAt }}</p> --}}
 
     <table class="data-table">

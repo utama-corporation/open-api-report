@@ -163,6 +163,7 @@
     @endphp
 
     @include('ascends.shared.partials.report-header', ['subtitle' => 'Per Tanggal : ' . ($reportData['per_date'] ?? '')])
+    @include('ascends.shared.hrm.employee_list.partials.diagram_section', ['diagramLabel' => 'Generasi'])
 
     <table class="data-table">
         <thead>
