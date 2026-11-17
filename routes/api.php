@@ -239,6 +239,7 @@ use App\Http\Controllers\UmurReprosesDetailController;
 use App\Http\Controllers\UmurS4SDetailController;
 use App\Http\Controllers\UmurSandingDetailController;
 use App\Http\Controllers\UmurSawnTimberDetailTonController;
+use App\Support\Ascends\CompanyReportRegistry;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/openapi.json', [OpenApiController::class, 'index'])->name('api.openapi');
@@ -659,24 +660,7 @@ Route::post(
     '/internal/ascends/shared/hrm/{report}/pdf',
     [AscendXmlTestController::class, 'apiSharedHrmReportPdf']
 )
-    ->whereIn('report', [
-        'list-karyawan',
-        'daftar-karyawan',
-        'daftar-karyawan-berdasarkan-abjad',
-        'data-karyawan-status-kerja',
-        'karyawan-aktif-per-departemen',
-        'karyawan-masuk-per-departemen-per-tanggal-masuk',
-        'karyawan-per-agama',
-        'karyawan-per-departemen-per-jabatan',
-        'karyawan-per-etnis',
-        'karyawan-per-level',
-        'karyawan-per-masa-kerja',
-        'karyawan-per-umur',
-        'kehadiran-kk-kt-st',
-        'list-karyawan-habis-kontrak',
-        'perbandingan-jumlah-karyawan-tahunan-per-bulan',
-        'usia-generasi-tahun-kelahiran-masa-kerja',
-    ])
+    ->whereIn('report', CompanyReportRegistry::HRM_REPORTS)
     ->name('api.internal.ascends.shared.hrm.report.pdf');
 
 Route::post(
@@ -1576,3 +1560,6 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         Route::post('/health', [RekapProduksiInjectController::class, 'health'])->name('health-explicit');
     });
 });
+
+// Company report routes stay last so existing ascends routes keep precedence.
+require __DIR__.'/ascends-company.php';

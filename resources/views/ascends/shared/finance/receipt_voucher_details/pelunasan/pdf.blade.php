@@ -144,7 +144,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_receipt_voucher_details_pelunasan($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -153,7 +153,7 @@
             return number_format($v, 0, '.', ',');
         }
 
-        function fmtDate($value)
+        function fmtDate_finance_receipt_voucher_details_pelunasan($value)
         {
             if ($value === '' || $value === null) {
                 return '';
@@ -197,13 +197,13 @@
                     <tr class="{{ ($salesmanIdx + $idx) % 2 === 0 ? 'row-odd' : 'row-even' }}">
                         <td>{{ $record['customer_name'] }}</td>
                         <td>{{ $record['item_ref'] }}</td>
-                        <td class="center">{{ fmtDate($record['item_date']) }}</td>
-                        <td class="center">{{ fmtDate($record['voucher_date']) }}</td>
+                        <td class="center">{{ fmtDate_finance_receipt_voucher_details_pelunasan($record['item_date']) }}</td>
+                        <td class="center">{{ fmtDate_finance_receipt_voucher_details_pelunasan($record['voucher_date']) }}</td>
                         <td class="number nowrap {{ ($record['line_total'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($record['line_total']) }}
+                            {{ fmtAmount_finance_receipt_voucher_details_pelunasan($record['line_total']) }}
                         </td>
                         <td class="number nowrap {{ ($record['total_voucher'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($record['total_voucher']) }}
+                            {{ fmtAmount_finance_receipt_voucher_details_pelunasan($record['total_voucher']) }}
                         </td>
                         <td class="number">{{ (int) ($record['age'] ?? 0) }}</td>
                         <td class="center">{{ $record['ket_hari'] ?: '' }}</td>
@@ -217,10 +217,10 @@
                 <tr class="salesman-subtotal">
                     <td colspan="4" class="center">Sub Total {{ $salesman['salesman_name'] }}</td>
                     <td class="number nowrap {{ ($salesman['subtotal_line'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($salesman['subtotal_line']) }}
+                        {{ fmtAmount_finance_receipt_voucher_details_pelunasan($salesman['subtotal_line']) }}
                     </td>
                     <td class="number nowrap {{ ($salesman['subtotal_voucher'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($salesman['subtotal_voucher']) }}
+                        {{ fmtAmount_finance_receipt_voucher_details_pelunasan($salesman['subtotal_voucher']) }}
                     </td>
                     <td colspan="3"></td>
                 </tr>
@@ -229,10 +229,10 @@
                             <tr class="grand-total-row">
                                 <td colspan="4" class="center">Grand Total</td>
                                 <td class="number nowrap {{ $grandTotalLine < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($grandTotalLine) }}
+                                    {{ fmtAmount_finance_receipt_voucher_details_pelunasan($grandTotalLine) }}
                                 </td>
                                 <td class="number nowrap {{ $grandTotalVoucher < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($grandTotalVoucher) }}
+                                    {{ fmtAmount_finance_receipt_voucher_details_pelunasan($grandTotalVoucher) }}
                                 </td>
                                 <td colspan="3"></td>
                             </tr>

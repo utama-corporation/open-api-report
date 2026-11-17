@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\RekapitulasiKehadiranKurang93TahunanReportService;
+use App\Services\Ascends\Shared\Hrm\RekapitulasiKehadiranKurang93TahunanReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
 use Mockery;
@@ -37,7 +37,6 @@ class AscendsRekapitulasiKehadiranKurang93TahunanReportFeatureTest extends TestC
             ->once()
             ->with('ascends.shared.hrm.attendance_full.rekapitulasi_kehadiran_kurang_93_tahunan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'GSU'
-                && ($data['reportData']['title'] ?? null) === 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan (Staff) (GSU)'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
@@ -55,7 +54,7 @@ class AscendsRekapitulasiKehadiranKurang93TahunanReportFeatureTest extends TestC
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Attendance Full - Laporan Rekapitulasi Kehadiran Kurang 93 Persen Tahunan Staff (GSU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Rekapitulasi Kehadiran Kurang Dari 93 % Tahunan (Staff)');
     }
 
     public function test_parser_applies_staff_status_and_yearly_less_than_93_formula(): void

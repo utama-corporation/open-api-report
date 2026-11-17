@@ -188,7 +188,7 @@
     $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
     $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-    function fmtAmount($value)
+    function fmtAmount_finance_receivable_details_piutang_semua($value)
     {
         $v = (float) $value;
         if ($v < 0) {
@@ -200,13 +200,13 @@
         return number_format($v, 0, '.', ',');
     }
 
-    function fmtUmur($value)
+    function fmtUmur_finance_receivable_details_piutang_semua($value)
     {
         $v = (int) $value;
         return number_format($v, 0, '.', ',') . ' Hari';
     }
 
-    function fmtRasio($value)
+    function fmtRasio_finance_receivable_details_piutang_semua($value)
     {
         if ($value === null) {
             return '-';
@@ -256,24 +256,24 @@
             <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
               <td>{{ $itemIndex === 0 ? $item['customer_name'] ?? '' : '' }}</td>
               <td>{{ $item['item_ref'] ?? '' }}</td>
-              <td class="center">{{ fmtUmur($item['umur'] ?? 0) }}</td>
+              <td class="center">{{ fmtUmur_finance_receivable_details_piutang_semua($item['umur'] ?? 0) }}</td>
               <td
                 class="number nowrap {{ ($item['bucket_001_044'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($item['bucket_001_044'] ?? 0) }}</td>
+                {{ fmtAmount_finance_receivable_details_piutang_semua($item['bucket_001_044'] ?? 0) }}</td>
               <td
                 class="number nowrap {{ ($item['bucket_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($item['bucket_045_060'] ?? 0) }}</td>
+                {{ fmtAmount_finance_receivable_details_piutang_semua($item['bucket_045_060'] ?? 0) }}</td>
               <td
                 class="number nowrap {{ ($item['bucket_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($item['bucket_061_090'] ?? 0) }}</td>
+                {{ fmtAmount_finance_receivable_details_piutang_semua($item['bucket_061_090'] ?? 0) }}</td>
               <td
                 class="number nowrap {{ ($item['bucket_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($item['bucket_091_120'] ?? 0) }}</td>
+                {{ fmtAmount_finance_receivable_details_piutang_semua($item['bucket_091_120'] ?? 0) }}</td>
               <td
                 class="number nowrap {{ ($item['bucket_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($item['bucket_over_120'] ?? 0) }}</td>
+                {{ fmtAmount_finance_receivable_details_piutang_semua($item['bucket_over_120'] ?? 0) }}</td>
               <td class="number nowrap {{ ($item['saldo'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                {{ fmtAmount($item['saldo'] ?? 0) }}</td>
+                {{ fmtAmount_finance_receivable_details_piutang_semua($item['saldo'] ?? 0) }}</td>
             </tr>
           @endforeach
 
@@ -281,22 +281,22 @@
             <td colspan="3">SUBTOTAL</td>
             <td
               class="number nowrap {{ ($customer['total_001_044'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($customer['total_001_044'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($customer['total_001_044'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($customer['total_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($customer['total_045_060'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($customer['total_045_060'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($customer['total_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($customer['total_061_090'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($customer['total_061_090'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($customer['total_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($customer['total_091_120'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($customer['total_091_120'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($customer['total_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($customer['total_over_120'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($customer['total_over_120'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($customer['total_saldo'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($customer['total_saldo'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($customer['total_saldo'] ?? 0) }}</td>
           </tr>
         @endforeach
 
@@ -304,27 +304,27 @@
         <tr class="grand-total">
           <td colspan="3" class="center">GRAND TOTAL</td>
           <td class="number nowrap {{ $grand001_044 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grand001_044) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grand001_044) }}</td>
           <td class="number nowrap {{ $grand045_060 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grand045_060) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grand045_060) }}</td>
           <td class="number nowrap {{ $grand061_090 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grand061_090) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grand061_090) }}</td>
           <td class="number nowrap {{ $grand091_120 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grand091_120) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grand091_120) }}</td>
           <td class="number nowrap {{ $grandOver120 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grandOver120) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grandOver120) }}</td>
           <td class="number nowrap {{ $grandSaldo < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grandSaldo) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grandSaldo) }}</td>
         </tr>
 
         {{-- Rasio --}}
         <tr class="rasio-row">
           <td colspan="3" class="center">Rasio :</td>
-          <td class="number nowrap">{{ fmtRasio($rasio[0] ?? null) }}</td>
-          <td class="number nowrap">{{ fmtRasio($rasio[1] ?? null) }}</td>
-          <td class="number nowrap">{{ fmtRasio($rasio[2] ?? null) }}</td>
-          <td class="number nowrap">{{ fmtRasio($rasio[3] ?? null) }}</td>
-          <td class="number nowrap">{{ fmtRasio($rasio[4] ?? null) }}</td>
+          <td class="number nowrap">{{ fmtRasio_finance_receivable_details_piutang_semua($rasio[0] ?? null) }}</td>
+          <td class="number nowrap">{{ fmtRasio_finance_receivable_details_piutang_semua($rasio[1] ?? null) }}</td>
+          <td class="number nowrap">{{ fmtRasio_finance_receivable_details_piutang_semua($rasio[2] ?? null) }}</td>
+          <td class="number nowrap">{{ fmtRasio_finance_receivable_details_piutang_semua($rasio[3] ?? null) }}</td>
+          <td class="number nowrap">{{ fmtRasio_finance_receivable_details_piutang_semua($rasio[4] ?? null) }}</td>
           <td></td>
         </tr>
       </tbody>
@@ -355,21 +355,21 @@
             <td class="center">{{ $sm['total_cust'] ?? 0 }}</td>
             <td
               class="number nowrap {{ ($sm['total_001_044'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($sm['total_001_044'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($sm['total_001_044'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($sm['total_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($sm['total_045_060'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($sm['total_045_060'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($sm['total_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($sm['total_061_090'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($sm['total_061_090'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($sm['total_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($sm['total_091_120'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($sm['total_091_120'] ?? 0) }}</td>
             <td
               class="number nowrap {{ ($sm['total_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($sm['total_over_120'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($sm['total_over_120'] ?? 0) }}</td>
             <td class="number nowrap {{ ($sm['total_all'] ?? 0) < 0 ? 'number-negative' : '' }}">
-              {{ fmtAmount($sm['total_all'] ?? 0) }}</td>
+              {{ fmtAmount_finance_receivable_details_piutang_semua($sm['total_all'] ?? 0) }}</td>
           </tr>
         @empty
           <tr class="empty-row">
@@ -380,17 +380,17 @@
         <tr class="salesman-total">
           <td colspan="2" class="center">TOTAL</td>
           <td class="number nowrap {{ $grandS001_044 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grandS001_044) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grandS001_044) }}</td>
           <td class="number nowrap {{ $grandS045_060 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grandS045_060) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grandS045_060) }}</td>
           <td class="number nowrap {{ $grandS061_090 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grandS061_090) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grandS061_090) }}</td>
           <td class="number nowrap {{ $grandS091_120 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grandS091_120) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grandS091_120) }}</td>
           <td class="number nowrap {{ $grandSOver120 < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grandSOver120) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grandSOver120) }}</td>
           <td class="number nowrap {{ $grandSTotal < 0 ? 'number-negative' : '' }}">
-            {{ fmtAmount($grandSTotal) }}</td>
+            {{ fmtAmount_finance_receivable_details_piutang_semua($grandSTotal) }}</td>
         </tr>
       </tbody>
     </table>

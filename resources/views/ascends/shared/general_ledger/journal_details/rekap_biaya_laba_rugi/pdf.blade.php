@@ -142,7 +142,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function formatAmount($value)
+        function formatAmount_general_ledger_journal_details_rekap_biaya_laba_rugi($value)
         {
             $value = (float) $value;
             if ($value == 0) {
@@ -175,12 +175,12 @@
                     <tr class="{{ $rowIndex % 2 === 0 ? 'row-even' : 'row-odd' }}">
                         <td>{{ (string) ($row['account_code'] ?? '') }}</td>
                         <td>{{ (string) ($row['account_name'] ?? '') }}</td>
-                        <td class="number nowrap">{{ formatAmount($row['total'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_rekap_biaya_laba_rugi($row['total'] ?? 0) }}</td>
                     </tr>
                 @endforeach
                 <tr class="grand-row">
                     <td colspan="2" class="center">Total :</td>
-                    <td class="number nowrap">{{ formatAmount($grandTotal) }}</td>
+                    <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_rekap_biaya_laba_rugi($grandTotal) }}</td>
                 </tr>
             </tbody>
         </table>

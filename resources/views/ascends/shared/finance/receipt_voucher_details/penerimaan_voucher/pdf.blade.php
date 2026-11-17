@@ -159,7 +159,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_receipt_voucher_details_penerimaan_voucher($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -171,7 +171,7 @@
             return number_format($v, 0, '.', ',');
         }
 
-        function fmtDate($value)
+        function fmtDate_finance_receipt_voucher_details_penerimaan_voucher($value)
         {
             if ($value === '' || $value === null) {
                 return '';
@@ -215,18 +215,18 @@
                         <tr class="item-row">
                             <td colspan="4">
                                 {{ $invoice['item_ref'] ?? '' }}
-                                Tanggal Invoice : {{ fmtDate($invoice['item_date'] ?? '') }}
-                                Nilai Invoice : <strong>{{ fmtAmount($invoice['item_amount'] ?? 0) }}</strong>
+                                Tanggal Invoice : {{ fmtDate_finance_receipt_voucher_details_penerimaan_voucher($invoice['item_date'] ?? '') }}
+                                Nilai Invoice : <strong>{{ fmtAmount_finance_receipt_voucher_details_penerimaan_voucher($invoice['item_amount'] ?? 0) }}</strong>
                             </td>
                         </tr>
 
                         @forelse ($invoice['vouchers'] ?? [] as $vIndex => $voucher)
                             <tr class="{{ $vIndex % 2 === 0 ? 'row-odd' : 'row-even' }}">
                                 <td>{{ $voucher['voucher_no'] ?? '' }}</td>
-                                <td>{{ fmtDate($voucher['voucher_date'] ?? '') }}</td>
+                                <td>{{ fmtDate_finance_receipt_voucher_details_penerimaan_voucher($voucher['voucher_date'] ?? '') }}</td>
                                 <td>{{ abs($voucher['beda_hari'] ?? 0) }} Hari</td>
                                 <td class="number nowrap {{ ($voucher['payment'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($voucher['payment'] ?? 0) }}
+                                    {{ fmtAmount_finance_receipt_voucher_details_penerimaan_voucher($voucher['payment'] ?? 0) }}
                                 </td>
                             </tr>
                         @empty
@@ -237,8 +237,8 @@
 
                         <tr class="subtotal-row">
                             <td colspan="4" class="number">
-                                Total Pembayaran : {{ fmtAmount($invoice['total_payment'] ?? 0) }},
-                                Sisa : {{ fmtAmount($invoice['sisa'] ?? 0) }}
+                                Total Pembayaran : {{ fmtAmount_finance_receipt_voucher_details_penerimaan_voucher($invoice['total_payment'] ?? 0) }},
+                                Sisa : {{ fmtAmount_finance_receipt_voucher_details_penerimaan_voucher($invoice['sisa'] ?? 0) }}
                             </td>
                         </tr>
                     @endforeach

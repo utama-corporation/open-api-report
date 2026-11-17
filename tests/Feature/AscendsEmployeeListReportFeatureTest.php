@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
-use App\Services\Ascends\Ru\Hrm\EmployeeListReportService;
+use App\Services\Ascends\Shared\Hrm\EmployeeListReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
 use Mockery;

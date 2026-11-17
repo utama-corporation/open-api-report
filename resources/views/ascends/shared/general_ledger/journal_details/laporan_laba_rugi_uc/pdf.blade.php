@@ -188,7 +188,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function formatAmount($value)
+        function formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -200,7 +200,7 @@
             return number_format($v, 0, '.', ',');
         }
 
-        function formatRasio($value)
+        function formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -264,78 +264,78 @@
                             @php $globalRow++; @endphp
                             <tr class="indent-item {{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                 <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                                <td class="number nowrap">{{ formatAmount($item['display_amount_b'] ?? $item['amount_b'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ formatRasio($item['rasio_b'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ formatAmount($item['display_amount_a'] ?? $item['amount_a'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ formatRasio($item['rasio_a'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ formatRasio($item['selisih'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($item['display_amount_b'] ?? $item['amount_b'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($item['rasio_b'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($item['display_amount_a'] ?? $item['amount_a'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($item['rasio_a'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($item['selisih'] ?? 0) }}</td>
                             </tr>
                         @endforeach
 
                         <tr class="category-subtotal indent-category">
                             <td>TOTAL {{ $categoryGroup['category'] }}</td>
                             <td class="number nowrap">
-                                {{ formatAmount($categoryGroup['display_subtotal_b'] ?? $categoryGroup['subtotal_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($categoryGroup['rasio_b'] ?? 0) }}</td>
+                                {{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($categoryGroup['display_subtotal_b'] ?? $categoryGroup['subtotal_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($categoryGroup['rasio_b'] ?? 0) }}</td>
                             <td class="number nowrap">
-                                {{ formatAmount($categoryGroup['display_subtotal_a'] ?? $categoryGroup['subtotal_a'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($categoryGroup['rasio_a'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($categoryGroup['selisih'] ?? 0) }}</td>
+                                {{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($categoryGroup['display_subtotal_a'] ?? $categoryGroup['subtotal_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($categoryGroup['rasio_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($categoryGroup['selisih'] ?? 0) }}</td>
                         </tr>
                     @endforeach
 
                     <tr class="section-subtotal">
                         <td>TOTAL {{ $section['section'] }}</td>
                         <td class="number nowrap">
-                            {{ formatAmount($section['display_subtotal_b'] ?? $section['subtotal_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatRasio($section['rasio_b'] ?? 0) }}</td>
+                            {{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($section['display_subtotal_b'] ?? $section['subtotal_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($section['rasio_b'] ?? 0) }}</td>
                         <td class="number nowrap">
-                            {{ formatAmount($section['display_subtotal_a'] ?? $section['subtotal_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatRasio($section['rasio_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ formatRasio($section['selisih'] ?? 0) }}</td>
+                            {{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($section['display_subtotal_a'] ?? $section['subtotal_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($section['rasio_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($section['selisih'] ?? 0) }}</td>
                     </tr>
 
                     @if ($section['section'] === 'PENDAPATAN')
                         <tr class="calculation-row">
                             <td>{{ $calcKotor['label'] ?? '' }}</td>
-                            <td class="number nowrap">{{ formatAmount($calcKotor['amount_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($calcKotor['rasio_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($calcKotor['amount_a'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($calcKotor['rasio_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcKotor['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($calcKotor['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcKotor['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($calcKotor['rasio_a'] ?? 0) }}</td>
                             <td></td>
                         </tr>
                     @elseif ($section['section'] === 'BEBAN USAHA')
                         <tr class="calculation-row">
                             <td>{{ $calcUsaha['label'] ?? '' }}</td>
-                            <td class="number nowrap">{{ formatAmount($calcUsaha['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcUsaha['amount_b'] ?? 0) }}</td>
                             <td></td>
-                            <td class="number nowrap">{{ formatAmount($calcUsaha['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcUsaha['amount_a'] ?? 0) }}</td>
                             <td></td>
                             <td></td>
                         </tr>
                     @elseif ($section['section'] === 'PENDAPATAN DAN BEBAN LAINNYA')
                         <tr class="calculation-row">
                             <td>{{ $calcBersihSblm['label'] ?? '' }}</td>
-                            <td class="number nowrap">{{ formatAmount($calcBersihSblm['amount_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($calcBersihSblm['rasio_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($calcBersihSblm['amount_a'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($calcBersihSblm['rasio_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcBersihSblm['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($calcBersihSblm['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcBersihSblm['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($calcBersihSblm['rasio_a'] ?? 0) }}</td>
                             <td></td>
                         </tr>
                         <tr class="calculation-row">
                             <td>{{ $calcPajak['label'] ?? '' }}</td>
-                            <td class="number nowrap">{{ formatAmount($calcPajak['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcPajak['amount_b'] ?? 0) }}</td>
                             <td></td>
-                            <td class="number nowrap">{{ formatAmount($calcPajak['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcPajak['amount_a'] ?? 0) }}</td>
                             <td></td>
                             <td></td>
                         </tr>
                         <tr class="calculation-row">
                             <td>{{ $calcBersihStlh['label'] ?? '' }}</td>
-                            <td class="number nowrap">{{ formatAmount($calcBersihStlh['amount_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($calcBersihStlh['rasio_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatAmount($calcBersihStlh['amount_a'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ formatRasio($calcBersihStlh['rasio_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcBersihStlh['amount_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($calcBersihStlh['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatAmount_general_ledger_journal_details_laporan_laba_rugi_uc($calcBersihStlh['amount_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ formatRasio_general_ledger_journal_details_laporan_laba_rugi_uc($calcBersihStlh['rasio_a'] ?? 0) }}</td>
                             <td></td>
                         </tr>
                     @endif

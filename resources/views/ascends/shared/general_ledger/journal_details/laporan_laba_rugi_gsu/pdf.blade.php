@@ -181,7 +181,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($value)
         {
             $value = (float) $value;
             if ($value == 0) {
@@ -193,7 +193,7 @@
             return number_format($value, 0, '.', ',');
         }
 
-        function fmtRasio($value)
+        function fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($value)
         {
             $value = (float) $value;
             if ($value < 0) {
@@ -239,42 +239,42 @@
                             @php $globalRow++; @endphp
                             <tr class="indent-item {{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                 <td>{{ (string) ($item['account_name'] ?? '') }}</td>
-                                <td class="number nowrap">{{ fmtAmount($item['amount_b'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ fmtRasio($item['rasio_b'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ fmtAmount($item['amount_a'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ fmtRasio($item['rasio_a'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ fmtRasio($item['selisih'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($item['amount_b'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($item['rasio_b'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($item['amount_a'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($item['rasio_a'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($item['selisih'] ?? 0) }}</td>
                             </tr>
                         @endforeach
 
                         <tr class="akm-subtotal indent-akm">
                             <td>TOTAL {{ $akmGroup['akm'] }}</td>
-                            <td class="number nowrap">{{ fmtAmount($akmGroup['display_subtotal_b'] ?? $akmGroup['subtotal_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtRasio($akmGroup['rasio_b'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmount($akmGroup['display_subtotal_a'] ?? $akmGroup['subtotal_a'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtRasio($akmGroup['rasio_a'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtRasio($akmGroup['selisih'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($akmGroup['display_subtotal_b'] ?? $akmGroup['subtotal_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($akmGroup['rasio_b'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($akmGroup['display_subtotal_a'] ?? $akmGroup['subtotal_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($akmGroup['rasio_a'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($akmGroup['selisih'] ?? 0) }}</td>
                         </tr>
                     @endforeach
 
                     <tr class="section-subtotal">
                         <td>TOTAL {{ $section['akl'] }}</td>
-                        <td class="number nowrap">{{ fmtAmount($section['display_subtotal_b'] ?? $section['subtotal_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtRasio($section['rasio_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($section['display_subtotal_a'] ?? $section['subtotal_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtRasio($section['rasio_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtRasio($section['selisih'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($section['display_subtotal_b'] ?? $section['subtotal_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($section['rasio_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($section['display_subtotal_a'] ?? $section['subtotal_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($section['rasio_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($section['selisih'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 @foreach ($calculations as $calc)
                     <tr class="calculation-row">
                         <td>{{ $calc['label'] }}</td>
-                        <td class="number nowrap">{{ fmtAmount($calc['amount_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtRasio($calc['rasio_b'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtAmount($calc['amount_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtRasio($calc['rasio_a'] ?? 0) }}</td>
-                        <td class="number nowrap">{{ fmtRasio($calc['selisih'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($calc['amount_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($calc['rasio_b'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_laporan_laba_rugi_gsu($calc['amount_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($calc['rasio_a'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtRasio_general_ledger_journal_details_laporan_laba_rugi_gsu($calc['selisih'] ?? 0) }}</td>
                     </tr>
                 @endforeach
             </tbody>

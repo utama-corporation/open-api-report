@@ -152,7 +152,7 @@
             }
         }
 
-        function fmtPersen($value)
+        function fmtPersen_custom_report_penjualan_vs_biaya_perjalanan_dinas($value)
         {
             return number_format((float) $value, 2, '.', ',') . '%';
         }
@@ -247,7 +247,7 @@
                             Dinas VS Penjualan
                         </td>
                         @foreach ($section['percentage'] as $val)
-                            <td class="number">{{ fmtPersen($val) }}</td>
+                            <td class="number">{{ fmtPersen_custom_report_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                         @endforeach
                         <td colspan="4"></td>
                     </tr>
@@ -315,7 +315,7 @@
                             Dinas VS Penjualan
                         </td>
                         @foreach ($grandTotals['percentage'] as $val)
-                            <td class="number">{{ fmtPersen($val) }}</td>
+                            <td class="number">{{ fmtPersen_custom_report_penjualan_vs_biaya_perjalanan_dinas($val) }}</td>
                         @endforeach
                         <td colspan="4"></td>
                     </tr>

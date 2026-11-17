@@ -10,6 +10,14 @@ use Illuminate\Testing\TestResponse;
 
 abstract class TestCase extends BaseTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Feature tests do not build Vite assets; avoid manifest lookups in Blade pages.
+        $this->withoutVite();
+    }
+
     /**
      * @param  array<string, mixed>  $claims
      */

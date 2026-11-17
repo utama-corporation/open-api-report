@@ -2,6 +2,7 @@
 
 namespace App\Services\Ascends\Shared\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use Throwable;
@@ -9,6 +10,8 @@ use XMLReader;
 
 class RekapitulasiKehadiranKurang93TahunanReportService
 {
+    use ResolvesFilterAliases;
+
     private const TITLE = 'Laporan Rekapitulasi Kehadiran < 93 % Tahunan';
 
     private const WORKING_DAYS_BY_MONTH = [
@@ -341,7 +344,13 @@ class RekapitulasiKehadiranKurang93TahunanReportService
      */
     private function resolveStatus(array $filters): string
     {
-        return trim((string) ($filters['Pilih Status'] ?? ''));
+        return self::resolveFilterValue($filters, [
+            'Pilih Status',
+            'Pilih_Status',
+            'Pilih_x0020_Status',
+            'status',
+            'Status',
+        ]);
     }
 
     /**

@@ -169,7 +169,7 @@
 
         $totalCols = 2 + $periodCount; // Keterangan + N periods + Total
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -222,9 +222,9 @@
                             <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }} indent-item">
                                 <td>{{ (string) ($item['account_name'] ?? '') }}</td>
                                 @foreach ($item['amounts'] as $amt)
-                                    <td class="number nowrap">{{ $amt != 0 ? fmtAmount($amt) : '-' }}</td>
+                                    <td class="number nowrap">{{ $amt != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($amt) : '-' }}</td>
                                 @endforeach
-                                <td class="number nowrap">{{ $item['total'] != 0 ? fmtAmount($item['total']) : '-' }}
+                                <td class="number nowrap">{{ $item['total'] != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($item['total']) : '-' }}
                                 </td>
                             </tr>
                         @endforeach
@@ -233,10 +233,10 @@
                             <tr class="subtotal-row indent-subsection">
                                 <td>Total {{ $subSection['sub_name'] }}</td>
                                 @foreach ($subSection['subtotals'] as $st)
-                                    <td class="number nowrap">{{ $st != 0 ? fmtAmount($st) : '-' }}</td>
+                                    <td class="number nowrap">{{ $st != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($st) : '-' }}</td>
                                 @endforeach
                                 <td class="number nowrap">
-                                    {{ $subSection['subtotal_total'] != 0 ? fmtAmount($subSection['subtotal_total']) : '-' }}
+                                    {{ $subSection['subtotal_total'] != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($subSection['subtotal_total']) : '-' }}
                                 </td>
                             </tr>
                         @endif
@@ -246,20 +246,20 @@
                         <tr class="subtotal-row">
                             <td>Total {{ $section['section_name'] }}</td>
                             @foreach ($section['subtotals'] as $st)
-                                <td class="number nowrap">{{ $st != 0 ? fmtAmount($st) : '-' }}</td>
+                                <td class="number nowrap">{{ $st != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($st) : '-' }}</td>
                             @endforeach
                             <td class="number nowrap">
-                                {{ $section['subtotal_total'] != 0 ? fmtAmount($section['subtotal_total']) : '-' }}
+                                {{ $section['subtotal_total'] != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($section['subtotal_total']) : '-' }}
                             </td>
                         </tr>
                     @else
                         <tr class="subtotal-row">
                             <td>Total</td>
                             @foreach ($section['subtotals'] as $st)
-                                <td class="number nowrap">{{ $st != 0 ? fmtAmount($st) : '-' }}</td>
+                                <td class="number nowrap">{{ $st != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($st) : '-' }}</td>
                             @endforeach
                             <td class="number nowrap">
-                                {{ $section['subtotal_total'] != 0 ? fmtAmount($section['subtotal_total']) : '-' }}
+                                {{ $section['subtotal_total'] != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($section['subtotal_total']) : '-' }}
                             </td>
                         </tr>
                     @endif
@@ -268,9 +268,9 @@
                 <tr class="grand-total-row">
                     <td>Grand Total</td>
                     @foreach ($grandTotals as $gt)
-                        <td class="number nowrap">{{ $gt != 0 ? fmtAmount($gt) : '-' }}</td>
+                        <td class="number nowrap">{{ $gt != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($gt) : '-' }}</td>
                     @endforeach
-                    <td class="number nowrap">{{ $grandTotal != 0 ? fmtAmount($grandTotal) : '-' }}</td>
+                    <td class="number nowrap">{{ $grandTotal != 0 ? fmtAmount_general_ledger_trial_balance_monthly_laba_rugi_multi_periode($grandTotal) : '-' }}</td>
                 </tr>
             </tbody>
         </table>

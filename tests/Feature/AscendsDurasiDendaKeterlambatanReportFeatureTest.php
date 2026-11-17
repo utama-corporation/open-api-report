@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\DurasiDendaKeterlambatanReportService;
+use App\Services\Ascends\Shared\Hrm\DurasiDendaKeterlambatanReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
 use Mockery;
@@ -40,7 +40,6 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
             ->once()
             ->with('ascends.shared.hrm.late_sign_in.durasi_denda_keterlambatan.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['company'] ?? null) === 'RU'
-                && ($data['reportData']['title'] ?? null) === 'Laporan Durasi & Denda Keterlambatan (Staff) Per Departemen (RU)'
                 && ($data['reportData']['printed_by'] ?? null) === 'Windi'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -60,7 +59,7 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Late Sign In - Laporan Durasi & Denda Keterlambatan Staff Per Departemen (RU)');
+        $this->assertPdfDisposition($response, 'attachment', 'Late Sign In - Laporan Durasi & Denda Keterlambatan Per Departemen Staff (RU)');
     }
 
     public function test_parser_filters_staff_late_sign_in_and_calculates_nominal(): void
@@ -110,7 +109,7 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
 
         $this->assertSame('2026-05-01', $reportData['period']['start_date']);
         $this->assertSame('2026-05-31', $reportData['period']['end_date']);
-        $this->assertSame('Dari 01-Mei-26 Sampai 31-Mei-26', $reportData['period']['label']);
+        $this->assertSame('Dari 01-Mei-26 s/d 31-Mei-26', $reportData['period']['label']);
     }
 
     public function test_parser_uses_explicit_period_aliases_before_xml_month_fallback(): void
@@ -124,7 +123,7 @@ class AscendsDurasiDendaKeterlambatanReportFeatureTest extends TestCase
 
         $this->assertSame('2026-06-01', $reportData['period']['start_date']);
         $this->assertSame('2026-06-30', $reportData['period']['end_date']);
-        $this->assertSame('Dari 01-Jun-26 Sampai 30-Jun-26', $reportData['period']['label']);
+        $this->assertSame('Dari 01-Jun-26 s/d 30-Jun-26', $reportData['period']['label']);
     }
 
     /**

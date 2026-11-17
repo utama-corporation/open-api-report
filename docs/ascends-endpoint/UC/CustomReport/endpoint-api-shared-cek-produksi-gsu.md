@@ -1,0 +1,108 @@
+# Dokumentasi Endpoint API Ascend UC Laporan Item Tidak ada Penjualan Dan Tidak Ada Produksi
+
+> Laporan pada dokumen ini tidak dipublikasikan untuk UC.
+
+
+Dokumen ini berisi endpoint internal untuk test/render laporan **Laporan Item Tidak ada Penjualan Dan Tidak Ada Produksi** Ascend yang memakai Blade shared.
+
+- Base host: `http://192.168.10.100:5006`
+- Prefix API: `/api`
+
+## Company
+
+Company ditentukan dari segmen URL (`uc`), bukan dari request. Client cukup mengirim XML.
+Sebagian URL sudah dimiliki route statis lama dan tetap memakai route tersebut.
+
+## Konsep
+
+Template shared ini dipakai supaya struktur struktur laporan bisa digunakan lintas perusahaan:
+
+- `RU`
+- `GSU`
+- `UC`
+
+Company pada title dan filename berasal dari segmen URL `/uc/`. Client cukup mengirim XML.
+Nama user print pada footer dibaca dari parameter field `Sys_Username`.
+
+## Endpoint
+
+### Laporan Item Tidak ada Penjualan Dan Tidak Ada Produksi
+
+`POST /api/internal/ascends/uc/custom-report/cek-produksi/pdf`
+
+
+
+**Deskripsi:** Laporan item yang tidak ada penjualan dan tidak ada produksi (stok awal > 0 dan aktivitas total = 0, mengecualikan item tertentu) dikelompokkan berdasarkan kategori stok.
+
+## Input
+
+Parameter field utama:
+
+- `xml_file`: file XML dari Ascend (contoh `Custom9.xml`).
+- `Sys_Username`: nama user print, contoh `Ridho`.
+- `StartDate`: tanggal awal periode (contoh `2026-08-01`).
+- `EndDate`: tanggal akhir periode (contoh `2026-08-02`).
+
+Input XML alternatif yang tetap diterima:
+
+- field `xml` berisi string XML
+- raw XML body dengan `Content-Type: application/xml`
+
+Fallback kompatibilitas:
+
+- `start_date` + `end_date`: alias untuk `StartDate` + `EndDate`.
+
+Contoh `multipart/form-data`:
+
+```text
+Sys_Username=Ridho
+StartDate=2026-08-01
+EndDate=2026-08-02
+xml_file=Custom9.xml
+```
+
+## Response Sukses
+
+- `200 application/pdf`
+- `Content-Disposition: attachment`
+
+Title yang tampil di halaman PDF:
+
+```text
+Laporan Item Tidak ada Penjualan Dan Tidak Ada Produksi
+```
+
+Filename PDF:
+
+```text
+Laporan Item Tidak ada Penjualan Dan Tidak Ada Produksi (UC).pdf
+```
+
+## Response Gagal
+
+- `422 application/json` jika XML kosong, tidak valid, atau tidak bisa diproses.
+- `422 application/json` jika tidak ada data yang sesuai dengan filter laporan.
+
+## Struktur Laporan
+
+Laporan dikelompokkan berdasarkan **StockCategoryName** (urutan abjad) dengan susunan:
+
+1. **Section Header** — Nama kategori stok (bold italic, warna `#9c111d`)
+2. **Item Rows** — Baris per item dengan kolom:
+   - Item Code
+   - Item Name
+   - Category Name
+   - Family Name
+   - Saldo Awal (`HasilStokBegining`)
+   - Qty Sales (`-`)
+   - Qty Prod (`-`)
+
+Format A4 portrait dengan font Noto Serif.
+
+## Template Blade
+
+Template Blade berada di:
+
+```
+resources/views/ascends/shared/custom_report/cek_produksi_gsu/pdf.blade.php
+```

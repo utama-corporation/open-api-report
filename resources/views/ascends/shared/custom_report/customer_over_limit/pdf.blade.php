@@ -131,7 +131,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_custom_report_customer_over_limit($value)
         {
             $v = (float) $value;
             if ($v == 0.0) {
@@ -173,15 +173,15 @@
                 <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                     <td class="left">{{ $row['customer_name'] ?? '' }}</td>
                     <td class="number nowrap {{ fmtAmountNegative($row['credit_limit'] ?? 0) }}">
-                        {{ fmtAmount($row['credit_limit'] ?? 0) }}</td>
-                    <td class="number {{ fmtAmountNegative($row['b1_30'] ?? 0) }}">{{ fmtAmount($row['b1_30'] ?? 0) }}</td>
-                    <td class="number {{ fmtAmountNegative($row['b31_60'] ?? 0) }}">{{ fmtAmount($row['b31_60'] ?? 0) }}
+                        {{ fmtAmount_custom_report_customer_over_limit($row['credit_limit'] ?? 0) }}</td>
+                    <td class="number {{ fmtAmountNegative($row['b1_30'] ?? 0) }}">{{ fmtAmount_custom_report_customer_over_limit($row['b1_30'] ?? 0) }}</td>
+                    <td class="number {{ fmtAmountNegative($row['b31_60'] ?? 0) }}">{{ fmtAmount_custom_report_customer_over_limit($row['b31_60'] ?? 0) }}
                     </td>
-                    <td class="number {{ fmtAmountNegative($row['b61_90'] ?? 0) }}">{{ fmtAmount($row['b61_90'] ?? 0) }}
+                    <td class="number {{ fmtAmountNegative($row['b61_90'] ?? 0) }}">{{ fmtAmount_custom_report_customer_over_limit($row['b61_90'] ?? 0) }}
                     </td>
-                    <td class="number {{ fmtAmountNegative($row['over90'] ?? 0) }}">{{ fmtAmount($row['over90'] ?? 0) }}
+                    <td class="number {{ fmtAmountNegative($row['over90'] ?? 0) }}">{{ fmtAmount_custom_report_customer_over_limit($row['over90'] ?? 0) }}
                     </td>
-                    <td class="number {{ fmtAmountNegative($row['tagihan'] ?? 0) }}">{{ fmtAmount($row['tagihan'] ?? 0) }}
+                    <td class="number {{ fmtAmountNegative($row['tagihan'] ?? 0) }}">{{ fmtAmount_custom_report_customer_over_limit($row['tagihan'] ?? 0) }}
                     </td>
                 </tr>
             @endforeach
@@ -197,17 +197,17 @@
                 <tr class="grand-total-row">
                     <td class="center" colspan="2">TOTAL</td>
                     {{-- <td class="number nowrap {{ fmtAmountNegative($totals['credit_limit'] ?? 0) }}">
-                        {{ fmtAmount($totals['credit_limit'] ?? 0) }}</td> --}}
-                    <td class="number {{ fmtAmountNegative($totals['b1_30'] ?? 0) }}">{{ fmtAmount($totals['b1_30'] ?? 0) }}
+                        {{ fmtAmount_custom_report_customer_over_limit($totals['credit_limit'] ?? 0) }}</td> --}}
+                    <td class="number {{ fmtAmountNegative($totals['b1_30'] ?? 0) }}">{{ fmtAmount_custom_report_customer_over_limit($totals['b1_30'] ?? 0) }}
                     </td>
                     <td class="number {{ fmtAmountNegative($totals['b31_60'] ?? 0) }}">
-                        {{ fmtAmount($totals['b31_60'] ?? 0) }}</td>
+                        {{ fmtAmount_custom_report_customer_over_limit($totals['b31_60'] ?? 0) }}</td>
                     <td class="number {{ fmtAmountNegative($totals['b61_90'] ?? 0) }}">
-                        {{ fmtAmount($totals['b61_90'] ?? 0) }}</td>
+                        {{ fmtAmount_custom_report_customer_over_limit($totals['b61_90'] ?? 0) }}</td>
                     <td class="number {{ fmtAmountNegative($totals['over90'] ?? 0) }}">
-                        {{ fmtAmount($totals['over90'] ?? 0) }}</td>
+                        {{ fmtAmount_custom_report_customer_over_limit($totals['over90'] ?? 0) }}</td>
                     <td class="number {{ fmtAmountNegative($totals['tagihan'] ?? 0) }}">
-                        {{ fmtAmount($totals['tagihan'] ?? 0) }}</td>
+                        {{ fmtAmount_custom_report_customer_over_limit($totals['tagihan'] ?? 0) }}</td>
                 </tr>
             </tfoot>
         @endif

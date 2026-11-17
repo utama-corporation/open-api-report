@@ -1,0 +1,141 @@
+# Dokumentasi Endpoint API Ascend GSU Laporan Penjualan Per Kategori Barang Bulanan (Breakdown Perhari)
+
+Dokumen ini berisi endpoint internal untuk test/render laporan **Laporan Penjualan Per Kategori Barang Bulanan (Breakdown Perhari)** Ascend yang memakai Blade shared.
+
+- Base host: `http://192.168.10.100:5006`
+- Prefix API: `/api`
+
+## Company
+
+Company ditentukan dari segmen URL (`gsu`), bukan dari request. Client cukup mengirim XML.
+Sebagian URL sudah dimiliki route statis lama dan tetap memakai route tersebut.
+
+## Konsep
+
+Template shared ini dipakai supaya struktur Blade laporan bisa digunakan lintas perusahaan:
+
+- `RU`
+- `GSU`
+- `UC`
+
+Company pada title dan filename berasal dari segmen URL `/gsu/`. Client cukup mengirim XML.
+Nama user print pada footer dibaca dari parameter field `Sys_Username`.
+
+## Endpoint
+
+### Laporan Penjualan Per Kategori Barang Bulanan (Breakdown Perhari)
+
+`POST /api/internal/ascends/gsu/custom-report/penjualan-per-kategori-barang-bulanan/pdf`
+
+**Route name:** `api.internal.ascends.gsu.custom-report.penjualan-per-kategori-barang-bulanan.pdf`
+
+**Controller:** `CompanyReportController::pdf`
+
+**Deskripsi:** Laporan penjualan per kategori barang per salesperson dengan breakdown harian, menampilkan Qty, Rp, dan Lebih (Kurang) terhadap target harian (berdasarkan jumlah hari kerja).
+
+## Input
+
+Parameter field utama:
+
+- `xml_file`: file XML dari Ascend (contoh `Custom23.xml`).
+- `Sys_Username`: nama user print, contoh `Ridho`.
+- `StartDate`: tanggal awal periode (contoh `2026-07-01`).
+- `EndDate`: tanggal akhir periode (contoh `2026-07-31`).
+- `JumlahHariKerja`: jumlah hari kerja dalam sebulan (contoh `26`).
+- `Target`: JSON string berisi **target bulanan per kategori per salesperson** (opsional). Jika tidak dikirim, target memakai nilai aktual penjualan kategori masing-masing.
+
+### Parameter `Target`
+
+Diterima dua format (JSON string, opsional). Jika tidak dikirim, target memakai nilai aktual penjualan kategori masing-masing.
+
+**Format A — Map penuh per kategori (per `SP Name`):**
+
+Key kategori: `pf` (Plastik Furniture 1 & 2), `pk1` (Plastik Kabinet 1), `pk2` (Plastik Kabinet 2), `enamel`, `fl`. Contoh:
+
+```text
+Target={"FENDY":{"pf":0,"pk1":2076540375,"pk2":1118137125,"enamel":410744250,"fl":45638250},"GSU":{"pf":0,"pk1":0,"pk2":0,"enamel":0,"fl":0}}
+```
+
+**Format B — Cukup quota `pk1` per SP (disarankan):**
+
+Cukup kirim satu angka `pk1` per SP; kategori lain dihitung otomatis oleh service mengikuti pola PDF referensi:
+
+```text
+Target={"FENDY":2076540375,"GSU":0}
+```
+
+Rumus yang dipakai: `pk2 = round(pk1 × 7/13)`, `enamel = round(pk1 × 18/91)`, `fl = round(pk1 × 2/91)`, `pf = 0`.
+
+Target per hari dihitung dari `round(target bulanan / JumlahHariKerja)`. Kolom **Lebih (Kurang)** harian memakai akumulasi penjualan dikurangi `target per hari × urutan baris` (urutan hari non-Minggu).
+
+Input XML alternatif yang tetap diterima:
+
+- field `xml` berisi string XML
+- raw XML body dengan `Content-Type: application/xml`
+
+Fallback kompatibilitas lama:
+
+- `Sys_UserName`: alias lama untuk nama user print jika `Sys_Username` belum dikirim.
+- `start_date` + `end_date`: alias untuk `StartDate` + `EndDate`.
+
+Contoh `multipart/form-data`:
+
+```text
+Sys_Username=Ridho
+StartDate=2026-07-01
+EndDate=2026-07-31
+JumlahHariKerja=26
+xml_file=Custom23.xml
+```
+
+## Response Sukses
+
+- `200 application/pdf`
+- `Content-Disposition: attachment`
+
+Title yang tampil di halaman PDF:
+
+```text
+Laporan Penjualan Per Kategori Barang Bulanan (Breakdown Perhari)
+```
+
+Filename PDF:
+
+```text
+Laporan Penjualan Per Kategori Barang Bulanan (GSU).pdf
+```
+
+## Response Gagal
+
+- `422 application/json` jika XML kosong, tidak valid, atau tidak bisa diproses.
+- `422 application/json` jika tidak ada data dalam rentang tanggal yang dipilih.
+
+## Struktur Laporan
+
+Laporan dikelompokkan berdasarkan **Salesperson** (`SP Name`) dengan rincian:
+
+1. **Salesperson Header** — Nama salesperson (bold italic, warna `#9c111d`)
+2. **Summary Rows** — Dua baris di atas tabel:
+   - Baris 1: Target bulanan Rp per kategori dan kolom Total (dari parameter `Target`)
+   - Baris 2: Target per hari per kategori dan kolom Total
+3. **Daily Breakdown Table** — Per baris tanggal (Tgl), dengan 6 grup kolom:
+   - Plastik Furniture 1 & 2 (Qty, Rp, Lebih (Kurang))
+   - Plastik Kabinet 1 (Qty, Rp, Lebih (Kurang))
+   - Plastik Kabinet 2 (Qty, Rp, Lebih (Kurang))
+   - Enamel (Qty, Rp, Lebih (Kurang))
+   - Furniture Lipat (Qty, Rp, Lebih (Kurang))
+   - **Total** (Qty, Rp, Lebih (Kurang))
+4. **Subtotal Row** — Total Qty, Rp, dan Lebih (Kurang) per kategori di akhir tiap salesperson
+5. **Weekly Analysis Table** — Analisa penjualan per minggu (Minggu 1-5) dengan kolom Target, Penjualan, dan % per kategori barang + Total
+6. **Analisa Penjualan Harian Table** — Rata-rata, Terendah, dan Tertinggi penjualan per kategori barang + Total
+7. **Grand Total Section** (jika >1 salesperson) — Seluruh tabel di atas (1-6) diagregasi untuk semua salesperson, dengan header kolom Rp diganti menjadi **Penjualan**
+
+Format landscape A4 dengan font Noto Serif.
+
+## Template Blade
+
+Template Blade berada di:
+
+```
+resources/views/ascends/shared/custom_report/penjualan_per_kategori_barang_bulanan/pdf.blade.php
+```

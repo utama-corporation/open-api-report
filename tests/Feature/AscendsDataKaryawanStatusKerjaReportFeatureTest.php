@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\DataKaryawanStatusKerjaReportService;
+use App\Services\Ascends\Shared\Hrm\DataKaryawanStatusKerjaReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
 use Mockery;
@@ -47,7 +47,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (RU) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Status Kerja');
     }
 
     public function test_ascend_test_upload_form_can_preview_data_karyawan_status_kerja_pdf(): void
@@ -82,7 +82,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (RU) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Status Kerja');
     }
 
     public function test_internal_ascend_api_can_render_uc_data_karyawan_status_kerja_pdf_without_jwt(): void
@@ -115,7 +115,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (UC) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Status Kerja');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_data_karyawan_status_kerja_pdf(): void
@@ -152,7 +152,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (UC) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Status Kerja');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -191,7 +191,7 @@ class AscendsDataKaryawanStatusKerjaReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Data Karyawan (RU) - Status Kerja');
+        $this->assertPdfDisposition($response, 'attachment', 'Status Kerja');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void

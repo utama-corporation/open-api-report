@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\PerbandinganJumlahKaryawanTahunanPerBulanReportService;
+use App\Services\Ascends\Shared\Hrm\PerbandinganJumlahKaryawanTahunanPerBulanReportService;
 use App\Services\PdfGenerator;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
@@ -27,7 +27,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list.xml')
+            ->with($xml, 'request upload: employee-list.xml', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
@@ -63,15 +63,15 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
 
         $this->assertSame([
             'Bulan',
-            'Total Karyawan',
+            'MPP Karyawan',
             'Karyawan Masuk',
-            '% Masuk',
+            '%',
             'Karyawan Keluar',
-            '% Keluar',
-            '% Karyawan',
-            'MPP',
+            '%',
+            'Total Karyawan',
+            '%',
             'GAP',
-            '% GAP',
+            '%',
             'Remark',
         ], $reportData['headers']);
         $this->assertSame('2026-06-01', $reportData['per_date']);
@@ -120,7 +120,7 @@ class AscendsPerbandinganJumlahKaryawanTahunanPerBulanReportFeatureTest extends 
         $this->assertStringContainsString('Per 01-Jun-26', $html);
         $this->assertStringContainsString('Tahun : 2025', $html);
         $this->assertStringContainsString('Tahun : 2026', $html);
-        $this->assertStringContainsString('Total<br>Karyawan', $html);
+        $this->assertStringContainsString('Total Karyawan', $html);
         $this->assertStringContainsString('Karyawan Masuk', $html);
         $this->assertStringContainsString('Karyawan Keluar', $html);
         $this->assertStringContainsString('Akumulasi Karyawan Masuk Per Bulan', $html);

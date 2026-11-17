@@ -113,7 +113,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_receivable_details_piutang_cash_14_hari($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -125,7 +125,7 @@
             return number_format($v, 0, '.', ',');
         }
 
-        function fmtDate($value)
+        function fmtDate_finance_receivable_details_piutang_cash_14_hari($value)
         {
             if ($value === '' || $value === null) {
                 return '';
@@ -165,12 +165,12 @@
                         <td class="center">{{ $globalRow }}</td>
                         <td>{{ $item['item_ref'] ?? '' }}</td>
                         <td>{{ $item['customer_name'] ?? '' }}</td>
-                        <td class="center">{{ fmtDate($item['item_date'] ?? '') }}</td>
+                        <td class="center">{{ fmtDate_finance_receivable_details_piutang_cash_14_hari($item['item_date'] ?? '') }}</td>
                         <td>{{ $item['salesman_name'] ?? '' }}</td>
                         <td class="center">{{ $item['top'] ?? 0 }}</td>
                         <td class="center">{{ $item['umur'] ?? 0 }}</td>
                         <td class="number nowrap {{ ($item['balance'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($item['balance'] ?? 0) }}
+                            {{ fmtAmount_finance_receivable_details_piutang_cash_14_hari($item['balance'] ?? 0) }}
                         </td>
                     </tr>
                 @endforeach

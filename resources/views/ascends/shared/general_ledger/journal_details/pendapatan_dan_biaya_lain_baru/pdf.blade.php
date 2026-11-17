@@ -170,7 +170,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($value)
         {
             $v = (float) $value;
             if ($v == 0) {
@@ -216,26 +216,26 @@
                             <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                 <td>{{ \Carbon\Carbon::parse($item['voucher_date'])->locale('id')->isoFormat('DD-MMM-YY') }}</td>
                                 <td>{{ (string) ($item['description'] ?? '') }}</td>
-                                <td class="number nowrap">{{ fmtAmount($item['amount_db'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ fmtAmount($item['amount_cr'] ?? 0) }}</td>
-                                <td class="number nowrap">{{ fmtAmount($item['saldo'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($item['amount_db'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($item['amount_cr'] ?? 0) }}</td>
+                                <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($item['saldo'] ?? 0) }}</td>
                             </tr>
                         @endforeach
 
                         <tr class="account-subtotal">
                             <td colspan="2">Sub Total</td>
-                            <td class="number nowrap">{{ fmtAmount($account['subtotal_db'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmount($account['subtotal_cr'] ?? 0) }}</td>
-                            <td class="number nowrap">{{ fmtAmount($account['subtotal'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($account['subtotal_db'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($account['subtotal_cr'] ?? 0) }}</td>
+                            <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($account['subtotal'] ?? 0) }}</td>
                         </tr>
                     @endforeach
                 @endforeach
 
                 <tr class="grand-row">
                     <td colspan="2" style="font-size: 11px;">Grand Total</td>
-                    <td class="number nowrap">{{ fmtAmount($grandTotalDb) }}</td>
-                    <td class="number nowrap">{{ fmtAmount($grandTotalCr) }}</td>
-                    <td class="number nowrap">{{ fmtAmount($grandTotal) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($grandTotalDb) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($grandTotalCr) }}</td>
+                    <td class="number nowrap">{{ fmtAmount_general_ledger_journal_details_pendapatan_dan_biaya_lain_baru($grandTotal) }}</td>
                 </tr>
             </tbody>
         </table>

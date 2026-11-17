@@ -75,7 +75,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_neraca_per_bulan($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -108,14 +108,14 @@
                         $rows[] = [
                             'type' => 'item',
                             'name' => (string) ($item['account_name'] ?? ''),
-                            'amount' => fmtAmount($item['balance'] ?? 0),
+                            'amount' => fmtAmount_general_ledger_trial_balance_neraca_per_bulan($item['balance'] ?? 0),
                         ];
                     }
 
-                    $rows[] = ['type' => 'subtotal', 'name' => 'TOTAL ' . $sub['name'], 'amount' => fmtAmount($sub['total'] ?? 0)];
+                    $rows[] = ['type' => 'subtotal', 'name' => 'TOTAL ' . $sub['name'], 'amount' => fmtAmount_general_ledger_trial_balance_neraca_per_bulan($sub['total'] ?? 0)];
                 }
 
-                $rows[] = ['type' => 'section_total', 'name' => 'TOTAL ' . $section['name'], 'amount' => fmtAmount($section['total'] ?? 0)];
+                $rows[] = ['type' => 'section_total', 'name' => 'TOTAL ' . $section['name'], 'amount' => fmtAmount_general_ledger_trial_balance_neraca_per_bulan($section['total'] ?? 0)];
             }
             return $rows;
         }
@@ -220,9 +220,9 @@
             @endfor
             {{-- Grand Total --}}
             <tr class="grand-total-row">
-                <td class="b fs11">{!! nmCell('TOTAL AKTIVA', fmtAmount($leftGrandTotal), 0, true) !!}</td>
+                <td class="b fs11">{!! nmCell('TOTAL AKTIVA', fmtAmount_general_ledger_trial_balance_neraca_per_bulan($leftGrandTotal), 0, true) !!}</td>
                 <td class="ref-cell">&nbsp;</td>
-                <td class="b fs11">{!! nmCell('TOTAL PASSIVA & MODAL', fmtAmount($rightGrandTotal), 0, true) !!}</td>
+                <td class="b fs11">{!! nmCell('TOTAL PASSIVA & MODAL', fmtAmount_general_ledger_trial_balance_neraca_per_bulan($rightGrandTotal), 0, true) !!}</td>
                 <td class="ref-cell">&nbsp;</td>
             </tr>
         </tbody>

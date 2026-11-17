@@ -162,7 +162,7 @@
         };
     @endphp
 
-    @include('ascends.shared.partials.report-header', ['subtitle' => 'Per Tanggal : ' . $reportData['per_date']])
+    @include('ascends.shared.partials.report-header', ['subtitle' => 'Per Tanggal : ' . ($reportData['per_date'] ?? '')])
 
     <table class="data-table">
         <thead>
@@ -179,9 +179,7 @@
             @forelse ($groupedRows as $group)
                 @php $groupRows = $group['rows'] ?? []; @endphp
                 <tr class="group-row">
-                    <td colspan="6" class="center">Generasi :
-                        {{ $generationDisplayLabel((string) ($group['label'] ?? '')) }}
-                    </td>
+                    <td colspan="6" class="center">Generasi : {{ $generationDisplayLabel((string) ($group['label'] ?? '')) }}</td>
                 </tr>
                 @foreach ($groupRows as $row)
                     <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">

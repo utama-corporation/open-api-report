@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\KaryawanPerUmurReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanPerUmurReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
 use Mockery;

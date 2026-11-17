@@ -199,7 +199,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -242,20 +242,20 @@
                             <tr class="sub-section-header">
                                 <td>{{ $item['label'] }}</td>
                                 <td class="number">
-                                    {{ isset($item['amount']) && $amount != 0 ? fmtAmount($amount) : '' }}
+                                    {{ isset($item['amount']) && $amount != 0 ? fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($amount) : '' }}
                                 </td>
                             </tr>
                         @elseif ($type === 'total')
                             <tr class="subtotal-row">
                                 <td>{{ $item['label'] }}</td>
                                 <td class="number nowrap {{ $amount < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($amount) }}</td>
+                                    {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($amount) }}</td>
                             </tr>
                         @else
                             <tr class="item-row {{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                 <td>{{ $item['label'] }}</td>
                                 <td class="number nowrap {{ $amount < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($amount) }}</td>
+                                    {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($amount) }}</td>
                             </tr>
                         @endif
                     @endforeach
@@ -263,44 +263,44 @@
                     <tr class="subtotal-row">
                         <td>{{ $section['subtotal_label'] }}</td>
                         <td class="number nowrap {{ ($section['subtotal'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($section['subtotal'] ?? 0) }}</td>
+                            {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($section['subtotal'] ?? 0) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-total-row">
                     <td>TOTAL KAS DARI AKTIVITAS OPERASI, INVESTASI & PENDANAAN</td>
                     <td class="number nowrap {{ $totalKeseluruhan < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($totalKeseluruhan) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($totalKeseluruhan) }}</td>
                 </tr>
 
                 <tr class="summary-label-row">
                     <td>{{ $openingLabel }}</td>
                     <td class="number nowrap {{ $openingBalance < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($openingBalance) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($openingBalance) }}</td>
                 </tr>
 
                 <tr class="grand-total-row">
                     <td>TOTAL KAS DARI AKTIVITAS OPERASI, INVESTASI & PENDANAAN</td>
                     <td class="number nowrap {{ $totalKeseluruhan < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($totalKeseluruhan) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($totalKeseluruhan) }}</td>
                 </tr>
 
                 <tr class="summary-label-row">
                     <td>{{ $closingLabel }}</td>
                     <td class="number nowrap {{ $closingBalance < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($closingBalance) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($closingBalance) }}</td>
                 </tr>
 
                 <tr class="summary-label-row">
                     <td>CROSS CEK KAS {{ $closingLabel }}</td>
                     <td class="number nowrap {{ $crossCek < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($crossCek) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($crossCek) }}</td>
                 </tr>
 
                 <tr class="selisih-row">
                     <td>SELISIH</td>
                     <td class="number nowrap {{ $selisih < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($selisih) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_arus_kas_uc($selisih) }}</td>
                 </tr>
             </tbody>
         </table>

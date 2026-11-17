@@ -130,7 +130,7 @@
         $headerTitle = trim((string) ($title ?? $reportData['title'] ?? $fallbackTitle ?? ''));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_payable_summary_saldo_hutang_ru($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -168,19 +168,19 @@
                         <td class="center">{{ $rowNum }}</td>
                         <td>{{ $row['supplier_name'] }}</td>
                         <td class="number nowrap">
-                            {{ fmtAmount($row['opening'] ?? 0) }}
+                            {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($row['opening'] ?? 0) }}
                         </td>
                         <td class="number nowrap">
-                            {{ fmtAmount($row['ap_purchase'] ?? 0) }}
+                            {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($row['ap_purchase'] ?? 0) }}
                         </td>
                         <td class="number nowrap">
-                            {{ fmtAmount($row['ap_note'] ?? 0) }}
+                            {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($row['ap_note'] ?? 0) }}
                         </td>
                         <td class="number nowrap">
-                            {{ fmtAmount($row['payment'] ?? 0) }}
+                            {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($row['payment'] ?? 0) }}
                         </td>
                         <td class="number nowrap">
-                            {{ fmtAmount($row['ending'] ?? 0) }}
+                            {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($row['ending'] ?? 0) }}
                         </td>
                     </tr>
                 @endforeach
@@ -188,19 +188,19 @@
                 <tr class="grand-total">
                     <td class="center" colspan="2">Total</td>
                     <td class="number nowrap">
-                        {{ fmtAmount($grandTotals['opening'] ?? 0) }}
+                        {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($grandTotals['opening'] ?? 0) }}
                     </td>
                     <td class="number nowrap">
-                        {{ fmtAmount($grandTotals['ap_purchase'] ?? 0) }}
+                        {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($grandTotals['ap_purchase'] ?? 0) }}
                     </td>
                     <td class="number nowrap">
-                        {{ fmtAmount($grandTotals['ap_note'] ?? 0) }}
+                        {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($grandTotals['ap_note'] ?? 0) }}
                     </td>
                     <td class="number nowrap">
-                        {{ fmtAmount($grandTotals['payment'] ?? 0) }}
+                        {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($grandTotals['payment'] ?? 0) }}
                     </td>
                     <td class="number nowrap">
-                        {{ fmtAmount($grandTotals['ending'] ?? 0) }}
+                        {{ fmtAmount_finance_payable_summary_saldo_hutang_ru($grandTotals['ending'] ?? 0) }}
                     </td>
                 </tr>
             </tbody>

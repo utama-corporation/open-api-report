@@ -135,7 +135,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_receipt_voucher_details_giro_cash_transfer($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -144,7 +144,7 @@
             return number_format($v, 0, '.', ',');
         }
 
-        function fmtDate($value)
+        function fmtDate_finance_receipt_voucher_details_giro_cash_transfer($value)
         {
             if ($value === '' || $value === null) {
                 return '';
@@ -203,11 +203,11 @@
                 <tr class="{{ $dataRowIndex % 2 === 0 ? 'row-odd' : 'row-even' }}">
                     <td>{{ $record['voucher_no'] }}</td>
                     <td>{{ $record['customer_name'] }}</td>
-                    <td style="text-align: center;">{{ fmtDate($record['item_date']) }}</td>
-                    <td style="text-align: center;">{{ fmtDate($record['voucher_date']) }}</td>
+                    <td style="text-align: center;">{{ fmtDate_finance_receipt_voucher_details_giro_cash_transfer($record['item_date']) }}</td>
+                    <td style="text-align: center;">{{ fmtDate_finance_receipt_voucher_details_giro_cash_transfer($record['voucher_date']) }}</td>
                     <td class="number">{{ (int) ($record['hari'] ?? 0) }}</td>
                     <td class="number nowrap {{ ($record['total'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($record['total']) }}
+                        {{ fmtAmount_finance_receipt_voucher_details_giro_cash_transfer($record['total']) }}
                     </td>
                 </tr>
 
@@ -221,7 +221,7 @@
                         <td colspan="5" class="center">Total
                             {{ $record['sales_person'] !== '-' ? $record['sales_person'] : $record['group_key'] }}
                         </td>
-                        <td class="number nowrap">{{ fmtAmount($subtotal) }}</td>
+                        <td class="number nowrap">{{ fmtAmount_finance_receipt_voucher_details_giro_cash_transfer($subtotal) }}</td>
                     </tr>
                 @endif
     @empty

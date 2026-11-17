@@ -131,7 +131,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_outstanding_payable_check_hutang_giro_ru($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -175,7 +175,7 @@
                         </td>
                         <td class="center nowrap">{{ $row['check_number'] ?: '-' }}</td>
                         <td class="number nowrap">
-                            {{ fmtAmount($row['net_total'] ?? 0) }}
+                            {{ fmtAmount_finance_outstanding_payable_check_hutang_giro_ru($row['net_total'] ?? 0) }}
                         </td>
                     </tr>
                 @endforeach
@@ -183,7 +183,7 @@
                 <tr class="grand-total">
                     <td class="center" colspan="5">Total</td>
                     <td class="number nowrap">
-                        {{ fmtAmount($grandTotals['net_total'] ?? 0) }}
+                        {{ fmtAmount_finance_outstanding_payable_check_hutang_giro_ru($grandTotals['net_total'] ?? 0) }}
                     </td>
                 </tr>
             </tbody>

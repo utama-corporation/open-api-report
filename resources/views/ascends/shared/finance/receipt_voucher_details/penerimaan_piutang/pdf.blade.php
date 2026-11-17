@@ -165,7 +165,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_receipt_voucher_details_penerimaan_piutang($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -174,7 +174,7 @@
             return number_format($v, 0, '.', ',');
         }
 
-        function fmtDate($value)
+        function fmtDate_finance_receipt_voucher_details_penerimaan_piutang($value)
         {
             if ($value === '' || $value === null) {
                 return '';
@@ -224,17 +224,17 @@
                     <td>{{ $record['sales_person'] !== '-' ? $record['sales_person'] : '' }}</td>
                     <td>{{ $record['customer_name'] }}</td>
                     <td>{{ $record['item_ref'] }}</td>
-                    <td class="center">{{ fmtDate($record['item_date']) }}</td>
-                    <td class="center">{{ fmtDate($record['voucher_date']) }}</td>
+                    <td class="center">{{ fmtDate_finance_receipt_voucher_details_penerimaan_piutang($record['item_date']) }}</td>
+                    <td class="center">{{ fmtDate_finance_receipt_voucher_details_penerimaan_piutang($record['voucher_date']) }}</td>
                     <td class="center">{{ (int) ($record['lama_piutang'] ?? 0) }}</td>
                     <td class="number nowrap {{ ($record['item_amount'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($record['item_amount']) }}
+                        {{ fmtAmount_finance_receipt_voucher_details_penerimaan_piutang($record['item_amount']) }}
                     </td>
                     <td class="number nowrap {{ ($record['nilai_bayar'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($record['nilai_bayar']) }}
+                        {{ fmtAmount_finance_receipt_voucher_details_penerimaan_piutang($record['nilai_bayar']) }}
                     </td>
                     <td class="number nowrap {{ ($record['total_nilai_bayar'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                        {{-- {{ fmtAmount($record['total_nilai_bayar']) }} --}}
+                        {{-- {{ fmtAmount_finance_receipt_voucher_details_penerimaan_piutang($record['total_nilai_bayar']) }} --}}
                     </td>
                     <td class="center">{{ $record['payment_method'] ?: '' }}</td>
                     <td class="nowrap">{{ $record['gab_ket'] ?: '' }}</td>
@@ -253,10 +253,10 @@
                         <tr class="grand-total-row">
                             <td colspan="6" class="center">Total</td>
                             <td class="number nowrap {{ $grandTotalInvoice < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($grandTotalInvoice) }}
+                                {{ fmtAmount_finance_receipt_voucher_details_penerimaan_piutang($grandTotalInvoice) }}
                             </td>
                             <td class="number nowrap {{ $grandTotalBayar < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($grandTotalBayar) }}
+                                {{ fmtAmount_finance_receipt_voucher_details_penerimaan_piutang($grandTotalBayar) }}
                             </td>
                             <td colspan="3"></td>
                         </tr>

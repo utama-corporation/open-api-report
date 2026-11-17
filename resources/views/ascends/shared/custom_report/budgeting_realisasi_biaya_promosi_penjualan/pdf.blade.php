@@ -137,7 +137,7 @@
             }
         }
 
-        function fmtPersen($value)
+        function fmtPersen_custom_report_budgeting_realisasi_biaya_promosi_penjualan($value)
         {
             return number_format((float) $value, 1, '.', ',') . '%';
         }

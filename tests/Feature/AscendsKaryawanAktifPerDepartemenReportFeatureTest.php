@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Services\Ascends\Ru\Hrm\KaryawanAktifPerDepartemenReportService;
+use App\Services\Ascends\Shared\Hrm\KaryawanAktifPerDepartemenReportService;
 use App\Services\PdfGenerator;
 use Illuminate\Http\UploadedFile;
 use Mockery;
@@ -93,15 +93,15 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: employee-list.xml')
-            ->andReturn($this->reportData('Laporan Karyawan Aktif Per Departemen (UC)'));
+            ->andReturn($this->reportData('Karyawan Aktif'));
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                && ($data['pdf_orientation'] ?? null) === 'portrait'
+                static fn (array $data): bool => count($data['rows'] ?? []) === 1
+                && ($data['pdf_orientation'] ?? null) === 'landscape'
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -114,7 +114,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Aktif Per Departemen (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Karyawan Aktif');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_karyawan_aktif_per_departemen_pdf(): void
@@ -126,14 +126,14 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->shouldReceive('buildReportDataFromXml')
             ->once()
             ->with($xml, 'request upload: employee-list.xml')
-            ->andReturn($this->reportData('Laporan Karyawan Aktif Per Departemen (UC)'));
+            ->andReturn($this->reportData('Karyawan Aktif'));
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
             ->with('ascends.uc.hrm.karyawan_aktif_per_departemen.pdf', Mockery::on(
-                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Laporan Karyawan Aktif Per Departemen (UC)'
+                static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Karyawan Aktif'
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -150,7 +150,7 @@ class AscendsKaryawanAktifPerDepartemenReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Karyawan Aktif Per Departemen (UC)');
+        $this->assertPdfDisposition($response, 'attachment', 'Karyawan Aktif');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void

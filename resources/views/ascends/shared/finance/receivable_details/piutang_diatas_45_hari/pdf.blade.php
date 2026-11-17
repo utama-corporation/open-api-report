@@ -148,7 +148,7 @@
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_finance_receivable_details_piutang_diatas_45_hari($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -160,7 +160,7 @@
             return number_format($v, 0, '.', ',');
         }
 
-        function fmtUmur($value)
+        function fmtUmur_finance_receivable_details_piutang_diatas_45_hari($value)
         {
             $v = (int) $value;
             return number_format($v, 0, '.', ',') . ' Hari';
@@ -199,21 +199,21 @@
                                 <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
                                     <td>{{ $itemIndex === 0 ? $customer['customer_name'] ?? '' : '' }}</td>
                                     <td class="center">{{ $item['Item Ref'] ?? '' }}</td>
-                                    <td class="center">{{ fmtUmur($item['umur'] ?? 0) }}</td>
+                                    <td class="center">{{ fmtUmur_finance_receivable_details_piutang_diatas_45_hari($item['umur'] ?? 0) }}</td>
                                     <td class="number nowrap {{ (float) ($item['bucket_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                        {{ fmtAmount($item['bucket_045_060'] ?? 0) }}
+                                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($item['bucket_045_060'] ?? 0) }}
                                     </td>
                                     <td class="number nowrap {{ (float) ($item['bucket_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                        {{ fmtAmount($item['bucket_061_090'] ?? 0) }}
+                                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($item['bucket_061_090'] ?? 0) }}
                                     </td>
                                     <td class="number nowrap {{ (float) ($item['bucket_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                        {{ fmtAmount($item['bucket_091_120'] ?? 0) }}
+                                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($item['bucket_091_120'] ?? 0) }}
                                     </td>
                                     <td class="number nowrap {{ (float) ($item['bucket_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                        {{ fmtAmount($item['bucket_over_120'] ?? 0) }}
+                                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($item['bucket_over_120'] ?? 0) }}
                                     </td>
                                     <td class="number nowrap {{ (float) ($item['Balance'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                        {{ fmtAmount($item['Balance'] ?? 0) }}
+                                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($item['Balance'] ?? 0) }}
                                     </td>
                                 </tr>
                             @endforeach
@@ -221,19 +221,19 @@
                             <tr class="customer-total">
                                 <td colspan="3">SUBTOTAL</td>
                                 <td class="number nowrap {{ ($customer['total_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($customer['total_045_060'] ?? 0) }}
+                                    {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($customer['total_045_060'] ?? 0) }}
                                 </td>
                                 <td class="number nowrap {{ ($customer['total_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($customer['total_061_090'] ?? 0) }}
+                                    {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($customer['total_061_090'] ?? 0) }}
                                 </td>
                                 <td class="number nowrap {{ ($customer['total_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($customer['total_091_120'] ?? 0) }}
+                                    {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($customer['total_091_120'] ?? 0) }}
                                 </td>
                                 <td class="number nowrap {{ ($customer['total_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($customer['total_over_120'] ?? 0) }}
+                                    {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($customer['total_over_120'] ?? 0) }}
                                 </td>
                                 <td class="number nowrap {{ ($customer['total_saldo'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                                    {{ fmtAmount($customer['total_saldo'] ?? 0) }}
+                                    {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($customer['total_saldo'] ?? 0) }}
                                 </td>
                             </tr>
                         @endif
@@ -242,19 +242,19 @@
                     <tr class="salesman-total">
                         <td colspan="3" class="center">TOTAL SALESMAN {{ $salesman['salesman_name'] ?? '' }} </td>
                         <td class="number nowrap {{ ($salesman['total_045_060'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($salesman['total_045_060'] ?? 0) }}
+                            {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($salesman['total_045_060'] ?? 0) }}
                         </td>
                         <td class="number nowrap {{ ($salesman['total_061_090'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($salesman['total_061_090'] ?? 0) }}
+                            {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($salesman['total_061_090'] ?? 0) }}
                         </td>
                         <td class="number nowrap {{ ($salesman['total_091_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($salesman['total_091_120'] ?? 0) }}
+                            {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($salesman['total_091_120'] ?? 0) }}
                         </td>
                         <td class="number nowrap {{ ($salesman['total_over_120'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($salesman['total_over_120'] ?? 0) }}
+                            {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($salesman['total_over_120'] ?? 0) }}
                         </td>
                         <td class="number nowrap {{ ($salesman['total_saldo'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($salesman['total_saldo'] ?? 0) }}
+                            {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($salesman['total_saldo'] ?? 0) }}
                         </td>
                     </tr>
                 @endforeach
@@ -262,19 +262,19 @@
                 <tr class="grand-total">
                     <td colspan="3" class="center">GRAND TOTAL</td>
                     <td class="number nowrap {{ $grand045_060 < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grand045_060) }}
+                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($grand045_060) }}
                     </td>
                     <td class="number nowrap {{ $grand061_090 < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grand061_090) }}
+                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($grand061_090) }}
                     </td>
                     <td class="number nowrap {{ $grand091_120 < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grand091_120) }}
+                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($grand091_120) }}
                     </td>
                     <td class="number nowrap {{ $grandOver120 < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grandOver120) }}
+                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($grandOver120) }}
                     </td>
                     <td class="number nowrap {{ $grandSaldo < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grandSaldo) }}
+                        {{ fmtAmount_finance_receivable_details_piutang_diatas_45_hari($grandSaldo) }}
                     </td>
                 </tr>
             </tbody>

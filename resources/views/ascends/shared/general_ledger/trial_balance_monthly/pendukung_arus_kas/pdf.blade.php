@@ -178,7 +178,7 @@
         $headerTitle = trim((string) ($title ?? ($reportData['title'] ?? ($fallbackTitle ?? ''))));
         $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
 
-        function fmtAmount($value)
+        function fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($value)
         {
             $v = (float) $value;
             if ($v < 0) {
@@ -224,11 +224,11 @@
                             <td>{{ (string) ($item['account_code'] ?? '') }}</td>
                             <td>{{ (string) ($item['account_name'] ?? '') }}</td>
                             <td class="number nowrap {{ $amtStart < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($amtStart) }}</td>
+                                {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($amtStart) }}</td>
                             <td class="number nowrap {{ $amtEnd < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($amtEnd) }}</td>
+                                {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($amtEnd) }}</td>
                             <td class="number nowrap {{ $selisih < 0 ? 'number-negative' : '' }}">
-                                {{ fmtAmount($selisih) }}</td>
+                                {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($selisih) }}</td>
                         </tr>
                     @endforeach
 
@@ -240,22 +240,22 @@
                     <tr class="subtotal-row">
                         <td colspan="2">Total {{ $section['section_name'] }}</td>
                         <td class="number nowrap {{ $subStart < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($subStart) }}</td>
+                            {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($subStart) }}</td>
                         <td class="number nowrap {{ $subEnd < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($subEnd) }}</td>
+                            {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($subEnd) }}</td>
                         <td class="number nowrap {{ $subSelisih < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount($subSelisih) }}</td>
+                            {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($subSelisih) }}</td>
                     </tr>
                 @endforeach
 
                 <tr class="grand-total-row">
                     <td colspan="2" class="center">Grand Total</td>
                     <td class="number nowrap {{ $grandStart < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grandStart) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($grandStart) }}</td>
                     <td class="number nowrap {{ $grandEnd < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grandEnd) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($grandEnd) }}</td>
                     <td class="number nowrap {{ $grandSelisih < 0 ? 'number-negative' : '' }}">
-                        {{ fmtAmount($grandSelisih) }}</td>
+                        {{ fmtAmount_general_ledger_trial_balance_monthly_pendukung_arus_kas($grandSelisih) }}</td>
                 </tr>
             </tbody>
         </table>
