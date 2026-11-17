@@ -41,9 +41,9 @@ class CompanyReportRoutesTest extends TestCase
     public function test_existing_company_route_still_wins(): void
     {
         $legacyCompany = Route::getRoutes()->match(
-            Request::create('/api/internal/ascends/ru/hrm/daftar-karyawan/pdf', 'POST')
+            Request::create('/api/internal/ascends/ru/sales/sales-invoice/pdf', 'POST')
         );
-        $this->assertSame(AscendXmlTestController::class.'@apiDaftarKaryawanPdf', $legacyCompany->getActionName());
+        $this->assertSame(AscendXmlTestController::class.'@apiSalesInvoicePdf', $legacyCompany->getActionName());
 
         $legacyShared = Route::getRoutes()->match(
             Request::create('/api/internal/ascends/shared/finance/receivable_details/piutang-diatas-60-hari/pdf', 'POST')

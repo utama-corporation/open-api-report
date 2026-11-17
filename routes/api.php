@@ -244,30 +244,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/openapi.json', [OpenApiController::class, 'index'])->name('api.openapi');
 
-Route::post(
-    '/internal/ascends/uc/hrm/karyawan-aktif-per-departemen/pdf',
-    [AscendXmlTestController::class, 'apiUcKaryawanAktifPerDepartemenPdf']
-)->name('api.internal.ascends.uc.hrm.karyawan-aktif-per-departemen.pdf');
 
-Route::post(
-    '/internal/ascends/uc/hrm/daftar-karyawan/pdf',
-    [AscendXmlTestController::class, 'apiUcDaftarKaryawanPdf']
-)->name('api.internal.ascends.uc.hrm.daftar-karyawan.pdf');
 
-Route::post(
-    '/internal/ascends/uc/hrm/daftar-karyawan-berdasarkan-abjad/pdf',
-    [AscendXmlTestController::class, 'apiUcDaftarKaryawanBerdasarkanAbjadPdf']
-)->name('api.internal.ascends.uc.hrm.daftar-karyawan-berdasarkan-abjad.pdf');
 
-Route::post(
-    '/internal/ascends/uc/hrm/data-karyawan-status-kerja/pdf',
-    [AscendXmlTestController::class, 'apiUcDataKaryawanStatusKerjaPdf']
-)->name('api.internal.ascends.uc.hrm.data-karyawan-status-kerja.pdf');
 
-Route::post(
-    '/internal/ascends/uc/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf',
-    [AscendXmlTestController::class, 'apiUcKaryawanMasukPerDepartemenPerTanggalMasukPdf']
-)->name('api.internal.ascends.uc.hrm.karyawan-masuk-per-departemen-per-tanggal-masuk.pdf');
 
 Route::post(
     '/internal/ascends/shared/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf',
@@ -653,55 +633,15 @@ Route::post(
     ->whereIn('report', CompanyReportRegistry::HRM_REPORTS)
     ->name('api.internal.ascends.shared.hrm.report.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf',
-    [AscendXmlTestController::class, 'apiKaryawanPerMasaKerjaPdf']
-)->name('api.internal.ascends.ru.hrm.karyawan-per-masa-kerja.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/data-karyawan-status-kerja/pdf',
-    [AscendXmlTestController::class, 'apiDataKaryawanStatusKerjaPdf']
-)->name('api.internal.ascends.ru.hrm.data-karyawan-status-kerja.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/daftar-karyawan-berdasarkan-abjad/pdf',
-    [AscendXmlTestController::class, 'apiDaftarKaryawanBerdasarkanAbjadPdf']
-)->name('api.internal.ascends.ru.hrm.daftar-karyawan-berdasarkan-abjad.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/daftar-karyawan/pdf',
-    [AscendXmlTestController::class, 'apiDaftarKaryawanPdf']
-)->name('api.internal.ascends.ru.hrm.daftar-karyawan.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/karyawan-aktif-per-departemen/pdf',
-    [AscendXmlTestController::class, 'apiKaryawanAktifPerDepartemenPdf']
-)->name('api.internal.ascends.ru.hrm.karyawan-aktif-per-departemen.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/karyawan-per-agama/pdf',
-    [AscendXmlTestController::class, 'apiKaryawanPerAgamaPdf']
-)->name('api.internal.ascends.ru.hrm.karyawan-per-agama.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/karyawan-per-etnis/pdf',
-    [AscendXmlTestController::class, 'apiKaryawanPerEtnisPdf']
-)->name('api.internal.ascends.ru.hrm.karyawan-per-etnis.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/karyawan-per-level/pdf',
-    [AscendXmlTestController::class, 'apiKaryawanPerLevelPdf']
-)->name('api.internal.ascends.ru.hrm.karyawan-per-level.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/karyawan-per-umur/pdf',
-    [AscendXmlTestController::class, 'apiKaryawanPerUmurPdf']
-)->name('api.internal.ascends.ru.hrm.karyawan-per-umur.pdf');
 
-Route::post(
-    '/internal/ascends/ru/hrm/karyawan-per-departemen-per-jabatan/pdf',
-    [AscendXmlTestController::class, 'apiKaryawanPerDepartemenPerJabatanPdf']
-)->name('api.internal.ascends.ru.hrm.karyawan-per-departemen-per-jabatan.pdf');
 
 Route::post(
     '/internal/ascends/ru/sales/sales-invoice/pdf',

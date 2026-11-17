@@ -25,14 +25,14 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list.xml')
+            ->with($xml, 'request upload: employee-list.xml', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.hrm.karyawan_per_agama.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.karyawan_per_agama.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
@@ -92,7 +92,7 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request raw xml body')
+            ->with($xml, 'request raw xml body', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
@@ -133,7 +133,7 @@ class AscendsKaryawanPerAgamaReportFeatureTest extends TestCase
 
         $this->postJson('/api/internal/ascends/ru/hrm/karyawan-per-agama/pdf', [])
             ->assertUnprocessable()
-            ->assertJsonPath('message', 'Data XML wajib dikirim dari Ascend saat request print PDF.');
+            ->assertJsonPath('message', 'File XML (xml_file) wajib dikirim.');
     }
 
     public function test_karyawan_per_agama_parser_groups_non_special_active_rows_and_builds_summaries(): void

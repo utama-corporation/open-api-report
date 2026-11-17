@@ -28,14 +28,14 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list.xml')
+            ->with($xml, 'request upload: employee-list.xml', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.hrm.karyawan_per_masa_kerja.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.karyawan_per_masa_kerja.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -93,14 +93,14 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request raw xml body')
+            ->with($xml, 'request raw xml body', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.hrm.karyawan_per_masa_kerja.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.karyawan_per_masa_kerja.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['title'] ?? null) === 'Karyawan Per Masa Kerja'
             ))
             ->andReturn('%PDF-1.4 mocked content');
@@ -137,7 +137,7 @@ class AscendsKaryawanPerMasaKerjaReportFeatureTest extends TestCase
 
         $this->postJson('/api/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf', [])
             ->assertUnprocessable()
-            ->assertJsonPath('message', 'Data XML wajib dikirim dari Ascend saat request print PDF.');
+            ->assertJsonPath('message', 'File XML (xml_file) wajib dikirim.');
     }
 
     public function test_karyawan_per_masa_kerja_parser_groups_rows_and_builds_summaries(): void

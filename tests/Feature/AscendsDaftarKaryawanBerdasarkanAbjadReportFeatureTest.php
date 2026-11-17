@@ -25,16 +25,15 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list.xml')
+            ->with($xml, 'request upload: employee-list.xml', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.ru.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
-                && ! array_key_exists('pdf_orientation', $data)
             ))
             ->andReturn('%PDF-1.4 mocked content');
 
@@ -47,7 +46,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan Berdasarkan Abjad (RU)');
     }
 
     public function test_ascend_test_upload_form_can_preview_daftar_karyawan_berdasarkan_abjad_pdf(): void
@@ -93,14 +92,14 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list.xml')
+            ->with($xml, 'request upload: employee-list.xml', Mockery::type('array'))
             ->andReturn($this->reportData($this->reportTitle('UC')));
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.uc.hrm.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.daftar_karyawan_berdasarkan_abjad.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 1
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
@@ -115,7 +114,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan (UC) - Berdasarkan Abjad');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan Berdasarkan Abjad (UC)');
     }
 
     public function test_ascend_test_upload_form_can_preview_uc_daftar_karyawan_berdasarkan_abjad_pdf(): void
@@ -163,7 +162,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request raw xml body')
+            ->with($xml, 'request raw xml body', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
@@ -191,7 +190,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
             ->assertOk()
             ->assertHeader('Content-Type', 'application/pdf');
 
-        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan (RU) - Berdasarkan Abjad');
+        $this->assertPdfDisposition($response, 'attachment', 'Laporan Daftar Karyawan Berdasarkan Abjad (RU)');
     }
 
     public function test_internal_ascend_api_rejects_request_without_xml_payload(): void
@@ -204,7 +203,7 @@ class AscendsDaftarKaryawanBerdasarkanAbjadReportFeatureTest extends TestCase
 
         $this->postJson('/api/internal/ascends/ru/hrm/daftar-karyawan-berdasarkan-abjad/pdf', [])
             ->assertUnprocessable()
-            ->assertJsonPath('message', 'Data XML wajib dikirim dari Ascend saat request print PDF.');
+            ->assertJsonPath('message', 'File XML (xml_file) wajib dikirim.');
     }
 
     public function test_daftar_karyawan_berdasarkan_abjad_parser_groups_rows_and_filters_staff(): void

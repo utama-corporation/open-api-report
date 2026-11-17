@@ -26,14 +26,14 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: employee-list.xml')
+            ->with($xml, 'request upload: employee-list.xml', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
                 static fn (array $data): bool => ($data['reportData']['total_rows'] ?? null) === 2
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
@@ -169,7 +169,7 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
 
         $this->postJson('/api/internal/ascends/uc/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf', [])
             ->assertUnprocessable()
-            ->assertJsonPath('message', 'Data XML wajib dikirim dari Ascend saat request print PDF.');
+            ->assertJsonPath('message', 'File XML (xml_file) wajib dikirim.');
     }
 
     public function test_internal_ascend_api_can_render_raw_xml_body_as_pdf_without_jwt(): void
@@ -180,14 +180,14 @@ class AscendsKaryawanMasukPerDepartemenPerTanggalMasukReportFeatureTest extends 
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request raw xml body')
+            ->with($xml, 'request raw xml body', Mockery::type('array'))
             ->andReturn($this->reportData());
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
         $pdfGenerator
             ->shouldReceive('render')
             ->once()
-            ->with('ascends.uc.hrm.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
+            ->with('ascends.shared.hrm.employee_list.karyawan_masuk_per_departemen_per_tanggal_masuk.pdf', Mockery::on(
                 static fn (array $data): bool => str_contains((string) ($data['reportData']['title'] ?? ''), 'Laporan Karyawan Masuk Per Departemen Per Tanggal Masuk')
                 && ($data['pdf_orientation'] ?? null) === 'portrait'
             ))
