@@ -509,8 +509,10 @@ return [
         'diagram_karyawan_per_divisi' => [
             'label' => 'Laporan Diagram Karyawan Per Divisi',
             'columns' => [
-                'Department_x0020_Code' => 'Kode Divisi',
-                'Department_x0020_Name' => 'Divisi',
+                'Division_x0020_Code' => 'Kode Divisi',
+                'Division_x0020_Name' => 'Divisi',
+                'Department_x0020_Code' => 'Kode Dept.',
+                'Department_x0020_Name' => 'Departemen',
                 'Sub-Department_x0020_Code' => 'Kode Sub Dept.',
                 'Sub-Department_x0020_Name' => 'Sub Departemen',
                 'Employee_x0020_Code' => 'Kode Karyawan',
