@@ -142,7 +142,7 @@ xml_file=AnlReports.HRM.EmployeeList.xml
 
 ## Endpoint UC Attendance Full
 
-- Attendance Full - Laporan Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/uc/hrm/attendance-full/absensi-briefing-harian/pdf`
+- Attendance Full - Laporan Absensi Briefing Harian (UC): `POST http://192.168.10.100:5006/api/internal/ascends/uc/hrm/attendance-full/absensi-briefing-harian/pdf`
 - Attendance Full - Laporan Rekapitulasi Absensi Briefing Harian (RU): `POST http://192.168.10.100:5006/api/internal/ascends/uc/hrm/attendance-full/rekapitulasi-absensi-briefing-harian/pdf` (tidak dipublikasikan untuk UC)
 - Attendance Full - Data Peserta Penerima Makan Siang Ibadah Di Aula Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/uc/hrm/attendance-full/data-peserta-makan-siang-ibadah-aula-per-departemen/pdf`
 - Attendance Full - Laporan Data Peserta Penerima Makan Siang Shalat Jumat Per Departemen: `POST http://192.168.10.100:5006/api/internal/ascends/uc/hrm/attendance-full/data-peserta-makan-siang-shalat-jumat-per-departemen/pdf`
