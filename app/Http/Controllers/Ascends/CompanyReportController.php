@@ -97,6 +97,12 @@ class CompanyReportController extends Controller
             'per_date', 'PerDate', 'Per Date', 'tanggal', 'Tanggal', 'date', 'Date',
             'report_date', 'ReportDate', 'Report Date',
         ],
+        'tanggal' => [
+            'tanggal', 'Tanggal', 'date', 'Date', 'per_date', 'PerDate',
+        ],
+        'tahun' => [
+            'tahun', 'Tahun', 'year', 'Year',
+        ],
     ];
 
     public function __construct(private readonly PdfGenerator $pdfGenerator) {}

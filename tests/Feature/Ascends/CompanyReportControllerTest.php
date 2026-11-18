@@ -3,6 +3,8 @@
 namespace Tests\Feature\Ascends;
 
 use App\Http\Controllers\Ascends\CompanyReportController;
+use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
+use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas60HariReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableSummary\UmurPiutangRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorRuReportService;
@@ -30,6 +32,16 @@ class CompanyReportControllerTest extends TestCase
             '/api/internal/ascends/{company}/general_ledger/journal_details/laba-kotor/pdf',
             [CompanyReportController::class, 'pdf']
         )->defaults('report', 'general_ledger.journal_details.laba-kotor');
+
+        Route::post(
+            '/api/internal/ascends/{company}/associate/customer-baru/pdf',
+            [CompanyReportController::class, 'pdf']
+        )->defaults('report', 'associate.customer-baru');
+
+        Route::post(
+            '/api/internal/ascends/{company}/associate/customer-baru-per-tahun/pdf',
+            [CompanyReportController::class, 'pdf']
+        )->defaults('report', 'associate.customer-baru-per-tahun');
     }
 
     protected function tearDown(): void
@@ -295,6 +307,56 @@ class CompanyReportControllerTest extends TestCase
 
         $this->post('/api/internal/ascends/uc/finance/receivable_details/piutang-diatas-60-hari/pdf', [
             'xml' => $xml,
+        ])->assertOk();
+    }
+
+    public function test_maps_tanggal_alias_for_customer_baru(): void
+    {
+        $xml = '<root/>';
+
+        $service = Mockery::mock(CustomerBaruReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request field: xml', Mockery::on(
+                static fn (array $filters): bool => ($filters['tanggal'] ?? null) === '2026-06-30'
+            ))
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator->shouldReceive('render')->once()->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(CustomerBaruReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $this->post('/api/internal/ascends/gsu/associate/customer-baru/pdf', [
+            'xml' => $xml,
+            'Tanggal' => '2026-06-30',
+        ])->assertOk();
+    }
+
+    public function test_maps_tahun_alias_for_customer_baru_per_tahun(): void
+    {
+        $xml = '<root/>';
+
+        $service = Mockery::mock(CustomerBaruPerTahunReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with($xml, 'request field: xml', Mockery::on(
+                static fn (array $filters): bool => ($filters['tahun'] ?? null) === '2025'
+            ))
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator->shouldReceive('render')->once()->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(CustomerBaruPerTahunReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $this->post('/api/internal/ascends/gsu/associate/customer-baru-per-tahun/pdf', [
+            'xml' => $xml,
+            'Tahun' => '2025',
         ])->assertOk();
     }
 
