@@ -108,6 +108,7 @@
     @endphp
 
     @include('ascends.shared.partials.report-header', [
+        'title' => 'Laporan Customer Baru Per Bulan',
         'subtitle' => $reportData['per_date'] ?? ''
     ])
 
