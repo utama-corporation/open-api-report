@@ -59,8 +59,14 @@ class DiagramKaryawanPerDivisiReportService
                 continue;
             }
 
-            $kode = trim((string) ($row['Kode Sub Dept.'] ?? ''));
-            $name = trim((string) ($row['Sub Departemen'] ?? ''));
+            $kode = trim((string) ($row['Kode Divisi'] ?? ''));
+            $name = trim((string) ($row['Divisi'] ?? ''));
+
+            // Older payloads may only carry sub-department columns.
+            if ($name === '') {
+                $kode = trim((string) ($row['Kode Sub Dept.'] ?? ''));
+                $name = trim((string) ($row['Sub Departemen'] ?? ''));
+            }
 
             $displayName = $name !== '' ? $name : 'NULL';
             $key = $kode !== '' ? $kode : 'NULL';
