@@ -54,30 +54,26 @@
         }
 
         .chart-wrapper img {
-            width: 320px;
-            height: 320px;
+            width: 250px;
+            height: 250px;
         }
 
         .dept-labels {
-            width: 100%;
-            margin: 8px 0;
+            width: 82%;
+            margin: 4px auto 10px auto;
             font-size: 10px;
         }
 
         .dept-labels td {
-            padding: 1px 6px;
+            padding: 0 8px;
             vertical-align: top;
             width: 50%;
         }
 
         .dept-label-checkbox {
-            display: attachment-block;
-            width: 45px;
-            height: 45px;
-            margin-right: 4px;
+            width: 12px;
+            height: 12px;
             border: 1px solid #000;
-            vertical-align: middle;
-            overflow: hidden;
         }
 
         .data-table {
@@ -173,11 +169,16 @@
                             $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerStrataPendidikanReportService
                                 ::CHART_COLORS[$i % 12] ?? [0, 0, 0];
                         @endphp
-                        <div>
-                            <span class="dept-label-checkbox"
-                                style="background: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
-                            {{ $dept['name'] }} ({{ $dept['count'] }}) - {{ number_format($dept['percent'], 1) }}%
-                        </div>
+                        <table style="border-collapse: collapse; margin: 0 0 4px 0;">
+                            <tr>
+                                <td
+                                    style="width: 12px; height: 12px; padding: 0; border: 1px solid #000; font-size: 1px; line-height: 1px; background-color: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">
+                                    &nbsp;</td>
+                                <td style="padding: 0 0 0 5px; vertical-align: middle;">
+                                    {{ $dept['name'] }} ({{ $dept['count'] }}) - {{ number_format($dept['percent'], 1) }}%
+                                </td>
+                            </tr>
+                        </table>
                     @endforeach
                 </td>
                 <td>
@@ -186,11 +187,16 @@
                             $color = \App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerStrataPendidikanReportService
                                 ::CHART_COLORS[($mid + $i) % 12] ?? [0, 0, 0];
                         @endphp
-                        <div>
-                            <span class="dept-label-checkbox"
-                                style="background: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">&nbsp;</span>
-                            {{ $dept['name'] }} ({{ $dept['count'] }}) - {{ number_format($dept['percent'], 1) }}%
-                        </div>
+                        <table style="border-collapse: collapse; margin: 0 0 4px 0;">
+                            <tr>
+                                <td
+                                    style="width: 12px; height: 12px; padding: 0; border: 1px solid #000; font-size: 1px; line-height: 1px; background-color: rgb({{ $color[0] }},{{ $color[1] }},{{ $color[2] }});">
+                                    &nbsp;</td>
+                                <td style="padding: 0 0 0 5px; vertical-align: middle;">
+                                    {{ $dept['name'] }} ({{ $dept['count'] }}) - {{ number_format($dept['percent'], 1) }}%
+                                </td>
+                            </tr>
+                        </table>
                     @endforeach
                 </td>
             </tr>
