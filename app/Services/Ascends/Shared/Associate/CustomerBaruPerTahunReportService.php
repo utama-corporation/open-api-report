@@ -20,9 +20,13 @@ class CustomerBaruPerTahunReportService
         }
 
         $tahun = trim((string) ($filters['tahun'] ?? ''));
+        if ($tahun === '') {
+            // Ascend only posts XML; default to the current year when no year is sent.
+            $tahun = (string) Carbon::now()->year;
+        }
 
-        if ($tahun === '' || ! is_numeric($tahun)) {
-            throw new RuntimeException('Parameter Tahun wajib dikirim dan harus berupa angka (YYYY).');
+        if (! is_numeric($tahun)) {
+            throw new RuntimeException('Parameter Tahun harus berupa angka (YYYY).');
         }
 
         $tahun = (int) $tahun;

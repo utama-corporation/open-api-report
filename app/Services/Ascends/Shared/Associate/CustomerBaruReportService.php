@@ -21,7 +21,8 @@ class CustomerBaruReportService
 
         $tanggalRaw = trim((string) ($filters['tanggal'] ?? ''));
         if ($tanggalRaw === '') {
-            throw new RuntimeException('Parameter Tanggal wajib dikirim.');
+            // Ascend only posts XML; default to the current month when no reference date is sent.
+            $tanggalRaw = Carbon::now()->startOfMonth()->toDateString();
         }
 
         try {

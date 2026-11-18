@@ -55,13 +55,13 @@ Input tambahan khusus `customer-modifikasi-6-bulan`:
 
 Input tambahan khusus `customer-baru-per-tahun`:
 
-- `tahun`: **wajib** — tahun laporan dalam format YYYY, contoh `2025`.
+- `tahun`: opsional — tahun laporan format YYYY, contoh `2025`. Jika tidak dikirim, dipakai tahun berjalan.
 - Hanya menampilkan customer dengan `Status = Active` dan `Created Date/Time` berada di tahun tersebut.
 - `Sales Person Code` tidak boleh kosong dan tidak diawali `SP-0011`.
 
 Input tambahan khusus `customer-baru`:
 
-- `tanggal`: **wajib** — tanggal referensi dalam format YYYY-MM-DD, contoh `2026-06-30`.
+- `tanggal`: opsional — tanggal referensi format YYYY-MM-DD, contoh `2026-06-30`. Jika tidak dikirim, dipakai awal bulan berjalan.
 - Menampilkan customer baru dalam rentang 1 bulan setelah tanggal referensi.
 - Hanya menampilkan customer dengan `Status = Active`.
 
