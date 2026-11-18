@@ -4,6 +4,17 @@ Total: **477 endpoint** (GSU 161, RU 165, UC 151).
 
 Semua endpoint adalah `POST`.
 
+## Catatan perubahan
+
+- Seluruh endpoint HRM `employee-list` untuk GSU/RU/UC memakai satu view `resources/views/ascends/shared/hrm/...`.
+- Empat laporan berikut sekarang **combined**: halaman pertama Diagram, halaman berikutnya List, dengan judul berakhiran `(Diagram)`:
+  - Karyawan Per Departemen Per Jabatan
+  - Karyawan Per Level
+  - Karyawan Per Masa Kerja
+  - Karyawan Usia Generasi Berdasarkan Tahun Kelahiran dan Masa Kerja
+- Route diagram lama (`/hrm/employee-list/diagram-karyawan-*`) tetap tersedia untuk backward compatibility.
+- Endpoint modul `sales` masih dilayani controller legacy `AscendXmlTestController`; endpoint lain memakai `CompanyReportController`.
+
 ## GSU (161 endpoint)
 
 ### associate (4)
@@ -134,10 +145,10 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/gsu/hrm/karyawan-aktif-per-departemen/pdf`
 - `/api/internal/ascends/gsu/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf`
 - `/api/internal/ascends/gsu/hrm/karyawan-per-agama/pdf`
-- `/api/internal/ascends/gsu/hrm/karyawan-per-departemen-per-jabatan/pdf`
+- `/api/internal/ascends/gsu/hrm/karyawan-per-departemen-per-jabatan/pdf` — **Diagram + List**
 - `/api/internal/ascends/gsu/hrm/karyawan-per-etnis/pdf`
-- `/api/internal/ascends/gsu/hrm/karyawan-per-level/pdf`
-- `/api/internal/ascends/gsu/hrm/karyawan-per-masa-kerja/pdf`
+- `/api/internal/ascends/gsu/hrm/karyawan-per-level/pdf` — **Diagram + List**
+- `/api/internal/ascends/gsu/hrm/karyawan-per-masa-kerja/pdf` — **Diagram + List**
 - `/api/internal/ascends/gsu/hrm/karyawan-per-umur/pdf`
 - `/api/internal/ascends/gsu/hrm/kehadiran-kk-kt-st/pdf`
 - `/api/internal/ascends/gsu/hrm/late-sign-in/durasi-denda-keterlambatan/pdf`
@@ -148,7 +159,7 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/gsu/hrm/overtime/lembur-bulanan/pdf`
 - `/api/internal/ascends/gsu/hrm/perbandingan-jumlah-karyawan-tahunan-per-bulan/pdf`
 - `/api/internal/ascends/gsu/hrm/thr/pdf`
-- `/api/internal/ascends/gsu/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
+- `/api/internal/ascends/gsu/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf` — **Diagram + List**
 - `/api/internal/ascends/gsu/hrm/warning-notice/surat-peringatan/pdf`
 
 ### inventory_analysis (28)
@@ -184,12 +195,12 @@ Semua endpoint adalah `POST`.
 
 ### sales (6)
 
-- `/api/internal/ascends/gsu/sales/sales-invoice/normal/pdf`
-- `/api/internal/ascends/gsu/sales/sales-invoice/panjang/pdf`
-- `/api/internal/ascends/gsu/sales/sales-invoice/pdf`
-- `/api/internal/ascends/gsu/sales/surat-jalan/normal/pdf`
-- `/api/internal/ascends/gsu/sales/surat-jalan/panjang/pdf`
-- `/api/internal/ascends/gsu/sales/surat-jalan/pdf`
+- `/api/internal/ascends/gsu/sales/sales-invoice/normal/pdf` — legacy controller
+- `/api/internal/ascends/gsu/sales/sales-invoice/panjang/pdf` — legacy controller
+- `/api/internal/ascends/gsu/sales/sales-invoice/pdf` — legacy controller
+- `/api/internal/ascends/gsu/sales/surat-jalan/normal/pdf` — legacy controller
+- `/api/internal/ascends/gsu/sales/surat-jalan/panjang/pdf` — legacy controller
+- `/api/internal/ascends/gsu/sales/surat-jalan/pdf` — legacy controller
 
 ## RU (165 endpoint)
 
@@ -322,10 +333,10 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/ru/hrm/karyawan-aktif-per-departemen/pdf`
 - `/api/internal/ascends/ru/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf`
 - `/api/internal/ascends/ru/hrm/karyawan-per-agama/pdf`
-- `/api/internal/ascends/ru/hrm/karyawan-per-departemen-per-jabatan/pdf`
+- `/api/internal/ascends/ru/hrm/karyawan-per-departemen-per-jabatan/pdf` — **Diagram + List**
 - `/api/internal/ascends/ru/hrm/karyawan-per-etnis/pdf`
-- `/api/internal/ascends/ru/hrm/karyawan-per-level/pdf`
-- `/api/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf`
+- `/api/internal/ascends/ru/hrm/karyawan-per-level/pdf` — **Diagram + List**
+- `/api/internal/ascends/ru/hrm/karyawan-per-masa-kerja/pdf` — **Diagram + List**
 - `/api/internal/ascends/ru/hrm/karyawan-per-umur/pdf`
 - `/api/internal/ascends/ru/hrm/kehadiran-kk-kt-st/pdf`
 - `/api/internal/ascends/ru/hrm/late-sign-in/durasi-denda-keterlambatan/pdf`
@@ -336,7 +347,7 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/ru/hrm/overtime/lembur-bulanan/pdf`
 - `/api/internal/ascends/ru/hrm/perbandingan-jumlah-karyawan-tahunan-per-bulan/pdf`
 - `/api/internal/ascends/ru/hrm/thr/pdf`
-- `/api/internal/ascends/ru/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
+- `/api/internal/ascends/ru/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf` — **Diagram + List**
 - `/api/internal/ascends/ru/hrm/warning-notice/surat-peringatan/pdf`
 
 ### inventory_analysis (31)
@@ -375,12 +386,12 @@ Semua endpoint adalah `POST`.
 
 ### sales (6)
 
-- `/api/internal/ascends/ru/sales/sales-invoice/normal/pdf`
-- `/api/internal/ascends/ru/sales/sales-invoice/panjang/pdf`
-- `/api/internal/ascends/ru/sales/sales-invoice/pdf`
-- `/api/internal/ascends/ru/sales/surat-jalan/normal/pdf`
-- `/api/internal/ascends/ru/sales/surat-jalan/panjang/pdf`
-- `/api/internal/ascends/ru/sales/surat-jalan/pdf`
+- `/api/internal/ascends/ru/sales/sales-invoice/normal/pdf` — legacy controller
+- `/api/internal/ascends/ru/sales/sales-invoice/panjang/pdf` — legacy controller
+- `/api/internal/ascends/ru/sales/sales-invoice/pdf` — legacy controller
+- `/api/internal/ascends/ru/sales/surat-jalan/normal/pdf` — legacy controller
+- `/api/internal/ascends/ru/sales/surat-jalan/panjang/pdf` — legacy controller
+- `/api/internal/ascends/ru/sales/surat-jalan/pdf` — legacy controller
 
 ## UC (151 endpoint)
 
@@ -512,10 +523,10 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/uc/hrm/karyawan-aktif-per-departemen/pdf`
 - `/api/internal/ascends/uc/hrm/karyawan-masuk-per-departemen-per-tanggal-masuk/pdf`
 - `/api/internal/ascends/uc/hrm/karyawan-per-agama/pdf`
-- `/api/internal/ascends/uc/hrm/karyawan-per-departemen-per-jabatan/pdf`
+- `/api/internal/ascends/uc/hrm/karyawan-per-departemen-per-jabatan/pdf` — **Diagram + List**
 - `/api/internal/ascends/uc/hrm/karyawan-per-etnis/pdf`
-- `/api/internal/ascends/uc/hrm/karyawan-per-level/pdf`
-- `/api/internal/ascends/uc/hrm/karyawan-per-masa-kerja/pdf`
+- `/api/internal/ascends/uc/hrm/karyawan-per-level/pdf` — **Diagram + List**
+- `/api/internal/ascends/uc/hrm/karyawan-per-masa-kerja/pdf` — **Diagram + List**
 - `/api/internal/ascends/uc/hrm/karyawan-per-umur/pdf`
 - `/api/internal/ascends/uc/hrm/kehadiran-kk-kt-st/pdf`
 - `/api/internal/ascends/uc/hrm/late-sign-in/durasi-denda-keterlambatan/pdf`
@@ -526,7 +537,7 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/uc/hrm/overtime/lembur-bulanan/pdf`
 - `/api/internal/ascends/uc/hrm/perbandingan-jumlah-karyawan-tahunan-per-bulan/pdf`
 - `/api/internal/ascends/uc/hrm/thr/pdf`
-- `/api/internal/ascends/uc/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf`
+- `/api/internal/ascends/uc/hrm/usia-generasi-tahun-kelahiran-masa-kerja/pdf` — **Diagram + List**
 - `/api/internal/ascends/uc/hrm/warning-notice/surat-peringatan/pdf`
 
 ### inventory_analysis (27)
