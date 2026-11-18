@@ -19,19 +19,13 @@ class AscendsDiagramKaryawanPerDivisiReportTest extends TestCase
         ], $reportData['rows']);
     }
 
-    public function test_falls_back_to_department_then_sub_department(): void
+    public function test_ignores_department_columns_and_labels_missing_division(): void
     {
         $reportData = app(DiagramKaryawanPerDivisiReportService::class)
             ->buildReportDataFromXml($this->departmentXml(), 'test xml');
 
-        $this->assertSame('D1', $reportData['rows'][0]['Kode']);
-        $this->assertSame('Produksi', $reportData['rows'][0]['Divisi']);
-
-        $subDepartment = app(DiagramKaryawanPerDivisiReportService::class)
-            ->buildReportDataFromXml($this->subDepartmentXml(), 'test xml');
-
-        $this->assertSame('S1', $subDepartment['rows'][0]['Kode']);
-        $this->assertSame('Rotary', $subDepartment['rows'][0]['Divisi']);
+        $this->assertSame('', $reportData['rows'][0]['Kode']);
+        $this->assertSame('Tanpa Divisi', $reportData['rows'][0]['Divisi']);
     }
 
     public function test_empty_division_is_labelled_tanpa_divisi(): void
@@ -85,17 +79,4 @@ XML;
 XML;
     }
 
-    private function subDepartmentXml(): string
-    {
-        return <<<'XML'
-<NewDataSet>
-    <Employees>
-        <Employee_x0020_Code>1</Employee_x0020_Code>
-        <Sub-Department_x0020_Code>S1</Sub-Department_x0020_Code>
-        <Sub-Department_x0020_Name>Rotary</Sub-Department_x0020_Name>
-        <Active>Active</Active>
-    </Employees>
-</NewDataSet>
-XML;
-    }
 }

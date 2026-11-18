@@ -62,16 +62,6 @@ class DiagramKaryawanPerDivisiReportService
             $kode = trim((string) ($row['Kode Divisi'] ?? ''));
             $name = trim((string) ($row['Divisi'] ?? ''));
 
-            // Fall back through department levels for payloads without Division columns.
-            if ($name === '') {
-                $kode = trim((string) ($row['Kode Dept.'] ?? ''));
-                $name = trim((string) ($row['Departemen'] ?? ''));
-            }
-            if ($name === '') {
-                $kode = trim((string) ($row['Kode Sub Dept.'] ?? ''));
-                $name = trim((string) ($row['Sub Departemen'] ?? ''));
-            }
-
             $displayName = $name !== '' ? $name : 'Tanpa Divisi';
             $key = $kode !== '' ? $kode : $displayName;
 
