@@ -106,13 +106,9 @@ use App\Services\Ascends\Shared\Hrm\DaftarLiburCutiBersamaReportService;
 use App\Services\Ascends\Shared\Hrm\DataKaryawanStatusKerjaReportService;
 use App\Services\Ascends\Shared\Hrm\DataPesertaMakanSiangIbadahAulaPerDepartemenReportService;
 use App\Services\Ascends\Shared\Hrm\DataPesertaMakanSiangShalatJumatPerDepartemenReportService;
-use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDepartemenReportService;
 use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerDivisiReportService;
 use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerJenisKelaminReportService;
-use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerLevelReportService;
-use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerMasaKerjaReportService;
 use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerStrataPendidikanReportService;
-use App\Services\Ascends\Shared\Hrm\DiagramKaryawanPerUsiaGenerasiReportService;
 use App\Services\Ascends\Shared\Hrm\DurasiDendaKeterlambatanReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeListReportService;
 use App\Services\Ascends\Shared\Hrm\EmployeeTerminationReportService;
@@ -1001,13 +997,6 @@ final class CompanyReportRegistry
                 pdf: ['format' => 'A4', 'orientation' => 'portrait'],
                 filename: fn (array $data, string $company): string => 'Employee List - Laporan Data Karyawan Staff, Karyawan Tetap & Karyawan Kontrak Berdasarkan Status Kerja ('.$company.').pdf',
             ),
-            'hrm.employee-list.diagram-karyawan-per-departemen' => new CompanyReportDefinition(
-                slug: 'hrm.employee-list.diagram-karyawan-per-departemen',
-                service: DiagramKaryawanPerDepartemenReportService::class,
-                view: 'ascends.shared.hrm.employee_list.diagram_karyawan_per_departemen.pdf',
-                pdf: ['format' => 'A4', 'orientation' => 'portrait'],
-                filename: fn (array $data, string $company): string => 'Employee List - Laporan Diagram Karyawan Per Departemen ('.$company.').pdf',
-            ),
             'hrm.employee-list.diagram-karyawan-per-divisi' => new CompanyReportDefinition(
                 slug: 'hrm.employee-list.diagram-karyawan-per-divisi',
                 service: DiagramKaryawanPerDivisiReportService::class,
@@ -1022,33 +1011,12 @@ final class CompanyReportRegistry
                 pdf: ['format' => 'A4', 'orientation' => 'portrait'],
                 filename: fn (array $data, string $company): string => 'Employee List - Laporan Diagram Karyawan Per Jenis Kelamin ('.$company.').pdf',
             ),
-            'hrm.employee-list.diagram-karyawan-per-level' => new CompanyReportDefinition(
-                slug: 'hrm.employee-list.diagram-karyawan-per-level',
-                service: DiagramKaryawanPerLevelReportService::class,
-                view: 'ascends.shared.hrm.employee_list.diagram_karyawan_per_level.pdf',
-                pdf: ['format' => 'A4', 'orientation' => 'portrait'],
-                filename: fn (array $data, string $company): string => 'Employee List - Laporan Diagram Karyawan Per Level ('.$company.').pdf',
-            ),
-            'hrm.employee-list.diagram-karyawan-per-masa-kerja' => new CompanyReportDefinition(
-                slug: 'hrm.employee-list.diagram-karyawan-per-masa-kerja',
-                service: DiagramKaryawanPerMasaKerjaReportService::class,
-                view: 'ascends.shared.hrm.employee_list.diagram_karyawan_per_masa_kerja.pdf',
-                pdf: ['format' => 'A4', 'orientation' => 'portrait'],
-                filename: fn (array $data, string $company): string => 'Employee List - Laporan Diagram Karyawan Per Masa Kerja ('.$company.').pdf',
-            ),
             'hrm.employee-list.diagram-karyawan-per-strata-pendidikan' => new CompanyReportDefinition(
                 slug: 'hrm.employee-list.diagram-karyawan-per-strata-pendidikan',
                 service: DiagramKaryawanPerStrataPendidikanReportService::class,
                 view: 'ascends.shared.hrm.employee_list.diagram_karyawan_per_strata_pendidikan.pdf',
                 pdf: ['format' => 'A4', 'orientation' => 'portrait'],
                 filename: fn (array $data, string $company): string => 'Employee List - Laporan Diagram Karyawan Per Strata Pendidikan ('.$company.').pdf',
-            ),
-            'hrm.employee-list.diagram-karyawan-per-usia-generasi' => new CompanyReportDefinition(
-                slug: 'hrm.employee-list.diagram-karyawan-per-usia-generasi',
-                service: DiagramKaryawanPerUsiaGenerasiReportService::class,
-                view: 'ascends.shared.hrm.employee_list.diagram_karyawan_per_usia_generasi.pdf',
-                pdf: ['format' => 'A4', 'orientation' => 'portrait'],
-                filename: fn (array $data, string $company): string => 'Employee List - Laporan Diagram Karyawan Per Usia Generasi ('.$company.').pdf',
             ),
             'hrm.employee-list.mpp-tahunan-per-divisi' => new CompanyReportDefinition(
                 slug: 'hrm.employee-list.mpp-tahunan-per-divisi',

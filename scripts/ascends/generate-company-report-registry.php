@@ -257,7 +257,17 @@ ksort($records);
 $usedServices = [];
 $entries = [];
 $published = [];
+$retiredDiagramSlugs = [
+    'hrm.employee-list.diagram-karyawan-per-departemen',
+    'hrm.employee-list.diagram-karyawan-per-level',
+    'hrm.employee-list.diagram-karyawan-per-masa-kerja',
+    'hrm.employee-list.diagram-karyawan-per-usia-generasi',
+];
 foreach ($records as $slug => $byCompany) {
+    if (in_array($slug, $retiredDiagramSlugs, true)) {
+        continue;
+    }
+
     $allowed = array_values(array_filter($companies, fn (string $company): bool => isset($byCompany[$company])));
     $base = $byCompany[$allowed[0]];
     $usedServices[$base['service']] = true;

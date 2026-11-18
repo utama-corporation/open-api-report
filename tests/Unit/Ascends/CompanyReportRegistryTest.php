@@ -53,11 +53,16 @@ class CompanyReportRegistryTest extends TestCase
 
     public function test_registry_covers_every_shared_route_after_suffix_normalization(): void
     {
-        $paths = $this->sharedRoutePaths();
+        $paths = array_values(array_diff($this->sharedRoutePaths(), [
+            'hrm.employee-list.diagram-karyawan-per-departemen',
+            'hrm.employee-list.diagram-karyawan-per-level',
+            'hrm.employee-list.diagram-karyawan-per-masa-kerja',
+            'hrm.employee-list.diagram-karyawan-per-usia-generasi',
+        ]));
         sort($paths);
 
-        // 180 shared route paths collapse to 163 slugs once company suffixes are stripped.
-        $this->assertSame(163, count($paths));
+        // Four diagram slugs are merged into their list reports; 180 shared paths collapse to 159 slugs.
+        $this->assertSame(159, count($paths));
         $this->assertSame($paths, array_keys(CompanyReportRegistry::all()));
         $this->assertNotNull(CompanyReportRegistry::get('general_ledger.trial_balance_monthly.arus-kas'));
         $this->assertSame(['ru'], CompanyReportRegistry::allowedCompanies('finance.receivable-summary.umur-piutang'));

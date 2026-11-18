@@ -1,6 +1,6 @@
 # Daftar Endpoint Laporan Ascends per Company
 
-Total: **477 endpoint** (GSU 161, RU 165, UC 151).
+Total: **465 endpoint** (GSU 157, RU 161, UC 147).
 
 Semua endpoint adalah `POST`.
 
@@ -12,10 +12,10 @@ Semua endpoint adalah `POST`.
   - Karyawan Per Level
   - Karyawan Per Masa Kerja
   - Karyawan Usia Generasi Berdasarkan Tahun Kelahiran dan Masa Kerja
-- Route diagram lama (`/hrm/employee-list/diagram-karyawan-*`) tetap tersedia untuk backward compatibility.
+- Route diagram lama untuk empat laporan di atas sudah dihapus dari endpoint company; route diagram lain yang belum digabung tetap tersedia.
 - Endpoint modul `sales` masih dilayani controller legacy `AscendXmlTestController`; endpoint lain memakai `CompanyReportController`.
 
-## GSU (161 endpoint)
+## GSU (157 endpoint)
 
 ### associate (4)
 
@@ -104,7 +104,7 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/gsu/general_ledger/trial_balance_monthly/laba-rugi-multi-periode/pdf`
 - `/api/internal/ascends/gsu/general_ledger/trial_balance_monthly/pendukung-arus-kas/pdf`
 
-### hrm (55)
+### hrm (51)
 
 - `/api/internal/ascends/gsu/hrm/absence/ketidakhadiran-bulanan/pdf`
 - `/api/internal/ascends/gsu/hrm/attendance-full/absensi-briefing-harian/pdf`
@@ -132,13 +132,9 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/gsu/hrm/daftar-karyawan-berdasarkan-abjad/pdf`
 - `/api/internal/ascends/gsu/hrm/daftar-karyawan/pdf`
 - `/api/internal/ascends/gsu/hrm/data-karyawan-status-kerja/pdf`
-- `/api/internal/ascends/gsu/hrm/employee-list/diagram-karyawan-per-departemen/pdf`
 - `/api/internal/ascends/gsu/hrm/employee-list/diagram-karyawan-per-divisi/pdf`
 - `/api/internal/ascends/gsu/hrm/employee-list/diagram-karyawan-per-jenis-kelamin/pdf`
-- `/api/internal/ascends/gsu/hrm/employee-list/diagram-karyawan-per-level/pdf`
-- `/api/internal/ascends/gsu/hrm/employee-list/diagram-karyawan-per-masa-kerja/pdf`
 - `/api/internal/ascends/gsu/hrm/employee-list/diagram-karyawan-per-strata-pendidikan/pdf`
-- `/api/internal/ascends/gsu/hrm/employee-list/diagram-karyawan-per-usia-generasi/pdf`
 - `/api/internal/ascends/gsu/hrm/employee-list/mpp-tahunan-per-divisi/pdf`
 - `/api/internal/ascends/gsu/hrm/employee-termination/pdf`
 - `/api/internal/ascends/gsu/hrm/holiday/daftar-libur-cuti-bersama/pdf`
@@ -202,7 +198,7 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/gsu/sales/surat-jalan/panjang/pdf` — legacy controller
 - `/api/internal/ascends/gsu/sales/surat-jalan/pdf` — legacy controller
 
-## RU (165 endpoint)
+## RU (161 endpoint)
 
 ### associate (4)
 
@@ -293,7 +289,7 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/ru/general_ledger/trial_balance_monthly/laba-rugi-multi-periode/pdf`
 - `/api/internal/ascends/ru/general_ledger/trial_balance_monthly/pendukung-arus-kas/pdf`
 
-### hrm (54)
+### hrm (50)
 
 - `/api/internal/ascends/ru/hrm/absence/ketidakhadiran-bulanan/pdf`
 - `/api/internal/ascends/ru/hrm/attendance-full/absensi-briefing-harian/pdf`
@@ -321,13 +317,9 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/ru/hrm/daftar-karyawan-berdasarkan-abjad/pdf`
 - `/api/internal/ascends/ru/hrm/daftar-karyawan/pdf`
 - `/api/internal/ascends/ru/hrm/data-karyawan-status-kerja/pdf`
-- `/api/internal/ascends/ru/hrm/employee-list/diagram-karyawan-per-departemen/pdf`
 - `/api/internal/ascends/ru/hrm/employee-list/diagram-karyawan-per-divisi/pdf`
 - `/api/internal/ascends/ru/hrm/employee-list/diagram-karyawan-per-jenis-kelamin/pdf`
-- `/api/internal/ascends/ru/hrm/employee-list/diagram-karyawan-per-level/pdf`
-- `/api/internal/ascends/ru/hrm/employee-list/diagram-karyawan-per-masa-kerja/pdf`
 - `/api/internal/ascends/ru/hrm/employee-list/diagram-karyawan-per-strata-pendidikan/pdf`
-- `/api/internal/ascends/ru/hrm/employee-list/diagram-karyawan-per-usia-generasi/pdf`
 - `/api/internal/ascends/ru/hrm/employee-termination/pdf`
 - `/api/internal/ascends/ru/hrm/holiday/daftar-libur-cuti-bersama/pdf`
 - `/api/internal/ascends/ru/hrm/karyawan-aktif-per-departemen/pdf`
@@ -393,7 +385,7 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/ru/sales/surat-jalan/panjang/pdf` — legacy controller
 - `/api/internal/ascends/ru/sales/surat-jalan/pdf` — legacy controller
 
-## UC (151 endpoint)
+## UC (147 endpoint)
 
 ### associate (4)
 
@@ -484,7 +476,7 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/uc/general_ledger/trial_balance_monthly/laba-rugi-multi-periode/pdf`
 - `/api/internal/ascends/uc/general_ledger/trial_balance_monthly/pendukung-arus-kas/pdf`
 
-### hrm (53)
+### hrm (49)
 
 - `/api/internal/ascends/uc/hrm/absence/ketidakhadiran-bulanan/pdf`
 - `/api/internal/ascends/uc/hrm/attendance-full/absensi-briefing-harian/pdf`
@@ -511,13 +503,9 @@ Semua endpoint adalah `POST`.
 - `/api/internal/ascends/uc/hrm/daftar-karyawan-berdasarkan-abjad/pdf`
 - `/api/internal/ascends/uc/hrm/daftar-karyawan/pdf`
 - `/api/internal/ascends/uc/hrm/data-karyawan-status-kerja/pdf`
-- `/api/internal/ascends/uc/hrm/employee-list/diagram-karyawan-per-departemen/pdf`
 - `/api/internal/ascends/uc/hrm/employee-list/diagram-karyawan-per-divisi/pdf`
 - `/api/internal/ascends/uc/hrm/employee-list/diagram-karyawan-per-jenis-kelamin/pdf`
-- `/api/internal/ascends/uc/hrm/employee-list/diagram-karyawan-per-level/pdf`
-- `/api/internal/ascends/uc/hrm/employee-list/diagram-karyawan-per-masa-kerja/pdf`
 - `/api/internal/ascends/uc/hrm/employee-list/diagram-karyawan-per-strata-pendidikan/pdf`
-- `/api/internal/ascends/uc/hrm/employee-list/diagram-karyawan-per-usia-generasi/pdf`
 - `/api/internal/ascends/uc/hrm/employee-termination/pdf`
 - `/api/internal/ascends/uc/hrm/holiday/daftar-libur-cuti-bersama/pdf`
 - `/api/internal/ascends/uc/hrm/karyawan-aktif-per-departemen/pdf`
