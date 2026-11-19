@@ -58,7 +58,12 @@ class SuratPeringatanReportService
 
         $rows = [];
         while ($reader->read()) {
-            if ($reader->nodeType !== XMLReader::ELEMENT || strtolower($reader->name) !== 'warning') {
+            // Ascend uses different record tag names per report; accept any direct child of the root.
+            if ($reader->nodeType !== XMLReader::ELEMENT || $reader->depth !== 1) {
+                continue;
+            }
+
+            if (str_contains(strtolower($reader->name), 'schema')) {
                 continue;
             }
 

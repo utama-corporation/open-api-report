@@ -94,6 +94,13 @@ class GenerateAscendsEmployeeListReportRequest extends BaseReportRequest
             return is_string($contents) && trim($contents) !== '' ? $contents : null;
         }
 
+        // Ascend clients name the XML field differently per report; accept any string input.
+        foreach ($this->all() as $value) {
+            if (is_string($value) && str_starts_with(ltrim($value), '<') && trim($value) !== '') {
+                return $value;
+            }
+        }
+
         $rawBody = trim($this->getContent());
         if (str_starts_with($rawBody, '<')) {
             return $rawBody;
