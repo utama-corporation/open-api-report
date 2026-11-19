@@ -409,7 +409,8 @@ Input XML khusus `pendapatan-lain-lain`:
 - Gunakan XML `AnlReports.HRM.OtherIncomeDeduction.xml` dari modul Other Income Deduction Ascend.
 - Tabel XML yang dibaca: `income`.
 - Field utama yang ditampilkan: `Nama Lengkap`, `Tanggal`, `Keterangan`, `Disetujui Oleh`, dan `Jumlah`.
-- Data dengan `Approved By = employeeother` tidak ditampilkan, mengikuti output Crystal Report referensi.
+- Data dengan `Approved By = employeeother` tetap ditampilkan.
+- `Pilih Type` / `type`: opsional, nilai `Staff` atau `KK/KT`; jika tidak dikirim semua tipe ditampilkan.
 
 Input tambahan khusus `ketidakhadiran-bulanan`:
 

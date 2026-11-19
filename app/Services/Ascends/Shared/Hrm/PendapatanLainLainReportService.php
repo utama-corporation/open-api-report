@@ -2,20 +2,32 @@
 
 namespace App\Services\Ascends\Shared\Hrm;
 
+use App\Services\Concerns\ResolvesFilterAliases;
 use Carbon\Carbon;
 use RuntimeException;
 use XMLReader;
 
 class PendapatanLainLainReportService
 {
+    use ResolvesFilterAliases;
+
     private const TITLE = 'Laporan Pendapatan Lain-Lain';
 
     /**
+     * @param  array<string, mixed>  $filters
      * @return array<string, mixed>
      */
-    public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload'): array
+    public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload', array $filters = []): array
     {
         $rows = $this->parseXml($xmlContents, $sourceLabel);
+
+        $type = self::resolveType($filters);
+        if ($type !== '') {
+            $rows = array_values(array_filter(
+                $rows,
+                static fn (array $row): bool => self::matchesType($row, $type)
+            ));
+        }
 
         usort($rows, static function (array $left, array $right): int {
             return [
@@ -91,6 +103,12 @@ class PendapatanLainLainReportService
                 'remarks' => trim((string) ($node->Remarks ?? '')),
                 'approved_by' => trim((string) ($node->{'Approved_x0020_By'} ?? '')),
                 'amount' => (float) trim((string) ($node->Amount ?? '0')),
+                'worker_type' => trim((string) (
+                    $node->{'Daily_x0020_Worker_x0020_Type_x0020_Code'}
+                    ?? $node->{'Employee_x0020_Type'}
+                    ?? $node->Type
+                    ?? ''
+                )),
                 'payroll_start' => trim((string) ($node->{'Payroll_x0020_Period_x0020__x0028_Start_x0029_'} ?? '')),
             ];
         }
@@ -102,6 +120,41 @@ class PendapatanLainLainReportService
         }
 
         return $rows;
+    }
+
+    private static function resolveType(array $filters): string
+    {
+        $value = self::resolveFilterValue($filters, [
+            'Pilih Type', 'Pilih_x0020_Type', 'pilih_type', 'pilihType', 'type', 'Type',
+        ]);
+
+        $upper = strtoupper($value);
+
+        if (str_contains($upper, 'STAFF') || $upper === 'ST') {
+            return 'Staff';
+        }
+
+        if (str_contains($upper, 'KK') || str_contains($upper, 'KT') || $upper === 'BR') {
+            return 'KK/KT';
+        }
+
+        return '';
+    }
+
+    private static function matchesType(array $row, string $type): bool
+    {
+        $code = strtoupper(trim((string) ($row['worker_type'] ?? '')));
+
+        // Payloads without an employee type column cannot be filtered safely.
+        if ($code === '') {
+            return true;
+        }
+
+        if ($type === 'Staff') {
+            return $code === 'ST' || str_contains($code, 'STAFF');
+        }
+
+        return in_array($code, ['KK', 'KT', 'BR'], true);
     }
 
     private static function resolvePeriodLabel(array $rows): string

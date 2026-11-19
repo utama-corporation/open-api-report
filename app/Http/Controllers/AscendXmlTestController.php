@@ -4208,7 +4208,8 @@ class AscendXmlTestController extends Controller
             $company = $this->resolveSharedHrmCompany($request, $xmlPayload);
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
-                $request->xmlSourceLabel() ?? 'request xml payload'
+                $request->xmlSourceLabel() ?? 'request xml payload',
+                $this->attendanceFullTypeFilters($request)
             );
 
             $reportData['company'] = $company;

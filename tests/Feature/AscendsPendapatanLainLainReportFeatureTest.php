@@ -25,7 +25,7 @@ class AscendsPendapatanLainLainReportFeatureTest extends TestCase
         $service
             ->shouldReceive('buildReportDataFromXml')
             ->once()
-            ->with($xml, 'request upload: other-income.xml')
+            ->with($xml, 'request upload: other-income.xml', Mockery::type('array'))
             ->andReturn($this->reportData('GSU'));
 
         $pdfGenerator = Mockery::mock(PdfGenerator::class);
@@ -74,6 +74,34 @@ class AscendsPendapatanLainLainReportFeatureTest extends TestCase
     /**
      * @return array<string, mixed>
      */
+    public function test_filters_rows_by_pilih_type(): void
+    {
+        $xml = <<<'XML'
+<NewDataSet>
+    <income>
+        <Full_x0020_Name>Staff A</Full_x0020_Name>
+        <Date>2026-05-01T00:00:00+07:00</Date>
+        <Daily_x0020_Worker_x0020_Type_x0020_Code>ST</Daily_x0020_Worker_x0020_Type_x0020_Code>
+        <Amount>0</Amount>
+    </income>
+    <income>
+        <Full_x0020_Name>Kontrak B</Full_x0020_Name>
+        <Date>2026-05-02T00:00:00+07:00</Date>
+        <Daily_x0020_Worker_x0020_Type_x0020_Code>KK</Daily_x0020_Worker_x0020_Type_x0020_Code>
+        <Amount>0</Amount>
+    </income>
+</NewDataSet>
+XML;
+
+        $staff = app(PendapatanLainLainReportService::class)
+            ->buildReportDataFromXml($xml, 'test xml', ['Pilih Type' => 'Staff']);
+        $this->assertSame(['Staff A'], array_column($staff['rows'], 'Nama Lengkap'));
+
+        $kkkt = app(PendapatanLainLainReportService::class)
+            ->buildReportDataFromXml($xml, 'test xml', ['type' => 'KK/KT']);
+        $this->assertSame(['Kontrak B'], array_column($kkkt['rows'], 'Nama Lengkap'));
+    }
+
     private function reportData(string $company): array
     {
         return [
