@@ -8,8 +8,10 @@ use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas60HariReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableSummary\UmurPiutangRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorRuReportService;
+use App\Services\Ascends\Shared\Hrm\CustomReports\DiagramLemburTahunanReportService;
 use App\Services\Ascends\Shared\Hrm\UsiaGenerasiTahunKelahiranMasaKerjaReportService;
 use App\Services\PdfGenerator;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Route;
 use Mockery;
 use Tests\TestCase;
@@ -42,6 +44,11 @@ class CompanyReportControllerTest extends TestCase
             '/api/internal/ascends/{company}/associate/customer-baru-per-tahun/pdf',
             [CompanyReportController::class, 'pdf']
         )->defaults('report', 'associate.customer-baru-per-tahun');
+
+        Route::post(
+            '/api/internal/ascends/{company}/hrm/custom-reports/diagram-lembur-tahunan/pdf',
+            [CompanyReportController::class, 'pdf']
+        )->defaults('report', 'hrm.custom-reports.diagram-lembur-tahunan');
     }
 
     protected function tearDown(): void
@@ -357,6 +364,31 @@ class CompanyReportControllerTest extends TestCase
         $this->post('/api/internal/ascends/gsu/associate/customer-baru-per-tahun/pdf', [
             'xml' => $xml,
             'Tahun' => '2025',
+        ])->assertOk();
+    }
+
+    public function test_diagram_lembur_tahunan_passes_two_xml_files(): void
+    {
+        $service = Mockery::mock(DiagramLemburTahunanReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with('<st/>', '<kkkt/>', Mockery::on(
+                static fn (string $label): bool => str_contains($label, 'ST:st.xml') && str_contains($label, 'KK/KT:kkkt.xml')
+            ), Mockery::on(
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'UC'
+            ))
+            ->andReturn(['title' => 'Laporan Diagram Lembur Tahunan Per Departemen', 'rows' => []]);
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator->shouldReceive('render')->once()->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(DiagramLemburTahunanReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $this->post('/api/internal/ascends/uc/hrm/custom-reports/diagram-lembur-tahunan/pdf', [
+            'xml_file_st' => UploadedFile::fake()->createWithContent('st.xml', '<st/>'),
+            'xml_file_kk_kt' => UploadedFile::fake()->createWithContent('kkkt.xml', '<kkkt/>'),
         ])->assertOk();
     }
 
