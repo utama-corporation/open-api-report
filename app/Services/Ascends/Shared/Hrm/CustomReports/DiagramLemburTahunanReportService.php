@@ -217,7 +217,12 @@ class DiagramLemburTahunanReportService
         $dataRows = [];
 
         while ($reader->read()) {
-            if ($reader->nodeType !== XMLReader::ELEMENT || strtolower($reader->name) !== 'table') {
+            // Ascend uses different record tag names per report; accept any direct child of the root.
+            if ($reader->nodeType !== XMLReader::ELEMENT || $reader->depth !== 1) {
+                continue;
+            }
+
+            if (str_contains(strtolower($reader->name), 'schema')) {
                 continue;
             }
 
@@ -236,7 +241,9 @@ class DiagramLemburTahunanReportService
                 $row[$key] = trim((string) $value);
             }
 
-            if (($row['EmployeeID'] ?? '') !== '') {
+            $row = self::normalizeRow($row);
+
+            if (($row['EmployeeID'] ?? '') !== '' || ($row['EmployeeCode'] ?? '') !== '') {
                 $dataRows[] = $row;
             }
         }
@@ -245,6 +252,34 @@ class DiagramLemburTahunanReportService
 
         return [
             'data_rows' => $dataRows,
+        ];
+    }
+
+    /**
+     * Map encoded Ascend column names to the keys used by this report.
+     *
+     * @param  array<string, string>  $row
+     * @return array<string, string>
+     */
+    private static function normalizeRow(array $row): array
+    {
+        $normalized = [];
+        foreach ($row as $key => $value) {
+            $normalized[strtolower(str_replace(
+                ['_x0020_', ' ', '_', '-', '.'],
+                '',
+                $key
+            ))] = $value;
+        }
+
+        return $row + [
+            'EmployeeID' => $normalized['employeeid'] ?? '',
+            'EmployeeCode' => $normalized['employeecode'] ?? '',
+            'Date' => $normalized['date'] ?? $normalized['perioddate'] ?? '',
+            'DepartmentName' => $normalized['departmentname'] ?? $normalized['department'] ?? 'Tanpa Departemen',
+            'DailyWorkerTypeCode' => $normalized['dailyworkertypecode'] ?? $normalized['employeetype'] ?? $normalized['type'] ?? '',
+            'ActualHours' => $normalized['actualhours'] ?? $normalized['hours'] ?? '0',
+            'Total' => $normalized['total'] ?? $normalized['amount'] ?? '0',
         ];
     }
 
