@@ -138,7 +138,7 @@
             ->translatedFormat('d-M-y H:i');
         $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
         $type = trim((string) ($reportData['type'] ?? ''));
-        $title = trim((string) ($reportData['title'] ?? 'Laporan Durasi & Denda Keterlambatan ('.$type.')'));
+        $title = trim((string) ($reportData['title'] ?? 'Laporan Durasi & Denda Keterlambatan ('.$type.') Per Departemen'));
     @endphp
 
     @include('ascends.shared.partials.report-header', ['subtitle' => $periodLabel, 'title' => $title])

@@ -3531,7 +3531,7 @@ class AscendXmlTestController extends Controller
 
             $type = trim((string) ($reportData['type'] ?? $this->attendanceFullType($request)));
             $reportData['company'] = $company;
-            $reportData['title'] = "Laporan Durasi & Denda Keterlambatan Per Departemen ({$type})";
+            $reportData['title'] = "Laporan Durasi & Denda Keterlambatan ({$type}) Per Departemen";
             $reportData['label'] = $reportData['title'];
             $reportData = $this->applyAscendSystemFields($request, $reportData);
         } catch (RuntimeException $exception) {

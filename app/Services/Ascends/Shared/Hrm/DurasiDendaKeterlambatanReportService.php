@@ -12,8 +12,6 @@ class DurasiDendaKeterlambatanReportService
 {
     use ResolvesFilterAliases;
 
-    private const TITLE = 'Laporan Durasi & Denda Keterlambatan';
-
     private const START_DATE_ALIASES = [
         'start_date',
         'StartDate',
@@ -61,7 +59,7 @@ class DurasiDendaKeterlambatanReportService
         $rows = array_merge(...array_map(static fn (array $group): array => $group['rows'], $groupedRows));
 
         return [
-            'title' => self::TITLE,
+            'title' => 'Laporan Durasi & Denda Keterlambatan ('.$type.') Per Departemen',
             'type' => $type,
             'source_file' => $sourceLabel,
             'printed_at' => Carbon::now()->locale('id')->translatedFormat('d F Y H:i'),
