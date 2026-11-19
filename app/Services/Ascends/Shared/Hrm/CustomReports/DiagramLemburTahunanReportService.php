@@ -272,14 +272,26 @@ class DiagramLemburTahunanReportService
             ))] = $value;
         }
 
+        $first = static function (array $keys) use ($normalized): string {
+            foreach ($keys as $needle) {
+                foreach ($normalized as $key => $value) {
+                    if (str_contains($key, $needle)) {
+                        return (string) $value;
+                    }
+                }
+            }
+
+            return '';
+        };
+
         return $row + [
             'EmployeeID' => $normalized['employeeid'] ?? '',
             'EmployeeCode' => $normalized['employeecode'] ?? '',
             'Date' => $normalized['date'] ?? $normalized['perioddate'] ?? '',
-            'DepartmentName' => $normalized['departmentname'] ?? $normalized['department'] ?? 'Tanpa Departemen',
-            'DailyWorkerTypeCode' => $normalized['dailyworkertypecode'] ?? $normalized['employeetype'] ?? $normalized['type'] ?? '',
-            'ActualHours' => $normalized['actualhours'] ?? $normalized['hours'] ?? '0',
-            'Total' => $normalized['total'] ?? $normalized['amount'] ?? '0',
+            'DepartmentName' => $first(['departmentname', 'department', 'departemen']) ?: 'Tanpa Departemen',
+            'DailyWorkerTypeCode' => $first(['dailyworkertypecode', 'workertype', 'employeetype', 'type', 'tipe']),
+            'ActualHours' => $first(['actualhours', 'hours', 'jam']) ?: '0',
+            'Total' => $first(['total', 'amount', 'cost', 'jumlah']) ?: '0',
         ];
     }
 

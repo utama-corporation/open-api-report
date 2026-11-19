@@ -18,7 +18,7 @@ class AscendsDiagramLemburTahunanReportTest extends TestCase
         <Department_x0020_Name>HRGA</Department_x0020_Name>
         <Daily_x0020_Worker_x0020_Type_x0020_Code>ST</Daily_x0020_Worker_x0020_Type_x0020_Code>
         <Actual_x0020_Hours>2</Actual_x0020_Hours>
-        <Total>100000</Total>
+        <Total_x0020_Cost>100000</Total_x0020_Cost>
     </Table1>
     <Table1>
         <Employee_x0020_ID>2</Employee_x0020_ID>
@@ -27,7 +27,7 @@ class AscendsDiagramLemburTahunanReportTest extends TestCase
         <Department_x0020_Name>HRGA</Department_x0020_Name>
         <Daily_x0020_Worker_x0020_Type_x0020_Code>KK</Daily_x0020_Worker_x0020_Type_x0020_Code>
         <Actual_x0020_Hours>4</Actual_x0020_Hours>
-        <Total>200000</Total>
+        <Total_x0020_Cost>200000</Total_x0020_Cost>
     </Table1>
 </NewDataSet>
 XML;
