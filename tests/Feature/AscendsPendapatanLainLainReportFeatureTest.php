@@ -54,7 +54,7 @@ class AscendsPendapatanLainLainReportFeatureTest extends TestCase
         $this->assertPdfDisposition($response, 'attachment', 'Other Income Deduction - Laporan Pendapatan Lain Lain (GSU)');
     }
 
-    public function test_parser_excludes_employeeother_and_sorts_by_full_name(): void
+    public function test_parser_includes_employeeother_and_sorts_by_full_name(): void
     {
         $reportData = app(PendapatanLainLainReportService::class)
             ->buildReportDataFromXml($this->otherIncomeXml(), 'test xml');
@@ -62,12 +62,13 @@ class AscendsPendapatanLainLainReportFeatureTest extends TestCase
         $this->assertSame('Laporan Pendapatan Lain-Lain', $reportData['title']);
         $this->assertSame('Penambahan', $reportData['section_title']);
         $this->assertSame('Per : Juni-2026', $reportData['period']['label']);
-        $this->assertSame(2, $reportData['total_rows']);
+        $this->assertSame(3, $reportData['total_rows']);
         $this->assertSame('Angraini', $reportData['rows'][0]['Nama Lengkap']);
         $this->assertSame('29-Mei-26', $reportData['rows'][0]['Tanggal']);
         $this->assertSame('Dina', $reportData['rows'][0]['Disetujui Oleh']);
+        $this->assertSame('employeeother', $reportData['rows'][1]['Disetujui Oleh']);
         $this->assertSame('0', $reportData['total_amount']);
-        $this->assertSame(['Angraini', 'Weni Asi Gaho'], array_column($reportData['rows'], 'Nama Lengkap'));
+        $this->assertSame(['Angraini', 'Charlie Kwekianto', 'Weni Asi Gaho'], array_column($reportData['rows'], 'Nama Lengkap'));
     }
 
     /**

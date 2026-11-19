@@ -16,10 +16,6 @@ class PendapatanLainLainReportService
     public function buildReportDataFromXml(string $xmlContents, string $sourceLabel = 'request xml payload'): array
     {
         $rows = $this->parseXml($xmlContents, $sourceLabel);
-        $rows = array_values(array_filter(
-            $rows,
-            static fn (array $row): bool => strtolower(trim((string) ($row['approved_by'] ?? ''))) !== 'employeeother'
-        ));
 
         usort($rows, static function (array $left, array $right): int {
             return [
