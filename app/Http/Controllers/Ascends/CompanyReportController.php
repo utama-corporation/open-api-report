@@ -134,38 +134,48 @@ class CompanyReportController extends Controller
             $xmlPayload = '';
 
             if ($definition->slug === 'hrm.custom-reports.diagram-lembur-tahunan') {
-                // This report carries two XML payloads instead of one.
                 $fileSt = $request->file('xml_file_st');
                 $fileKkKt = $request->file('xml_file_kk_kt');
 
-                if (($fileSt === null || ! $fileSt->isValid()) && ($fileKkKt === null || ! $fileKkKt->isValid())) {
-                    throw new RuntimeException('Minimal satu file XML (xml_file_st atau xml_file_kk_kt) wajib dikirim.');
+                if (($fileSt !== null && $fileSt->isValid()) || ($fileKkKt !== null && $fileKkKt->isValid())) {
+                    // This report can carry two XML payloads instead of one.
+                    $xmlSt = ($fileSt !== null && $fileSt->isValid())
+                        ? file_get_contents((string) $fileSt->getRealPath())
+                        : null;
+                    $xmlKkKt = ($fileKkKt !== null && $fileKkKt->isValid())
+                        ? file_get_contents((string) $fileKkKt->getRealPath())
+                        : null;
+
+                    $xmlSt = is_string($xmlSt) ? $xmlSt : null;
+                    $xmlKkKt = is_string($xmlKkKt) ? $xmlKkKt : null;
+
+                    $sourceLabel = 'request upload';
+                    if ($fileSt !== null) {
+                        $sourceLabel .= ' ST:'.$fileSt->getClientOriginalName();
+                    }
+                    if ($fileKkKt !== null) {
+                        $sourceLabel .= ' KK/KT:'.$fileKkKt->getClientOriginalName();
+                    }
+
+                    $reportData = app($definition->serviceFor($company))->buildReportDataFromXml(
+                        $xmlSt,
+                        $xmlKkKt,
+                        $sourceLabel,
+                        $filters,
+                    );
+                } else {
+                    // Ascend normally sends one DataSet; split it by DailyWorkerTypeCode.
+                    $xmlPayload = $request->xmlPayload();
+                    if ($xmlPayload === null || trim($xmlPayload) === '') {
+                        throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+                    }
+
+                    $reportData = app($definition->serviceFor($company))->buildReportDataFromSingleXml(
+                        $xmlPayload,
+                        $request->xmlSourceLabel() ?? 'request xml payload',
+                        $filters,
+                    );
                 }
-
-                $xmlSt = ($fileSt !== null && $fileSt->isValid())
-                    ? file_get_contents((string) $fileSt->getRealPath())
-                    : null;
-                $xmlKkKt = ($fileKkKt !== null && $fileKkKt->isValid())
-                    ? file_get_contents((string) $fileKkKt->getRealPath())
-                    : null;
-
-                $xmlSt = is_string($xmlSt) ? $xmlSt : null;
-                $xmlKkKt = is_string($xmlKkKt) ? $xmlKkKt : null;
-
-                $sourceLabel = 'request upload';
-                if ($fileSt !== null) {
-                    $sourceLabel .= ' ST:'.$fileSt->getClientOriginalName();
-                }
-                if ($fileKkKt !== null) {
-                    $sourceLabel .= ' KK/KT:'.$fileKkKt->getClientOriginalName();
-                }
-
-                $reportData = app($definition->serviceFor($company))->buildReportDataFromXml(
-                    $xmlSt,
-                    $xmlKkKt,
-                    $sourceLabel,
-                    $filters,
-                );
             } else {
                 $xmlPayload = $request->xmlPayload();
                 if ($xmlPayload === null || trim($xmlPayload) === '') {

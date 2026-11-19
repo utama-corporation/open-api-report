@@ -22,6 +22,45 @@ class DiagramLemburTahunanReportService
         $stRows = $xmlContentsSt !== null ? $this->parseRows($xmlContentsSt, $sourceLabel)['data_rows'] : [];
         $kkKtRows = $xmlContentsKkKt !== null ? $this->parseRows($xmlContentsKkKt, $sourceLabel)['data_rows'] : [];
 
+        return $this->buildFromRows($stRows, $kkKtRows, $sourceLabel, $filters);
+    }
+
+    /**
+     * The Ascend DataSet may arrive as one XML containing both employee types.
+     *
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    public function buildReportDataFromSingleXml(
+        string $xmlContents,
+        string $sourceLabel = 'request xml payload',
+        array $filters = [],
+    ): array {
+        $rows = $this->parseRows($xmlContents, $sourceLabel)['data_rows'];
+        $stRows = [];
+        $kkKtRows = [];
+
+        foreach ($rows as $row) {
+            $type = strtoupper(trim((string) ($row['DailyWorkerTypeCode'] ?? '')));
+
+            if ($type === 'ST') {
+                $stRows[] = $row;
+            } elseif (in_array($type, ['KK', 'KT', 'BR', 'KK/KT'], true)) {
+                $kkKtRows[] = $row;
+            }
+        }
+
+        return $this->buildFromRows($stRows, $kkKtRows, $sourceLabel, $filters);
+    }
+
+    /**
+     * @param  array<int, array<string, string>>  $stRows
+     * @param  array<int, array<string, string>>  $kkKtRows
+     * @param  array<string, mixed>  $filters
+     * @return array<string, mixed>
+     */
+    private function buildFromRows(array $stRows, array $kkKtRows, string $sourceLabel, array $filters): array
+    {
         $stRowsFiltered = $this->filterByDateRange($stRows, $filters);
         $kkKtRowsFiltered = $this->filterByDateRange($kkKtRows, $filters);
 

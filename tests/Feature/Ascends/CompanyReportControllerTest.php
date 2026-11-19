@@ -392,6 +392,30 @@ class CompanyReportControllerTest extends TestCase
         ])->assertOk();
     }
 
+    public function test_diagram_lembur_tahunan_accepts_single_dataset_xml(): void
+    {
+        $xml = '<NewDataSet><Table><EmployeeID>1</EmployeeID><DailyWorkerTypeCode>KK/KT</DailyWorkerTypeCode></Table></NewDataSet>';
+
+        $service = Mockery::mock(DiagramLemburTahunanReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromSingleXml')
+            ->once()
+            ->with($xml, 'request field: xml', Mockery::on(
+                static fn (array $filters): bool => ($filters['company'] ?? null) === 'UC'
+            ))
+            ->andReturn(['title' => 'Laporan Diagram Lembur Tahunan Per Departemen', 'rows' => []]);
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator->shouldReceive('render')->once()->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(DiagramLemburTahunanReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $this->post('/api/internal/ascends/uc/hrm/custom-reports/diagram-lembur-tahunan/pdf', [
+            'xml' => $xml,
+        ])->assertOk();
+    }
+
     private function reportData(): array
     {
         return [
