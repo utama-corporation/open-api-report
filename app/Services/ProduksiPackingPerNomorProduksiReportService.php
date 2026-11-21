@@ -46,6 +46,8 @@ class ProduksiPackingPerNomorProduksiReportService
             'output_row_count' => count($report['output_rows'] ?? []),
             'repair_row_count' => count($report['repair_rows'] ?? []),
             'afkir_row_count' => count($report['afkir_rows'] ?? []),
+            'input_reproses_row_count' => count($report['input_reproses_rows'] ?? []),
+            'output_reproses_row_count' => count($report['output_reproses_rows'] ?? []),
         ];
     }
 
@@ -61,21 +63,37 @@ class ProduksiPackingPerNomorProduksiReportService
             'output' => [],
             'repair' => [],
             'afkir' => [],
+            'input_reproses' => [],
+            'output_reproses' => [],
         ];
         $labels = ['input' => null, 'output' => null];
 
         foreach ($rows as $row) {
-            foreach ($this->extractCandidates($row) as [$detail, $direction, $label]) {
-                $bucket = $this->resolveFlagBucket($row, $direction) ?? $direction;
+            $isReproses = $this->isReprosesRow($row);
 
-                if ($bucket === null) {
+            foreach ($this->extractCandidates($row) as [$detail, $direction, $label]) {
+                $flagBucket = $this->resolveFlagBucket($row, $direction);
+
+                if ($flagBucket !== null) {
+                    $buckets[$flagBucket][] = $detail;
+
                     continue;
                 }
 
-                $buckets[$bucket][] = $detail;
+                if ($direction === null) {
+                    continue;
+                }
 
-                if ($bucket === 'input' || $bucket === 'output') {
-                    $labels[$bucket] ??= $label;
+                $buckets[$direction][] = $detail;
+
+                // Reproses tetap dihitung di Input/Output agar total dan rendemen tidak berubah;
+                // tabel Reproses hanya merinci subsetnya.
+                if ($isReproses) {
+                    $buckets[$direction.'_reproses'][] = $detail;
+                }
+
+                if ($direction === 'input' || $direction === 'output') {
+                    $labels[$direction] ??= $label;
                 }
             }
         }
@@ -84,11 +102,15 @@ class ProduksiPackingPerNomorProduksiReportService
         $outputRows = $this->sortDetailRows($buckets['output']);
         $repairRows = $this->sortDetailRows($buckets['repair']);
         $afkirRows = $this->sortDetailRows($buckets['afkir']);
+        $inputReprosesRows = $this->sortDetailRows($buckets['input_reproses']);
+        $outputReprosesRows = $this->sortDetailRows($buckets['output_reproses']);
 
         $inputTotals = $this->calculateTotals($inputRows);
         $outputTotals = $this->calculateTotals($outputRows);
         $repairTotals = $this->calculateTotals($repairRows);
         $afkirTotals = $this->calculateTotals($afkirRows);
+        $inputReprosesTotals = $this->calculateTotals($inputReprosesRows);
+        $outputReprosesTotals = $this->calculateTotals($outputReprosesRows);
         // Rumus dari manajemen: (Output + Repair) / Input * 100. Afkir tidak dihitung.
         $rendemenNumerator = $outputTotals['kubik'] + $repairTotals['kubik'];
         $rendemen = $inputTotals['kubik'] > 0
@@ -115,11 +137,15 @@ class ProduksiPackingPerNomorProduksiReportService
             'output_rows' => $outputRows,
             'repair_rows' => $repairRows,
             'afkir_rows' => $afkirRows,
+            'input_reproses_rows' => $inputReprosesRows,
+            'output_reproses_rows' => $outputReprosesRows,
             'totals' => [
                 'input' => $inputTotals,
                 'output' => $outputTotals,
                 'repair' => $repairTotals,
                 'afkir' => $afkirTotals,
+                'input_reproses' => $inputReprosesTotals,
+                'output_reproses' => $outputReprosesTotals,
                 'rendemen' => $rendemen,
             ],
             'raw_columns' => array_keys($firstRow),
@@ -222,6 +248,21 @@ class ProduksiPackingPerNomorProduksiReportService
         }
 
         return null;
+    }
+
+    /**
+     * SP menandai baris reproses lewat kolom IsReproses (seperti IsReject/IsRepair).
+     * Group='REPROSES' tetap dipakai sebagai fallback untuk database yang SP-nya belum diperbarui.
+     *
+     * @param  array<string, mixed>  $row
+     */
+    private function isReprosesRow(array $row): bool
+    {
+        if (array_key_exists('IsReproses', $row)) {
+            return $this->isFlagSet($row, 'IsReproses');
+        }
+
+        return strcasecmp(trim((string) ($row['Group'] ?? '')), 'REPROSES') === 0;
     }
 
     /**

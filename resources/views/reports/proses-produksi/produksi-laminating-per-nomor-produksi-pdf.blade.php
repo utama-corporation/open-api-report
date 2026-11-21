@@ -220,6 +220,8 @@
         $outputRows = $report['output_rows'] ?? [];
         $repairRows = $report['repair_rows'] ?? [];
         $afkirRows = $report['afkir_rows'] ?? [];
+        $inputReprosesRows = $report['input_reproses_rows'] ?? [];
+        $outputReprosesRows = $report['output_reproses_rows'] ?? [];
         $totals = $report['totals'] ?? [];
         $generatedByName = $generatedBy->name ?? 'sistem';
 
@@ -235,28 +237,36 @@
         $outputTotals = $totals['output'] ?? $emptyTotals;
         $repairTotals = $totals['repair'] ?? $emptyTotals;
         $afkirTotals = $totals['afkir'] ?? $emptyTotals;
+        $inputReprosesTotals = $totals['input_reproses'] ?? $emptyTotals;
+        $outputReprosesTotals = $totals['output_reproses'] ?? $emptyTotals;
         $rendemen = $totals['rendemen'] ?? null;
 
         $pageHeightMm = 297 - 16 - 18;
         // Tinggi tetap: header/total tiap tabel, 2 baris meta tambahan, dan section Rangkuman di halaman terakhir.
-        $reservedHeightMm = 96;
+        $reservedHeightMm = 126;
         $rowHeightMm = 4.9;
 
-        // Tabel Repair dan Afkir ditumpuk di bawah Input/Output pada halaman yang sama,
-        // jadi tinggi yang tersedia dibagi dua hanya ketika tabel kedua memang berisi data.
-        $tableBlocks = ($repairRows !== [] || $afkirRows !== []) ? 2 : 1;
+        // Input/Output, Repair/Afkir, dan Reproses ditumpuk pada halaman yang sama,
+        // jadi tinggi yang tersedia dibagi hanya untuk pasangan tabel yang berisi data.
+        $tableBlocks = 1
+            + (($repairRows !== [] || $afkirRows !== []) ? 1 : 0)
+            + (($inputReprosesRows !== [] || $outputReprosesRows !== []) ? 1 : 0);
         $rowsPerPage = max(1, (int) floor(($pageHeightMm - $reservedHeightMm) / ($rowHeightMm * $tableBlocks)));
 
         $inputChunks = array_values(array_chunk($inputRows, $rowsPerPage)) ?: [[]];
         $outputChunks = array_values(array_chunk($outputRows, $rowsPerPage)) ?: [[]];
         $repairChunks = array_values(array_chunk($repairRows, $rowsPerPage)) ?: [[]];
         $afkirChunks = array_values(array_chunk($afkirRows, $rowsPerPage)) ?: [[]];
+        $inputReprosesChunks = array_values(array_chunk($inputReprosesRows, $rowsPerPage)) ?: [[]];
+        $outputReprosesChunks = array_values(array_chunk($outputReprosesRows, $rowsPerPage)) ?: [[]];
 
         $pageCount = max(
             count($inputChunks),
             count($outputChunks),
             count($repairChunks),
             count($afkirChunks),
+            count($inputReprosesChunks),
+            count($outputReprosesChunks),
         );
     @endphp
 
@@ -266,10 +276,14 @@
             $pageOutputRows = $outputChunks[$pageIndex] ?? [];
             $pageRepairRows = $repairChunks[$pageIndex] ?? [];
             $pageAfkirRows = $afkirChunks[$pageIndex] ?? [];
+            $pageInputReprosesRows = $inputReprosesChunks[$pageIndex] ?? [];
+            $pageOutputReprosesRows = $outputReprosesChunks[$pageIndex] ?? [];
             $isLastInputPage = $pageIndex === count($inputChunks) - 1;
             $isLastOutputPage = $pageIndex === count($outputChunks) - 1;
             $isLastRepairPage = $pageIndex === count($repairChunks) - 1;
             $isLastAfkirPage = $pageIndex === count($afkirChunks) - 1;
+            $isLastInputReprosesPage = $pageIndex === count($inputReprosesChunks) - 1;
+            $isLastOutputReprosesPage = $pageIndex === count($outputReprosesChunks) - 1;
             $isLastPage = $pageIndex === $pageCount - 1;
             $showEmptyMessage = $pageIndex === 0;
         @endphp
@@ -425,6 +439,42 @@
                 </tr>
             </table>
 
+            <table class="section-title-grid">
+                <tr>
+                    <td>Input Reproses</td>
+                    <td>Output Reproses</td>
+                </tr>
+            </table>
+
+            <table class="split-grid">
+                <tr>
+                    <td class="left-pane">
+                        <p class="section-heading">Input Reproses</p>
+                        @include('reports.partials.produksi-detail-table', [
+                            'rows' => $pageInputReprosesRows,
+                            'totals' => $inputReprosesTotals,
+                            'emptyMessage' => 'Data input reproses tidak tersedia.',
+                            'showEmpty' => $showEmptyMessage,
+                            'showTotal' => $isLastInputReprosesPage,
+                            'fmtInt' => $fmtInt,
+                            'fmt4' => $fmt4,
+                        ])
+                    </td>
+                    <td class="right-pane">
+                        <p class="section-heading">Output Reproses</p>
+                        @include('reports.partials.produksi-detail-table', [
+                            'rows' => $pageOutputReprosesRows,
+                            'totals' => $outputReprosesTotals,
+                            'emptyMessage' => 'Data output reproses tidak tersedia.',
+                            'showEmpty' => $showEmptyMessage,
+                            'showTotal' => $isLastOutputReprosesPage,
+                            'fmtInt' => $fmtInt,
+                            'fmt4' => $fmt4,
+                        ])
+                    </td>
+                </tr>
+            </table>
+
             @if ($isLastPage)
                 <table class="summary-table">
                     <tr>
@@ -453,6 +503,14 @@
                         <td class="summary-label">Total Afkir</td>
                         <td class="meta-sep">:</td>
                         <td class="summary-value">{{ $fmt4($afkirTotals['kubik'] ?? 0) }} m&sup3;</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Total Input Reproses</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmt4($inputReprosesTotals['kubik'] ?? 0) }} m&sup3;</td>
+                        <td class="summary-label">Total Output Reproses</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmt4($outputReprosesTotals['kubik'] ?? 0) }} m&sup3;</td>
                     </tr>
                 </table>
             @endif

@@ -50,6 +50,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             'Kubik' => 1.5,
             'IsReject' => '0',
             'IsRepair' => null,
+            'IsReproses' => '0',
             'NoSPKTujuan' => '',
         ], $overrides);
     }
@@ -166,15 +167,70 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertNull($report['input_rows'][0]['no_spk_tujuan']);
     }
 
-    public function test_every_sp_row_lands_in_exactly_one_bucket(): void
+    public function test_reproses_rows_are_also_itemised_in_their_own_buckets(): void
+    {
+        $report = $this->build([
+            $this->spRow('Input', 'R.000001', ['Kubik' => 10.0]),
+            $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES', 'IsReproses' => '1', 'Kubik' => 2.0]),
+            $this->spRow('Output', 'S.000001', ['Kubik' => 8.0]),
+            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'IsReproses' => '1', 'Kubik' => 1.0]),
+        ]);
+
+        // Reproses tetap bagian dari Input/Output agar total dan rendemen tidak berubah.
+        $this->assertSame(['R.000001', 'Y.000001'], array_column($report['input_rows'], 'no_label'));
+        $this->assertSame(['S.000001', 'Y.000002'], array_column($report['output_rows'], 'no_label'));
+
+        // Tabel Reproses hanya merinci subsetnya.
+        $this->assertSame(['Y.000001'], array_column($report['input_reproses_rows'], 'no_label'));
+        $this->assertSame(['Y.000002'], array_column($report['output_reproses_rows'], 'no_label'));
+        $this->assertSame(2.0, $report['totals']['input_reproses']['kubik']);
+        $this->assertSame(1.0, $report['totals']['output_reproses']['kubik']);
+
+        $this->assertSame(12.0, $report['totals']['input']['kubik']);
+        $this->assertSame(9.0, $report['totals']['output']['kubik']);
+        $this->assertEqualsWithDelta(75.0, $report['totals']['rendemen'], 0.0001);
+    }
+
+    public function test_reject_flag_takes_precedence_over_reproses_flag(): void
+    {
+        $report = $this->build([
+            $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES', 'IsReproses' => '1', 'IsReject' => '1']),
+        ]);
+
+        $this->assertSame(['Y.000001'], array_column($report['afkir_rows'], 'no_label'));
+        $this->assertSame([], $report['input_reproses_rows']);
+    }
+
+    public function test_isreproses_flag_marks_reproses_without_relying_on_group(): void
+    {
+        $report = $this->build([
+            $this->spRow('Input', 'Y.000001', ['Group' => 'Laminating', 'IsReproses' => '1']),
+        ]);
+
+        $this->assertSame(['Y.000001'], array_column($report['input_reproses_rows'], 'no_label'));
+    }
+
+    public function test_group_reproses_still_works_for_old_sp_without_the_flag(): void
+    {
+        $row = $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES']);
+        unset($row['IsReproses']);
+
+        $report = $this->build([$row]);
+
+        $this->assertSame(['Y.000001'], array_column($report['input_reproses_rows'], 'no_label'));
+    }
+
+    public function test_every_row_lands_in_its_direction_bucket_and_reproses_are_itemised(): void
     {
         $rows = [
             $this->spRow('Input', 'R.000001'),
             $this->spRow('Input', 'R.000002', ['IsReject' => '1']),
             $this->spRow('Input', 'R.000003', ['IsRepair' => '1']),
+            $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES', 'IsReproses' => '1']),
             $this->spRow('Output', 'S.000001'),
             $this->spRow('Output', 'S.000002', ['IsRepair' => '1']),
             $this->spRow('Output', 'S.000003', ['IsReject' => '1']),
+            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'IsReproses' => '1']),
         ];
 
         $report = $this->build($rows);
@@ -184,7 +240,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             + count($report['repair_rows'])
             + count($report['afkir_rows']);
 
-        $this->assertSame(count($rows), $bucketCount);
+        $this->assertSame(count($rows), $bucketCount, 'Bucket arah tetap memuat setiap baris tepat satu kali.');
 
         $labels = array_merge(
             array_column($report['input_rows'], 'no_label'),
@@ -193,7 +249,9 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             array_column($report['afkir_rows'], 'no_label'),
         );
 
-        $this->assertCount(6, array_unique($labels), 'Label harus muncul tepat satu kali di seluruh bucket.');
+        $this->assertCount(8, array_unique($labels), 'Label harus muncul tepat satu kali di bucket arah.');
+        $this->assertSame(['Y.000001'], array_column($report['input_reproses_rows'], 'no_label'));
+        $this->assertSame(['Y.000002'], array_column($report['output_reproses_rows'], 'no_label'));
     }
 
     public function test_rendemen_uses_output_plus_repair_over_input(): void
@@ -268,13 +326,23 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             ['count' => 0, 'jmlh_batang' => 0, 'kubik' => 0.0],
             $report['totals']['afkir']
         );
+        $this->assertSame(
+            ['count' => 0, 'jmlh_batang' => 0, 'kubik' => 0.0],
+            $report['totals']['input_reproses']
+        );
+        $this->assertSame(
+            ['count' => 0, 'jmlh_batang' => 0, 'kubik' => 0.0],
+            $report['totals']['output_reproses']
+        );
     }
 
-    public function test_pdf_view_renders_four_detail_tables_with_repair_and_afkir_sections(): void
+    public function test_pdf_view_renders_six_detail_tables_with_reproses_sections(): void
     {
         $report = $this->build([
             $this->spRow('Input', 'R.000001', ['NoSPKTujuan' => '2026-12']),
+            $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES', 'IsReproses' => '1']),
             $this->spRow('Output', 'S.000001'),
+            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'IsReproses' => '1']),
             $this->spRow('Output', 'S.000002', ['IsReject' => '1', 'NoSPKTujuan' => '2026-13']),
         ]);
 
@@ -285,11 +353,15 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             'pdf_simple_tables' => false,
         ])->render();
 
-        $this->assertSame(4, substr_count($html, '<table class="detail-table">'));
-        $this->assertSame(4, substr_count($html, 'Total :'));
-        $this->assertSame(4, substr_count($html, 'No SPK Tujuan'), 'Tiap tabel punya kolom No SPK Tujuan.');
+        $this->assertSame(6, substr_count($html, '<table class="detail-table">'));
+        $this->assertSame(6, substr_count($html, 'Total :'));
+        $this->assertSame(6, substr_count($html, 'No SPK Tujuan'), 'Tiap tabel punya kolom No SPK Tujuan.');
         $this->assertStringContainsString('Data repair tidak tersedia.', $html);
         $this->assertStringNotContainsString('Data afkir tidak tersedia.', $html);
+        $this->assertStringContainsString('Input Reproses', $html);
+        $this->assertStringContainsString('Output Reproses', $html);
+        $this->assertStringContainsString('Y.000001', $html);
+        $this->assertStringContainsString('Y.000002', $html);
         $this->assertStringContainsString('S.000002', $html);
         $this->assertStringContainsString('2026-12', $html);
         $this->assertStringContainsString('2026-13', $html);
@@ -309,7 +381,9 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
     {
         $report = $this->build([
             $this->spRow('Input', 'R.000001', ['Kubik' => 10.0, 'JamLembur' => 3, 'HourMeter' => 1234.567]),
+            $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES', 'IsReproses' => '1', 'Kubik' => 0.5]),
             $this->spRow('Output', 'S.000001', ['Kubik' => 8.0]),
+            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'IsReproses' => '1', 'Kubik' => 0.25]),
             $this->spRow('Output', 'S.000002', ['IsRepair' => '1', 'Kubik' => 1.0]),
             $this->spRow('Output', 'S.000003', ['IsReject' => '1', 'Kubik' => 2.0]),
         ]);
@@ -324,10 +398,14 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertStringContainsString('Rangkuman', $html);
         $this->assertStringContainsString('Jam Lembur', $html);
         $this->assertStringContainsString('1234.57', $html);
-        $this->assertStringContainsString('10.0000', $html, 'Total Input memakai kubik input.');
-        $this->assertStringContainsString('8.0000', $html, 'Total Output memakai kubik output.');
+        $this->assertStringContainsString('Total Input Reproses', $html);
+        $this->assertStringContainsString('Total Output Reproses', $html);
+        $this->assertStringContainsString('10.5000', $html, 'Total Input mencakup reproses.');
+        $this->assertStringContainsString('8.2500', $html, 'Total Output mencakup reproses.');
         $this->assertStringContainsString('1.0000', $html, 'Total Repair memakai kubik repair.');
         $this->assertStringContainsString('2.0000', $html, 'Total Afkir memakai kubik afkir.');
+        $this->assertStringContainsString('0.5000', $html, 'Total Input Reproses memakai kubiknya sendiri.');
+        $this->assertStringContainsString('0.2500', $html, 'Total Output Reproses memakai kubiknya sendiri.');
     }
 
     public function test_pdf_view_paginates_when_second_table_pair_has_data(): void
@@ -349,6 +427,6 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         ])->render();
 
         $this->assertGreaterThan(1, substr_count($html, 'class="page-block'), 'Data manyak harus dipaginasi.');
-        $this->assertSame(4, substr_count($html, 'Total :'), 'Baris total hanya di halaman terakhir tiap tabel.');
+        $this->assertSame(6, substr_count($html, 'Total :'), 'Baris total hanya di halaman terakhir tiap tabel.');
     }
 }
