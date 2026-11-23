@@ -133,6 +133,8 @@ return [
 
     'pdf_render_cache_ttl_seconds' => (int) env('PDF_RENDER_CACHE_TTL_SECONDS', 300),
 
+    'ascends_memory_limit' => env('ASCENDS_MEMORY_LIMIT', '1024M'),
+
     'mpp_excel_path' => env('MPP_EXCEL_PATH', ''),
 
 ];

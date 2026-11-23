@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AuthenticateReportJwtClaims;
 use App\Http\Middleware\ForceattachmentPdfPreview;
+use App\Http\Middleware\LogAscendsRequest;
 use App\Http\Middleware\LogUserActivity;
 use App\Http\Middleware\NormalizePdfDownloadFilename;
 use Illuminate\Foundation\Application;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->api(append: [
+            LogAscendsRequest::class,
             LogUserActivity::class,
             ForceattachmentPdfPreview::class,
             NormalizePdfDownloadFilename::class,
