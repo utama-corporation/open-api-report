@@ -6858,7 +6858,9 @@ class AscendXmlTestController extends Controller
                 ]
             );
 
-            $reportData['period_label'] = 'Dari '.Carbon::parse($rawStartDate)->locale('id')->isoFormat('DD-MMM-YY').' s/d '.Carbon::parse($rawEndDate)->locale('id')->isoFormat('DD-MMM-YY');
+            if ($rawStartDate !== '' && $rawEndDate !== '') {
+                $reportData['period_label'] = 'Dari '.Carbon::parse($rawStartDate)->locale('id')->isoFormat('DD-MMM-YY').' s/d '.Carbon::parse($rawEndDate)->locale('id')->isoFormat('DD-MMM-YY');
+            }
             $reportData['company'] = $company;
             $reportData['title'] = 'Laporan Daftar Penyusutan Aktiva Tetap';
             $reportData = $this->applyAscendSystemFields($request, $reportData);
