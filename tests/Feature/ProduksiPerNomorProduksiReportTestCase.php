@@ -174,7 +174,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             $this->spRow('Input', 'R.000001', ['Kubik' => 10.0]),
             $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES', 'IsReproses' => '1', 'Kubik' => 2.0]),
             $this->spRow('Output', 'S.000001', ['Kubik' => 8.0]),
-            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'IsReproses' => '1', 'Kubik' => 1.0]),
+            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'HasilDariReproses' => '1', 'Kubik' => 1.0]),
         ]);
 
         // Baris reproses tidak lagi muncul di tabel Input/Output utama.
@@ -212,25 +212,42 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
         $this->assertSame(['Y.000001'], array_column($report['input_reproses_rows'], 'no_label'));
     }
 
-    public function test_hasil_dari_reproses_flag_also_marks_reproses(): void
+    public function test_hasil_dari_reproses_flag_marks_output_reproses(): void
+    {
+        $report = $this->build([
+            $this->spRow('Output', 'Y.000001', ['HasilDariReproses' => '1']),
+        ]);
+
+        $this->assertSame([], $report['output_rows']);
+        $this->assertSame(['Y.000001'], array_column($report['output_reproses_rows'], 'no_label'));
+    }
+
+    public function test_reproses_flags_are_direction_specific(): void
     {
         $report = $this->build([
             $this->spRow('Input', 'Y.000001', ['HasilDariReproses' => '1']),
+            $this->spRow('Output', 'Y.000002', ['IsReproses' => '1']),
         ]);
 
-        $this->assertSame([], $report['input_rows']);
-        $this->assertSame(['Y.000001'], array_column($report['input_reproses_rows'], 'no_label'));
+        // Input hanya membaca IsReproses; Output hanya membaca HasilDariReproses.
+        $this->assertSame(['Y.000001'], array_column($report['input_rows'], 'no_label'));
+        $this->assertSame(['Y.000002'], array_column($report['output_rows'], 'no_label'));
+        $this->assertSame([], $report['input_reproses_rows']);
+        $this->assertSame([], $report['output_reproses_rows']);
     }
 
     public function test_group_reproses_still_works_for_old_sp_without_the_flags(): void
     {
-        $row = $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES']);
-        unset($row['IsReproses'], $row['HasilDariReproses']);
+        $input = $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES']);
+        $output = $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES']);
+        unset($input['IsReproses'], $input['HasilDariReproses'], $output['IsReproses'], $output['HasilDariReproses']);
 
-        $report = $this->build([$row]);
+        $report = $this->build([$input, $output]);
 
         $this->assertSame([], $report['input_rows']);
+        $this->assertSame([], $report['output_rows']);
         $this->assertSame(['Y.000001'], array_column($report['input_reproses_rows'], 'no_label'));
+        $this->assertSame(['Y.000002'], array_column($report['output_reproses_rows'], 'no_label'));
     }
 
     public function test_every_row_lands_in_exactly_one_bucket(): void
@@ -243,7 +260,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             $this->spRow('Output', 'S.000001'),
             $this->spRow('Output', 'S.000002', ['IsRepair' => '1']),
             $this->spRow('Output', 'S.000003', ['IsReject' => '1']),
-            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'IsReproses' => '1']),
+            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'HasilDariReproses' => '1']),
         ];
 
         $report = $this->build($rows);
@@ -362,7 +379,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             $this->spRow('Input', 'R.000001', ['NoSPKTujuan' => '2026-12']),
             $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES', 'IsReproses' => '1']),
             $this->spRow('Output', 'S.000001'),
-            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'IsReproses' => '1']),
+            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'HasilDariReproses' => '1']),
             $this->spRow('Output', 'S.000002', ['IsReject' => '1', 'NoSPKTujuan' => '2026-13']),
         ]);
 
@@ -403,7 +420,7 @@ abstract class ProduksiPerNomorProduksiReportTestCase extends TestCase
             $this->spRow('Input', 'R.000001', ['Kubik' => 10.0, 'JamLembur' => 3, 'HourMeter' => 1234.567]),
             $this->spRow('Input', 'Y.000001', ['Group' => 'REPROSES', 'IsReproses' => '1', 'Kubik' => 0.5]),
             $this->spRow('Output', 'S.000001', ['Kubik' => 8.0]),
-            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'IsReproses' => '1', 'Kubik' => 0.25]),
+            $this->spRow('Output', 'Y.000002', ['Group' => 'REPROSES', 'HasilDariReproses' => '1', 'Kubik' => 0.25]),
             $this->spRow('Output', 'S.000002', ['IsRepair' => '1', 'Kubik' => 1.0]),
             $this->spRow('Output', 'S.000003', ['IsReject' => '1', 'Kubik' => 2.0]),
         ]);
