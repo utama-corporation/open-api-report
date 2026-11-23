@@ -244,6 +244,12 @@ class PenyusutanAktivaReportService
             $start = $periodMonth->copy()->startOfMonth();
             $end = $periodMonth->copy()->endOfMonth();
 
+            // The current month can only be printed up to today, not the month end.
+            $today = Carbon::today();
+            if ($start->isSameMonth($today)) {
+                $end = $today->copy();
+            }
+
             return [
                 'start' => $start->locale('id')->isoFormat('DD-MMM-YY'),
                 'end' => $end->locale('id')->isoFormat('DD-MMM-YY'),

@@ -3,10 +3,25 @@
 namespace Tests\Feature;
 
 use App\Services\Ascends\Shared\FixedAsset\AssetSummary\PenyusutanAktivaReportService;
+use Carbon\Carbon;
 use Tests\TestCase;
 
 class AscendsPenyusutanAktivaReportTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Carbon::setTestNow(Carbon::parse('2026-11-23 10:00:00'));
+    }
+
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+
+        parent::tearDown();
+    }
+
     public function test_period_subtitle_uses_indonesian_short_date_format(): void
     {
         $xml = <<<'XML'
@@ -59,5 +74,26 @@ XML;
         $reportData = app(PenyusutanAktivaReportService::class)->buildReportDataFromXml($xml, 'test xml');
 
         $this->assertSame('Dari 01-Mei-26 s/d 31-Mei-26', $reportData['period_label']);
+    }
+
+    public function test_period_end_is_today_when_the_report_is_for_the_current_month(): void
+    {
+        $xml = <<<'XML'
+<NewDataSet>
+    <dd>
+        <Asset_x0020_Code>A-001</Asset_x0020_Code>
+        <Asset_x0020_Name>Test Asset</Asset_x0020_Name>
+        <Asset_x0020_Category>KATEGORI TEST</Asset_x0020_Category>
+        <Usage_x0020_Date>2024-01-29T00:00:00+07:00</Usage_x0020_Date>
+        <Acquisition_x0020_Cost>1000000</Acquisition_x0020_Cost>
+        <Age_x0020__x0028_Months_x0029_>48</Age_x0020__x0028_Months_x0029_>
+        <Months_x0020_Left>14</Months_x0020_Left>
+    </dd>
+</NewDataSet>
+XML;
+
+        $reportData = app(PenyusutanAktivaReportService::class)->buildReportDataFromXml($xml, 'test xml');
+
+        $this->assertSame('Dari 01-Nov-26 s/d 23-Nov-26', $reportData['period_label']);
     }
 }
