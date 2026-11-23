@@ -65,6 +65,7 @@
         .report-table {
             width: 100%;
             margin-bottom: 6px;
+            table-layout: fixed;
         }
 
         .report-table th,
@@ -91,8 +92,14 @@
             border-bottom: 0;
         }
 
-        .report-table tbody tr.last-data-row td {
+        .report-table tbody td.last-data-cell {
             border-bottom: 1px solid #000;
+        }
+
+        .report-table tbody td.empty-cell {
+            border: 0 !important;
+            background: transparent !important;
+            padding: 0;
         }
 
         .report-table td.center {
@@ -283,18 +290,18 @@
     <table class="report-table">
         <thead>
             <tr>
-                <th style="width: 5%;">No</th>
-                <th style="width: 7.5%;">Tebal</th>
-                <th style="width: 7.5%;">Lebar</th>
-                <th style="width: 7.5%;">Panjang</th>
-                <th style="width: 9.5%;">Ton</th>
+                <th style="width: 6%;">No</th>
+                <th style="width: 10%;">Tebal</th>
+                <th style="width: 10%;">Lebar</th>
+                <th style="width: 10%;">Panjang</th>
+                <th style="width: 12%;">Ton</th>
                 {{-- <th style="width: 11%;">Keterangan</th> --}}
                 <th class="separator-cell"></th>
-                <th style="width: 5%;">No</th>
-                <th style="width: 7.5%;">Tebal</th>
-                <th style="width: 7.5%;">Lebar</th>
-                <th style="width: 7.5%;">Panjang</th>
-                <th style="width: 9.5%;">Ton</th>
+                <th style="width: 6%;">No</th>
+                <th style="width: 10%;">Tebal</th>
+                <th style="width: 10%;">Lebar</th>
+                <th style="width: 10%;">Panjang</th>
+                <th style="width: 12%;">Ton</th>
                 {{-- <th style="width: 11%;">Keterangan</th> --}}
             </tr>
         </thead>
@@ -303,25 +310,26 @@
                 @php
                     $leftRow = $rows[$index] ?? [];
                     $rightRow = $rows[$leftRowsCount + $index] ?? null;
+                    $isLastLeftRow = $index === $leftRowsCount - 1;
+                    $isLastRightRow = is_array($rightRow) && $rightStartNumber + $index === count($rows);
                 @endphp
-                <tr @class(['last-data-row' => $index === $leftRowsCount - 1])>
-                    <td class="center">{{ $index + 1 }}</td>
-                    <td class="number">{{ $formatSize((float) ($leftRow['Tebal'] ?? 0)) }}</td>
-                    <td class="number">{{ $formatSize((float) ($leftRow['Lebar'] ?? 0)) }}</td>
-                    <td class="number">{{ $formatSize((float) ($leftRow['Panjang'] ?? 0)) }}</td>
-                    <td class="number" style="font-weight:bold;">{{ $formatTon((float) ($leftRow['Ton'] ?? 0)) }}</td>
+                <tr>
+                    <td @class(['center', 'last-data-cell' => $isLastLeftRow])>{{ $index + 1 }}</td>
+                    <td @class(['number', 'last-data-cell' => $isLastLeftRow])>{{ $formatSize((float) ($leftRow['Tebal'] ?? 0)) }}</td>
+                    <td @class(['number', 'last-data-cell' => $isLastLeftRow])>{{ $formatSize((float) ($leftRow['Lebar'] ?? 0)) }}</td>
+                    <td @class(['number', 'last-data-cell' => $isLastLeftRow])>{{ $formatSize((float) ($leftRow['Panjang'] ?? 0)) }}</td>
+                    <td @class(['number', 'last-data-cell' => $isLastLeftRow]) style="font-weight:bold;">{{ $formatTon((float) ($leftRow['Ton'] ?? 0)) }}</td>
                     {{-- <td class="center">{{ (string) ($leftRow['Ket'] ?? '') }}</td> --}}
                     <td class="separator-cell"></td>
                     @if (is_array($rightRow))
-                        <td class="center">{{ $rightStartNumber + $index }}</td>
-                        <td class="number">{{ $formatSize((float) ($rightRow['Tebal'] ?? 0)) }}</td>
-                        <td class="number">{{ $formatSize((float) ($rightRow['Lebar'] ?? 0)) }}</td>
-                        <td class="number">{{ $formatSize((float) ($rightRow['Panjang'] ?? 0)) }}</td>
-                        <td class="number" style="font-weight:bold;">{{ $formatTon((float) ($rightRow['Ton'] ?? 0)) }}
-                        </td>
+                        <td @class(['center', 'last-data-cell' => $isLastRightRow])>{{ $rightStartNumber + $index }}</td>
+                        <td @class(['number', 'last-data-cell' => $isLastRightRow])>{{ $formatSize((float) ($rightRow['Tebal'] ?? 0)) }}</td>
+                        <td @class(['number', 'last-data-cell' => $isLastRightRow])>{{ $formatSize((float) ($rightRow['Lebar'] ?? 0)) }}</td>
+                        <td @class(['number', 'last-data-cell' => $isLastRightRow])>{{ $formatSize((float) ($rightRow['Panjang'] ?? 0)) }}</td>
+                        <td @class(['number', 'last-data-cell' => $isLastRightRow]) style="font-weight:bold;">{{ $formatTon((float) ($rightRow['Ton'] ?? 0)) }}</td>
                         {{-- <td class="center">{{ (string) ($rightRow['Ket'] ?? '') }}</td> --}}
                     @else
-                        <td colspan="6"></td>
+                        <td colspan="5" class="empty-cell"></td>
                     @endif
                 </tr>
             @endfor
