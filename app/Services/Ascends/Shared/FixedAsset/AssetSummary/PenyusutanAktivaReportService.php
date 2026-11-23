@@ -231,16 +231,16 @@ class PenyusutanAktivaReportService
                 $end = Carbon::parse($endDate);
 
                 return [
-                    'start' => $start->locale('id')->translatedFormat('d-M-y'),
-                    'end' => $end->locale('id')->translatedFormat('d-M-y'),
-                    'label' => 'Dari '.$start->locale('id')->translatedFormat('d-M-y').' s/d '.$end->locale('id')->translatedFormat('d-M-y'),
+                    'start' => $start->locale('id')->isoFormat('DD-MMM-YY'),
+                    'end' => $end->locale('id')->isoFormat('DD-MMM-YY'),
+                    'label' => 'Dari '.$start->locale('id')->isoFormat('DD-MMM-YY').' s/d '.$end->locale('id')->isoFormat('DD-MMM-YY'),
                 ];
             } catch (Throwable) {
             }
         }
 
         $now = Carbon::now()->locale('id');
-        $label = $now->translatedFormat('d-M-y');
+        $label = $now->isoFormat('DD-MMM-YY');
 
         return [
             'start' => $label,
