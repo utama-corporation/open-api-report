@@ -240,55 +240,193 @@
         $inputReprosesTotals = $totals['input_reproses'] ?? $emptyTotals;
         $outputReprosesTotals = $totals['output_reproses'] ?? $emptyTotals;
         $rendemen = $totals['rendemen'] ?? null;
+        $rendemenReproses = $totals['rendemen_reproses'] ?? null;
 
-        $pageHeightMm = 297 - 16 - 18;
-        // Tinggi tetap: header/total tiap tabel, 2 baris meta tambahan, dan section Rangkuman di halaman terakhir.
-        $reservedHeightMm = 126;
+        // Tinggi layout berurutan (mm): header halaman, overhead tiap pasangan tabel,
+        // tinggi baris, baris rendemen, dan Rangkuman.
+        $pageHeightMm = 263;
+        $pageHeaderHeightMm = 28;
+        $pairOverheadMm = 21;
         $rowHeightMm = 4.9;
+        $rendemenHeightMm = 6.5;
+        $summaryHeightMm = 27;
+        $sectionGapMm = 3;
 
-        // Input/Output, Repair/Afkir, dan Reproses ditumpuk pada halaman yang sama,
-        // jadi tinggi yang tersedia dibagi hanya untuk pasangan tabel yang berisi data.
-        $tableBlocks = 1
-            + (($repairRows !== [] || $afkirRows !== []) ? 1 : 0)
-            + (($inputReprosesRows !== [] || $outputReprosesRows !== []) ? 1 : 0);
-        $rowsPerPage = max(1, (int) floor(($pageHeightMm - $reservedHeightMm) / ($rowHeightMm * $tableBlocks)));
+        $mainRendemen = [
+            'label' => 'Rendemen',
+            'numerator' => $fmt4($outputTotals['kubik'] ?? 0) . ' + ' . $fmt4($repairTotals['kubik'] ?? 0),
+            'denominator' => $fmt4($inputTotals['kubik'] ?? 0),
+            'percent' => $fmtPercent($rendemen),
+        ];
+        $reprosesRendemen = ($inputReprosesRows !== [] || $outputReprosesRows !== [])
+            ? [
+                'label' => 'Rendemen Reproses',
+                'numerator' => $fmt4($outputReprosesTotals['kubik'] ?? 0),
+                'denominator' => $fmt4($inputReprosesTotals['kubik'] ?? 0),
+                'percent' => $fmtPercent($rendemenReproses),
+            ]
+            : null;
 
-        $inputChunks = array_values(array_chunk($inputRows, $rowsPerPage)) ?: [[]];
-        $outputChunks = array_values(array_chunk($outputRows, $rowsPerPage)) ?: [[]];
-        $repairChunks = array_values(array_chunk($repairRows, $rowsPerPage)) ?: [[]];
-        $afkirChunks = array_values(array_chunk($afkirRows, $rowsPerPage)) ?: [[]];
-        $inputReprosesChunks = array_values(array_chunk($inputReprosesRows, $rowsPerPage)) ?: [[]];
-        $outputReprosesChunks = array_values(array_chunk($outputReprosesRows, $rowsPerPage)) ?: [[]];
+        $blocks = [
+            [
+                'titles' => ['Input', 'Output'],
+                'headings' => [
+                    'Input : ' . ($meta['input_label'] ?? 'INPUT'),
+                    'Output : ' . ($meta['output_label'] ?? 'OUTPUT'),
+                ],
+                'left_rows' => $inputRows,
+                'right_rows' => $outputRows,
+                'left_totals' => $inputTotals,
+                'right_totals' => $outputTotals,
+                'left_empty' => 'Data input tidak tersedia.',
+                'right_empty' => 'Data output tidak tersedia.',
+                'rendemen' => $mainRendemen,
+            ],
+            [
+                'titles' => ['Repair', 'Afkir'],
+                'headings' => ['Repair', 'Afkir'],
+                'left_rows' => $repairRows,
+                'right_rows' => $afkirRows,
+                'left_totals' => $repairTotals,
+                'right_totals' => $afkirTotals,
+                'left_empty' => 'Data repair tidak tersedia.',
+                'right_empty' => 'Data afkir tidak tersedia.',
+                'rendemen' => null,
+            ],
+            [
+                'titles' => ['Input Reproses', 'Output Reproses'],
+                'headings' => ['Input Reproses', 'Output Reproses'],
+                'left_rows' => $inputReprosesRows,
+                'right_rows' => $outputReprosesRows,
+                'left_totals' => $inputReprosesTotals,
+                'right_totals' => $outputReprosesTotals,
+                'left_empty' => 'Data input reproses tidak tersedia.',
+                'right_empty' => 'Data output reproses tidak tersedia.',
+                'rendemen' => $reprosesRendemen,
+            ],
+        ];
 
-        $pageCount = max(
-            count($inputChunks),
-            count($outputChunks),
-            count($repairChunks),
-            count($afkirChunks),
-            count($inputReprosesChunks),
-            count($outputReprosesChunks),
-        );
+        $pages = [];
+        $currentPage = ['blocks' => [], 'summary' => false];
+        $usedHeightMm = $pageHeaderHeightMm;
+
+        $flushPage = static function () use (&$pages, &$currentPage, &$usedHeightMm, $pageHeaderHeightMm): void {
+            if ($currentPage['blocks'] !== [] || $currentPage['summary']) {
+                $pages[] = $currentPage;
+            }
+            $currentPage = ['blocks' => [], 'summary' => false];
+            $usedHeightMm = $pageHeaderHeightMm;
+        };
+
+        foreach ($blocks as $block) {
+            $leftRemaining = array_values($block['left_rows']);
+            $rightRemaining = array_values($block['right_rows']);
+            $firstChunk = true;
+            $leftTotalShown = false;
+            $rightTotalShown = false;
+
+            if ($leftRemaining === [] && $rightRemaining === []) {
+                $blockHeight = $pairOverheadMm + $rowHeightMm + $sectionGapMm
+                    + ($block['rendemen'] !== null ? $rendemenHeightMm : 0);
+                if ($usedHeightMm + $blockHeight > $pageHeightMm) {
+                    $flushPage();
+                }
+                $currentPage['blocks'][] = [
+                    'titles' => $block['titles'],
+                    'headings' => $block['headings'],
+                    'left_rows' => [],
+                    'right_rows' => [],
+                    'left_totals' => $block['left_totals'],
+                    'right_totals' => $block['right_totals'],
+                    'left_empty' => $block['left_empty'],
+                    'right_empty' => $block['right_empty'],
+                    'show_left_empty' => true,
+                    'show_right_empty' => true,
+                    'show_left_total' => true,
+                    'show_right_total' => true,
+                    'rendemen' => $block['rendemen'],
+                ];
+                $usedHeightMm += $blockHeight;
+                continue;
+            }
+
+            while ($leftRemaining !== [] || $rightRemaining !== []) {
+                $available = $pageHeightMm - $usedHeightMm;
+                $maxRows = (int) floor(($available - $pairOverheadMm) / $rowHeightMm);
+
+                if ($maxRows < 1) {
+                    $flushPage();
+                    continue;
+                }
+
+                $maxSide = max(count($leftRemaining), count($rightRemaining));
+                $take = min($maxRows, $maxSide);
+
+                // Kalau chunk ini menghabiskan blok, sisakan ruang untuk baris rendemen.
+                $willComplete = $take >= count($leftRemaining) && $take >= count($rightRemaining);
+                if ($willComplete && $block['rendemen'] !== null) {
+                    $maxRowsWithLine = (int) floor(($available - $pairOverheadMm - $rendemenHeightMm) / $rowHeightMm);
+                    if ($maxRowsWithLine < 1) {
+                        $flushPage();
+                        continue;
+                    }
+                    $take = min($take, $maxRowsWithLine);
+                }
+
+                $leftChunk = array_splice($leftRemaining, 0, $take);
+                $rightChunk = array_splice($rightRemaining, 0, $take);
+                $isLastLeft = $leftRemaining === [];
+                $isLastRight = $rightRemaining === [];
+                $completes = $isLastLeft && $isLastRight;
+
+                $showLeftTotal = ! $leftTotalShown && $isLastLeft && ($leftChunk !== [] || $firstChunk);
+                $showRightTotal = ! $rightTotalShown && $isLastRight && ($rightChunk !== [] || $firstChunk);
+                if ($showLeftTotal) {
+                    $leftTotalShown = true;
+                }
+                if ($showRightTotal) {
+                    $rightTotalShown = true;
+                }
+
+                $currentPage['blocks'][] = [
+                    'titles' => $block['titles'],
+                    'headings' => $block['headings'],
+                    'left_rows' => $leftChunk,
+                    'right_rows' => $rightChunk,
+                    'left_totals' => $block['left_totals'],
+                    'right_totals' => $block['right_totals'],
+                    'left_empty' => $block['left_empty'],
+                    'right_empty' => $block['right_empty'],
+                    'show_left_empty' => $firstChunk && $leftChunk === [],
+                    'show_right_empty' => $firstChunk && $rightChunk === [],
+                    'show_left_total' => $showLeftTotal,
+                    'show_right_total' => $showRightTotal,
+                    'rendemen' => $completes ? $block['rendemen'] : null,
+                ];
+
+                $usedHeightMm += $pairOverheadMm + $take * $rowHeightMm + $sectionGapMm
+                    + ($completes && $block['rendemen'] !== null ? $rendemenHeightMm : 0);
+                $firstChunk = false;
+
+                if (! $completes) {
+                    $flushPage();
+                }
+            }
+        }
+
+        if ($usedHeightMm + $summaryHeightMm > $pageHeightMm) {
+            $flushPage();
+        }
+        $currentPage['summary'] = true;
+        $flushPage();
+
+        if ($pages === []) {
+            $pages[] = ['blocks' => [], 'summary' => true];
+        }
     @endphp
 
-    @for ($pageIndex = 0; $pageIndex < $pageCount; $pageIndex++)
-        @php
-            $pageInputRows = $inputChunks[$pageIndex] ?? [];
-            $pageOutputRows = $outputChunks[$pageIndex] ?? [];
-            $pageRepairRows = $repairChunks[$pageIndex] ?? [];
-            $pageAfkirRows = $afkirChunks[$pageIndex] ?? [];
-            $pageInputReprosesRows = $inputReprosesChunks[$pageIndex] ?? [];
-            $pageOutputReprosesRows = $outputReprosesChunks[$pageIndex] ?? [];
-            $isLastInputPage = $pageIndex === count($inputChunks) - 1;
-            $isLastOutputPage = $pageIndex === count($outputChunks) - 1;
-            $isLastRepairPage = $pageIndex === count($repairChunks) - 1;
-            $isLastAfkirPage = $pageIndex === count($afkirChunks) - 1;
-            $isLastInputReprosesPage = $pageIndex === count($inputReprosesChunks) - 1;
-            $isLastOutputReprosesPage = $pageIndex === count($outputReprosesChunks) - 1;
-            $isLastPage = $pageIndex === $pageCount - 1;
-            $showEmptyMessage = $pageIndex === 0;
-        @endphp
-
-        <div class="page-block {{ $isLastPage ? 'last-page' : '' }}">
+    @foreach ($pages as $pageIndex => $page)
+        <div class="page-block {{ $pageIndex === count($pages) - 1 ? 'last-page' : '' }}">
             <h1 class="report-title">Laporan Produksi Per Nomor Produksi Laminating</h1>
 
             <table class="meta-grid">
@@ -354,128 +492,54 @@
                 </tr>
             </table>
 
-            <table class="section-title-grid">
-                <tr>
-                    <td>Input</td>
-                    <td>Output</td>
-                </tr>
-            </table>
+            @foreach ($page['blocks'] as $block)
+                <table class="section-title-grid">
+                    <tr>
+                        <td>{{ $block['titles'][0] }}</td>
+                        <td>{{ $block['titles'][1] }}</td>
+                    </tr>
+                </table>
 
-            <table class="split-grid">
-                <tr>
-                    <td class="left-pane">
-                        <p class="section-heading">Input : {{ $meta['input_label'] ?? 'INPUT' }}</p>
-                        @include('reports.partials.produksi-detail-table', [
-                            'rows' => $pageInputRows,
-                            'totals' => $inputTotals,
-                            'emptyMessage' => 'Data input tidak tersedia.',
-                            'showEmpty' => $showEmptyMessage,
-                            'showTotal' => $isLastInputPage,
-                            'fmtInt' => $fmtInt,
-                            'fmt4' => $fmt4,
-                        ])
-                    </td>
-                    <td class="right-pane">
-                        <p class="section-heading">Output : {{ $meta['output_label'] ?? 'OUTPUT' }}</p>
-                        @include('reports.partials.produksi-detail-table', [
-                            'rows' => $pageOutputRows,
-                            'totals' => $outputTotals,
-                            'emptyMessage' => 'Data output tidak tersedia.',
-                            'showEmpty' => $showEmptyMessage,
-                            'showTotal' => $isLastOutputPage,
-                            'fmtInt' => $fmtInt,
-                            'fmt4' => $fmt4,
-                        ])
-                    </td>
-                </tr>
-            </table>
+                <table class="split-grid">
+                    <tr>
+                        <td class="left-pane">
+                            <p class="section-heading">{{ $block['headings'][0] }}</p>
+                            @include('reports.partials.produksi-detail-table', [
+                                'rows' => $block['left_rows'],
+                                'totals' => $block['left_totals'],
+                                'emptyMessage' => $block['left_empty'],
+                                'showEmpty' => $block['show_left_empty'],
+                                'showTotal' => $block['show_left_total'],
+                                'fmtInt' => $fmtInt,
+                                'fmt4' => $fmt4,
+                            ])
+                        </td>
+                        <td class="right-pane">
+                            <p class="section-heading">{{ $block['headings'][1] }}</p>
+                            @include('reports.partials.produksi-detail-table', [
+                                'rows' => $block['right_rows'],
+                                'totals' => $block['right_totals'],
+                                'emptyMessage' => $block['right_empty'],
+                                'showEmpty' => $block['show_right_empty'],
+                                'showTotal' => $block['show_right_total'],
+                                'fmtInt' => $fmtInt,
+                                'fmt4' => $fmt4,
+                            ])
+                        </td>
+                    </tr>
+                </table>
 
-            @if ($isLastPage)
-                <p class="rendemen-line">
-                    Rendemen :
-                    ({{ $fmt4($outputTotals['kubik'] ?? 0) }}
-                    +
-                    {{ $fmt4($repairTotals['kubik'] ?? 0) }})
-                    /
-                    {{ $fmt4($inputTotals['kubik'] ?? 0) }}
-                    =
-                    {{ $fmtPercent($rendemen) }}
-                </p>
-            @endif
+                @if ($block['rendemen'] !== null)
+                    <p class="rendemen-line">
+                        {{ $block['rendemen']['label'] }} :
+                        ({{ $block['rendemen']['numerator'] }})
+                        / {{ $block['rendemen']['denominator'] }}
+                        = {{ $block['rendemen']['percent'] }}
+                    </p>
+                @endif
+            @endforeach
 
-            <table class="section-title-grid">
-                <tr>
-                    <td>Repair</td>
-                    <td>Afkir</td>
-                </tr>
-            </table>
-
-            <table class="split-grid">
-                <tr>
-                    <td class="left-pane">
-                        <p class="section-heading">Repair</p>
-                        @include('reports.partials.produksi-detail-table', [
-                            'rows' => $pageRepairRows,
-                            'totals' => $repairTotals,
-                            'emptyMessage' => 'Data repair tidak tersedia.',
-                            'showEmpty' => $showEmptyMessage,
-                            'showTotal' => $isLastRepairPage,
-                            'fmtInt' => $fmtInt,
-                            'fmt4' => $fmt4,
-                        ])
-                    </td>
-                    <td class="right-pane">
-                        <p class="section-heading">Afkir</p>
-                        @include('reports.partials.produksi-detail-table', [
-                            'rows' => $pageAfkirRows,
-                            'totals' => $afkirTotals,
-                            'emptyMessage' => 'Data afkir tidak tersedia.',
-                            'showEmpty' => $showEmptyMessage,
-                            'showTotal' => $isLastAfkirPage,
-                            'fmtInt' => $fmtInt,
-                            'fmt4' => $fmt4,
-                        ])
-                    </td>
-                </tr>
-            </table>
-
-            <table class="section-title-grid">
-                <tr>
-                    <td>Input Reproses</td>
-                    <td>Output Reproses</td>
-                </tr>
-            </table>
-
-            <table class="split-grid">
-                <tr>
-                    <td class="left-pane">
-                        <p class="section-heading">Input Reproses</p>
-                        @include('reports.partials.produksi-detail-table', [
-                            'rows' => $pageInputReprosesRows,
-                            'totals' => $inputReprosesTotals,
-                            'emptyMessage' => 'Data input reproses tidak tersedia.',
-                            'showEmpty' => $showEmptyMessage,
-                            'showTotal' => $isLastInputReprosesPage,
-                            'fmtInt' => $fmtInt,
-                            'fmt4' => $fmt4,
-                        ])
-                    </td>
-                    <td class="right-pane">
-                        <p class="section-heading">Output Reproses</p>
-                        @include('reports.partials.produksi-detail-table', [
-                            'rows' => $pageOutputReprosesRows,
-                            'totals' => $outputReprosesTotals,
-                            'emptyMessage' => 'Data output reproses tidak tersedia.',
-                            'showEmpty' => $showEmptyMessage,
-                            'showTotal' => $isLastOutputReprosesPage,
-                            'fmtInt' => $fmtInt,
-                            'fmt4' => $fmt4,
-                        ])
-                    </td>
-                </tr>
-            </table>
-
-            @if ($isLastPage)
+            @if ($page['summary'])
                 <table class="summary-table">
                     <tr>
                         <td class="summary-title" colspan="6">Rangkuman</td>
@@ -515,7 +579,7 @@
                 </table>
             @endif
         </div>
-    @endfor
+    @endforeach
 
     @include('reports.partials.pdf-reference-footer')
 </body>

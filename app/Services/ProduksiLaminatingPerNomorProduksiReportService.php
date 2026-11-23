@@ -84,13 +84,14 @@ class ProduksiLaminatingPerNomorProduksiReportService
                     continue;
                 }
 
-                $buckets[$direction][] = $detail;
-
-                // Reproses tetap dihitung di Input/Output agar total dan rendemen tidak berubah;
-                // tabel Reproses hanya merinci subsetnya.
-                if ($isReproses) {
+                // Baris yang dicentang Reproses hanya tampil di section Reproses.
+                if ($isReproses && ($direction === 'input' || $direction === 'output')) {
                     $buckets[$direction.'_reproses'][] = $detail;
+
+                    continue;
                 }
+
+                $buckets[$direction][] = $detail;
 
                 if ($direction === 'input' || $direction === 'output') {
                     $labels[$direction] ??= $label;
@@ -115,6 +116,11 @@ class ProduksiLaminatingPerNomorProduksiReportService
         $rendemenNumerator = $outputTotals['kubik'] + $repairTotals['kubik'];
         $rendemen = $inputTotals['kubik'] > 0
             ? ($rendemenNumerator / $inputTotals['kubik']) * 100.0
+            : null;
+
+        // Rendemen reproses hanya membandingkan tabel Input/Output Reproses.
+        $rendemenReproses = $inputReprosesTotals['kubik'] > 0
+            ? ($outputReprosesTotals['kubik'] / $inputReprosesTotals['kubik']) * 100.0
             : null;
 
         return [
@@ -147,6 +153,7 @@ class ProduksiLaminatingPerNomorProduksiReportService
                 'input_reproses' => $inputReprosesTotals,
                 'output_reproses' => $outputReprosesTotals,
                 'rendemen' => $rendemen,
+                'rendemen_reproses' => $rendemenReproses,
             ],
             'raw_columns' => array_keys($firstRow),
             'raw_rows' => $rows,
@@ -251,15 +258,19 @@ class ProduksiLaminatingPerNomorProduksiReportService
     }
 
     /**
-     * SP menandai baris reproses lewat kolom IsReproses (seperti IsReject/IsRepair).
-     * Group='REPROSES' tetap dipakai sebagai fallback untuk database yang SP-nya belum diperbarui.
+     * Baris reproses ditandai flag IsReproses/HasilDariReproses dari header sumber
+     * (seperti IsReject/IsRepair). Group='REPROSES' hanya fallback untuk SP lama.
      *
      * @param  array<string, mixed>  $row
      */
     private function isReprosesRow(array $row): bool
     {
-        if (array_key_exists('IsReproses', $row)) {
-            return $this->isFlagSet($row, 'IsReproses');
+        if ($this->isFlagSet($row, 'IsReproses') || $this->isFlagSet($row, 'HasilDariReproses')) {
+            return true;
+        }
+
+        if (array_key_exists('IsReproses', $row) || array_key_exists('HasilDariReproses', $row)) {
+            return false;
         }
 
         return strcasecmp(trim((string) ($row['Group'] ?? '')), 'REPROSES') === 0;
