@@ -19,8 +19,8 @@ class GiroCashTransferReportService
         }
 
         $paymentMethod = trim((string) ($filters['PaymentMethod'] ?? ''));
-        $dateStart = trim((string) ($filters['ReceiptVoucherDate.StartDate'] ?? $filters['StartDate'] ?? ''));
-        $dateEnd = trim((string) ($filters['ReceiptVoucherDate.EndDate'] ?? $filters['EndDate'] ?? ''));
+        $dateStart = trim((string) ($filters['ReceiptVoucherDate.StartDate'] ?? $filters['ReceiptVoucherDate_StartDate'] ?? $filters['StartDate'] ?? $filters['start_date'] ?? ''));
+        $dateEnd = trim((string) ($filters['ReceiptVoucherDate.EndDate'] ?? $filters['ReceiptVoucherDate_EndDate'] ?? $filters['EndDate'] ?? $filters['end_date'] ?? ''));
 
         $periodLabel = $this->buildPeriodLabel($dateStart, $dateEnd, $allRows);
 

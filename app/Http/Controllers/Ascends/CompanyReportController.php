@@ -103,6 +103,10 @@ class CompanyReportController extends Controller
         'tahun' => [
             'tahun', 'Tahun', 'year', 'Year',
         ],
+        'PaymentMethod' => [
+            'PaymentMethod', 'PymentMethod', 'payment_method', 'payment method',
+            'Pilih Payment Method', 'Pilih_x0020_Payment_x0020_Method', 'pilih_payment_method',
+        ],
     ];
 
     public function __construct(private readonly PdfGenerator $pdfGenerator) {}

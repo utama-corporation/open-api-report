@@ -5,6 +5,7 @@ namespace Tests\Feature\Ascends;
 use App\Http\Controllers\Ascends\CompanyReportController;
 use App\Services\Ascends\Shared\Associate\CustomerBaruPerTahunReportService;
 use App\Services\Ascends\Shared\Associate\CustomerBaruReportService;
+use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\GiroCashTransferReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableDetails\PiutangDiatas60HariReportService;
 use App\Services\Ascends\Shared\Finance\ReceivableSummary\UmurPiutangRuReportService;
 use App\Services\Ascends\Shared\GeneralLedger\JournalDetails\LabaKotorRuReportService;
@@ -49,6 +50,11 @@ class CompanyReportControllerTest extends TestCase
             '/api/internal/ascends/{company}/hrm/custom-reports/diagram-lembur-tahunan/pdf',
             [CompanyReportController::class, 'pdf']
         )->defaults('report', 'hrm.custom-reports.diagram-lembur-tahunan');
+
+        Route::post(
+            '/api/internal/ascends/{company}/finance/receipt_voucher_details/giro-cash-transfer/pdf',
+            [CompanyReportController::class, 'pdf']
+        )->defaults('report', 'finance.receipt_voucher_details.giro-cash-transfer');
     }
 
     protected function tearDown(): void
@@ -413,6 +419,29 @@ class CompanyReportControllerTest extends TestCase
 
         $this->post('/api/internal/ascends/uc/hrm/custom-reports/diagram-lembur-tahunan/pdf', [
             'xml' => $xml,
+        ])->assertOk();
+    }
+
+    public function test_maps_pymentmethod_alias_for_giro_cash_transfer(): void
+    {
+        $service = Mockery::mock(GiroCashTransferReportService::class);
+        $service
+            ->shouldReceive('buildReportDataFromXml')
+            ->once()
+            ->with('<root/>', 'request field: xml', Mockery::on(
+                static fn (array $filters): bool => ($filters['PaymentMethod'] ?? null) === 'Cash'
+            ))
+            ->andReturn($this->reportData());
+
+        $pdfGenerator = Mockery::mock(PdfGenerator::class);
+        $pdfGenerator->shouldReceive('render')->once()->andReturn('%PDF-1.4 mocked content');
+
+        $this->app->instance(GiroCashTransferReportService::class, $service);
+        $this->app->instance(PdfGenerator::class, $pdfGenerator);
+
+        $this->post('/api/internal/ascends/gsu/finance/receipt_voucher_details/giro-cash-transfer/pdf', [
+            'xml' => '<root/>',
+            'PymentMethod' => 'Cash',
         ])->assertOk();
     }
 
