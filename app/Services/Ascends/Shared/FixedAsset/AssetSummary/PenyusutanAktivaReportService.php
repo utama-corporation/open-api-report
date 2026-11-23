@@ -39,7 +39,7 @@ class PenyusutanAktivaReportService
         $groupedRows = $this->groupByCategory($filteredRows);
         $categorySubtotals = $this->calculateCategorySubtotals($groupedRows);
         $grandTotals = $this->calculateGrandTotals($categorySubtotals);
-        $period = $this->resolvePeriod($filters, $allRows);
+        $period = $this->resolvePeriod($filters);
 
         return [
             'title' => self::TITLE,
@@ -220,7 +220,7 @@ class PenyusutanAktivaReportService
         ];
     }
 
-    private function resolvePeriod(array $filters, array $rows = []): array
+    private function resolvePeriod(array $filters): array
     {
         $startDate = trim((string) ($filters['Date.StartDate'] ?? $filters['Date_StartDate'] ?? $filters['StartDate'] ?? $filters['start_date'] ?? ''));
         $endDate = trim((string) ($filters['Date.EndDate'] ?? $filters['Date_EndDate'] ?? $filters['EndDate'] ?? $filters['end_date'] ?? ''));
@@ -239,84 +239,12 @@ class PenyusutanAktivaReportService
             }
         }
 
-        $periodMonth = $this->resolvePeriodMonthFromRows($rows);
-        if ($periodMonth !== null) {
-            $start = $periodMonth->copy()->startOfMonth();
-            $end = $periodMonth->copy()->endOfMonth();
-
-            // The current month can only be printed up to today, not the month end.
-            $today = Carbon::today();
-            if ($start->isSameMonth($today)) {
-                $end = $today->copy();
-            }
-
-            return [
-                'start' => $start->locale('id')->isoFormat('DD-MMM-YY'),
-                'end' => $end->locale('id')->isoFormat('DD-MMM-YY'),
-                'label' => 'Dari '.$start->locale('id')->isoFormat('DD-MMM-YY').' s/d '.$end->locale('id')->isoFormat('DD-MMM-YY'),
-            ];
-        }
-
-        $now = Carbon::now()->locale('id');
-        $label = $now->isoFormat('DD-MMM-YY');
+        $label = Carbon::now()->locale('id')->isoFormat('DD-MMM-YY');
 
         return [
             'start' => $label,
             'end' => $label,
-            'label' => 'Periode: '.$label,
+            'label' => 'Per Tanggal : '.$label,
         ];
-    }
-
-    /**
-     * The XML carries no period element, but Months Left is calculated at the
-     * report end date, so Usage/Acquisition Date + (Age - Months Left) lands in
-     * the selected period. The most common month across rows is the report month.
-     */
-    private function resolvePeriodMonthFromRows(array $rows): ?Carbon
-    {
-        $counts = [];
-
-        foreach ($rows as $row) {
-            $baseDate = trim((string) ($row['Usage Date'] ?? ''));
-            if ($baseDate === '') {
-                $baseDate = trim((string) ($row['Acquisition Date'] ?? ''));
-            }
-            $age = (int) ($row['Age (Months)'] ?? 0);
-            $monthsLeft = (int) ($row['Months Left'] ?? 0);
-
-            if ($baseDate === '' || $age <= 0 || $monthsLeft <= 0 || $age < $monthsLeft) {
-                continue;
-            }
-
-            try {
-                $monthKey = Carbon::parse($baseDate)
-                    ->startOfMonth()
-                    ->addMonths($age - $monthsLeft)
-                    ->format('Y-m');
-            } catch (Throwable) {
-                continue;
-            }
-
-            $counts[$monthKey] = ($counts[$monthKey] ?? 0) + 1;
-        }
-
-        if ($counts === []) {
-            return null;
-        }
-
-        $bestMonth = null;
-        $bestCount = -1;
-        foreach ($counts as $monthKey => $count) {
-            if ($count > $bestCount || ($count === $bestCount && $monthKey > $bestMonth)) {
-                $bestMonth = $monthKey;
-                $bestCount = $count;
-            }
-        }
-
-        try {
-            return Carbon::createFromFormat('Y-m', (string) $bestMonth)->startOfMonth();
-        } catch (Throwable) {
-            return null;
-        }
     }
 }
