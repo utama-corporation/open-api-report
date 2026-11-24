@@ -35,6 +35,7 @@ use App\Services\Ascends\Shared\CustomReport\PenjualanPerItemAnalisaSkuReportSer
 use App\Services\Ascends\Shared\CustomReport\PenjualanPerKategoriBarangBulananReportService;
 use App\Services\Ascends\Shared\CustomReport\PenjualanVsBiayaPerjalananDinasReportService;
 use App\Services\Ascends\Shared\CustomReport\SalesSummaryPerCustomerPerPeriodReportService;
+use App\Services\Ascends\Shared\Finance\OpnameKas\OpnameKasReportService;
 use App\Services\Ascends\Shared\Finance\OutstandingPayableCheck\HutangGiroRuReportService;
 use App\Services\Ascends\Shared\Finance\PayableSummary\SaldoHutangRuReportService;
 use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\GiroCashTransferReportService;
@@ -484,6 +485,20 @@ final class CompanyReportRegistry
                 view: 'ascends.shared.finance.outstanding_payable_check.hutang_giro_ru.pdf',
                 pdf: ['format' => 'A4', 'orientation' => 'portrait'],
                 filename: fn (array $data, string $company): string => 'Outstanding Payable Check - Laporan Hutang Giro ('.$company.').pdf',
+            ),
+            'finance.outstanding_advance_payable.opname-kas' => new CompanyReportDefinition(
+                slug: 'finance.outstanding_advance_payable.opname-kas',
+                service: OpnameKasReportService::class,
+                view: 'ascends.shared.finance.outstanding_advance_payable.opname_kas.pdf',
+                pdf: ['format' => 'A4', 'orientation' => 'portrait', 'disable_chunking' => true],
+                filename: fn (array $data, string $company): string => 'Laporan Opname Kas ('.$company.').pdf',
+            ),
+            'finance.outstanding_advance_receivable.opname-kas' => new CompanyReportDefinition(
+                slug: 'finance.outstanding_advance_receivable.opname-kas',
+                service: OpnameKasReportService::class,
+                view: 'ascends.shared.finance.outstanding_advance_receivable.opname_kas.pdf',
+                pdf: ['format' => 'A4', 'orientation' => 'portrait', 'disable_chunking' => true],
+                filename: fn (array $data, string $company): string => 'Laporan Opname Kas ('.$company.').pdf',
             ),
             'finance.payable-summary.saldo-hutang' => new CompanyReportDefinition(
                 slug: 'finance.payable-summary.saldo-hutang',

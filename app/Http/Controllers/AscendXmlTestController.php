@@ -38,6 +38,7 @@ use App\Services\Ascends\Shared\CustomReport\PenjualanPerItemAnalisaSkuReportSer
 use App\Services\Ascends\Shared\CustomReport\PenjualanPerKategoriBarangBulananReportService;
 use App\Services\Ascends\Shared\CustomReport\PenjualanVsBiayaPerjalananDinasReportService;
 use App\Services\Ascends\Shared\CustomReport\SalesSummaryPerCustomerPerPeriodReportService;
+use App\Services\Ascends\Shared\Finance\OpnameKas\OpnameKasReportService;
 use App\Services\Ascends\Shared\Finance\OutstandingPayableCheck\HutangGiroRuReportService;
 use App\Services\Ascends\Shared\Finance\PayableSummary\SaldoHutangRuReportService;
 use App\Services\Ascends\Shared\Finance\ReceiptVoucherDetails\GiroCashTransferReportService;
@@ -9423,7 +9424,7 @@ class AscendXmlTestController extends Controller
 
             $company = $this->normalizeSharedHrmCompany($dbCompanyName);
 
-            $filters = $this->outstandingPayableCheckFilters($request);
+            $filters = $this->perDateFilters($request);
 
             $reportData = $reportService->buildReportDataFromXml(
                 $xmlPayload,
@@ -9449,6 +9450,102 @@ class AscendXmlTestController extends Controller
         return response($pdf, 200, [
             'Content-Type' => 'application/pdf',
             'Content-Disposition' => 'attachment; filename="Outstanding Payable Check - Laporan Hutang Giro ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceOpnameKasPayablePdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        OpnameKasReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                $this->perDateFilters($request),
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.outstanding_advance_payable.opname_kas.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_disable_chunking' => true,
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Opname Kas ('.$company.').pdf"',
+        ]);
+    }
+
+    public function apiSharedFinanceOpnameKasReceivablePdf(
+        GenerateAscendsEmployeeListReportRequest $request,
+        OpnameKasReportService $reportService,
+        PdfGenerator $pdfGenerator,
+    ) {
+        try {
+            $xmlPayload = $request->xmlPayload();
+            $sourceLabel = $request->xmlSourceLabel() ?? 'request xml payload';
+
+            if ($xmlPayload === null || trim($xmlPayload) === '') {
+                throw new RuntimeException('File XML (xml_file) wajib dikirim.');
+            }
+
+            $dbCompanyName = trim((string) $request->input('DB_CompanyName', ''));
+            if ($dbCompanyName === '') {
+                throw new RuntimeException('Field DB_CompanyName wajib dikirim.');
+            }
+
+            $company = $this->normalizeSharedHrmCompany($dbCompanyName);
+
+            $reportData = $reportService->buildReportDataFromXml(
+                $xmlPayload,
+                $sourceLabel,
+                $this->perDateFilters($request),
+            );
+
+            $reportData['company'] = $company;
+            $reportData = $this->applyAscendSystemFields($request, $reportData);
+        } catch (RuntimeException $exception) {
+            return response()->json(['message' => $exception->getMessage()], 422);
+        }
+
+        $pdf = $pdfGenerator->render('ascends.shared.finance.outstanding_advance_receivable.opname_kas.pdf', [
+            'company' => $company,
+            'reportData' => $reportData,
+            'generatedAt' => now(),
+            'pdf_format' => 'A4',
+            'pdf_orientation' => 'portrait',
+            'pdf_disable_chunking' => true,
+            'pdf_simple_tables' => false,
+        ]);
+
+        return response($pdf, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="Laporan Opname Kas ('.$company.').pdf"',
         ]);
     }
 
@@ -10847,7 +10944,7 @@ class AscendXmlTestController extends Controller
         ];
     }
 
-    private function outstandingPayableCheckFilters(GenerateAscendsEmployeeListReportRequest $request): array
+    private function perDateFilters(GenerateAscendsEmployeeListReportRequest $request): array
     {
         return [
             'per_date' => $this->requestInputByAliases($request, [

@@ -1109,6 +1109,16 @@ Route::post(
 )->name('api.internal.ascends.shared.finance.payable-summary.saldo-hutang-ru.pdf');
 
 Route::post(
+    '/internal/ascends/shared/finance/outstanding_advance_payable/opname-kas/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceOpnameKasPayablePdf']
+)->name('api.internal.ascends.shared.finance.outstanding_advance_payable.opname-kas.pdf');
+
+Route::post(
+    '/internal/ascends/shared/finance/outstanding_advance_receivable/opname-kas/pdf',
+    [AscendXmlTestController::class, 'apiSharedFinanceOpnameKasReceivablePdf']
+)->name('api.internal.ascends.shared.finance.outstanding_advance_receivable.opname-kas.pdf');
+
+Route::post(
     '/internal/ascends/shared/finance/outstanding-payable-check/hutang-giro-ru/pdf',
     [AscendXmlTestController::class, 'apiSharedFinanceOutstandingPayableCheckHutangGiroRuPdf']
 )->name('api.internal.ascends.shared.finance.outstanding-payable-check.hutang-giro-ru.pdf');
