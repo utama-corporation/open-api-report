@@ -69,6 +69,8 @@ class ProduksiSandingPerNomorProduksiReportService
         $labels = ['input' => null, 'output' => null];
 
         foreach ($rows as $row) {
+            $isReproses = $this->isReprosesRow($row);
+
             foreach ($this->extractCandidates($row) as [$detail, $direction, $label]) {
                 $flagBucket = $this->resolveFlagBucket($row, $direction);
 
@@ -82,10 +84,9 @@ class ProduksiSandingPerNomorProduksiReportService
                     continue;
                 }
 
-                // Baris reproses hanya tampil di section Reproses;
-                // Input memakai IsReproses, Output memakai HasilDariReproses.
-                if ($this->isReprosesRow($row, $direction)) {
-                    $buckets[$direction . '_reproses'][] = $detail;
+                // Baris yang dicentang Reproses hanya tampil di section Reproses.
+                if ($isReproses && ($direction === 'input' || $direction === 'output')) {
+                    $buckets[$direction.'_reproses'][] = $detail;
 
                     continue;
                 }
@@ -181,7 +182,7 @@ class ProduksiSandingPerNomorProduksiReportService
         if ($driver !== 'sqlsrv' && $syntax !== 'query') {
             throw new RuntimeException(
                 'Laporan produksi sanding per nomor produksi dikonfigurasi untuk SQL Server. '
-                    . 'Set PRODUKSI_SANDING_PER_NOMOR_PRODUKSI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
+                    .'Set PRODUKSI_SANDING_PER_NOMOR_PRODUKSI_REPORT_CALL_SYNTAX=query jika ingin memakai query manual pada driver lain.',
             );
         }
 
@@ -192,7 +193,7 @@ class ProduksiSandingPerNomorProduksiReportService
 
             $bindings = str_contains($query, '?') ? array_pad([$noProduksi], $parameterCount, null) : [];
 
-            return array_map(static fn($row): array => (array) $row, $connection->select($query, $bindings));
+            return array_map(static fn ($row): array => (array) $row, $connection->select($query, $bindings));
         }
 
         if (! preg_match('/^[A-Za-z0-9_$.]+$/', $procedure)) {
@@ -211,7 +212,7 @@ class ProduksiSandingPerNomorProduksiReportService
         $bindings[0] = $noProduksi;
 
         return array_map(
-            static fn($row): array => (array) $row,
+            static fn ($row): array => (array) $row,
             $connection->select("SET NOCOUNT ON; {$sql}", $bindings),
         );
     }
@@ -222,7 +223,7 @@ class ProduksiSandingPerNomorProduksiReportService
             return "EXEC {$procedure}";
         }
 
-        return "EXEC {$procedure} " . implode(', ', array_fill(0, $parameterCount, '?'));
+        return "EXEC {$procedure} ".implode(', ', array_fill(0, $parameterCount, '?'));
     }
 
     private function buildCallSql(string $procedure, int $parameterCount): string
@@ -231,7 +232,7 @@ class ProduksiSandingPerNomorProduksiReportService
             return "CALL {$procedure}()";
         }
 
-        return "CALL {$procedure}(" . implode(', ', array_fill(0, $parameterCount, '?')) . ')';
+        return "CALL {$procedure}(".implode(', ', array_fill(0, $parameterCount, '?')).')';
     }
 
     /**
@@ -257,18 +258,15 @@ class ProduksiSandingPerNomorProduksiReportService
     }
 
     /**
-     * Baris reproses ditandai header sumber: IsReproses untuk Input,
-     * HasilDariReproses untuk Output. Group='REPROSES' hanya fallback untuk SP lama.
+     * Baris reproses ditandai header sumber lewat IsReproses atau HasilDariReproses.
+     * Checkbox UI mengisi IsReproses, jadi kedua flag diterima untuk kedua arah.
+     * Group='REPROSES' hanya fallback untuk SP lama.
      *
      * @param  array<string, mixed>  $row
      */
-    private function isReprosesRow(array $row, ?string $direction): bool
+    private function isReprosesRow(array $row): bool
     {
-        if ($direction === 'input' && $this->isFlagSet($row, 'IsReproses')) {
-            return true;
-        }
-
-        if ($direction === 'output' && $this->isFlagSet($row, 'HasilDariReproses')) {
+        if ($this->isFlagSet($row, 'IsReproses') || $this->isFlagSet($row, 'HasilDariReproses')) {
             return true;
         }
 
@@ -276,8 +274,7 @@ class ProduksiSandingPerNomorProduksiReportService
             return false;
         }
 
-        return $direction !== null
-            && strcasecmp(trim((string) ($row['Group'] ?? '')), 'REPROSES') === 0;
+        return strcasecmp(trim((string) ($row['Group'] ?? '')), 'REPROSES') === 0;
     }
 
     /**

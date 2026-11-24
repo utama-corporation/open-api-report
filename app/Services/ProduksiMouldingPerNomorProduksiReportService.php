@@ -48,6 +48,7 @@ class ProduksiMouldingPerNomorProduksiReportService
             'afkir_row_count' => count($report['afkir_rows'] ?? []),
             'input_reproses_row_count' => count($report['input_reproses_rows'] ?? []),
             'output_reproses_row_count' => count($report['output_reproses_rows'] ?? []),
+            'output_hasil_reproses_row_count' => count($report['output_hasil_reproses_rows'] ?? []),
         ];
     }
 
@@ -65,10 +66,14 @@ class ProduksiMouldingPerNomorProduksiReportService
             'afkir' => [],
             'input_reproses' => [],
             'output_reproses' => [],
+            'output_hasil_reproses' => [],
         ];
         $labels = ['input' => null, 'output' => null];
 
         foreach ($rows as $row) {
+            $isReproses = $this->isReprosesRow($row);
+            $isHasilReproses = $this->isFlagSet($row, 'HasilDariReproses');
+
             foreach ($this->extractCandidates($row) as [$detail, $direction, $label]) {
                 $flagBucket = $this->resolveFlagBucket($row, $direction);
 
@@ -82,9 +87,15 @@ class ProduksiMouldingPerNomorProduksiReportService
                     continue;
                 }
 
-                // Baris reproses hanya tampil di section Reproses;
-                // Input memakai IsReproses, Output memakai HasilDariReproses.
-                if ($this->isReprosesRow($row, $direction)) {
+                // Output dengan checkbox Hasil Dari Reproses punya tabel sendiri.
+                if ($direction === 'output' && $isHasilReproses) {
+                    $buckets['output_hasil_reproses'][] = $detail;
+
+                    continue;
+                }
+
+                // Baris yang dicentang Reproses hanya tampil di section Reproses.
+                if ($isReproses && ($direction === 'input' || $direction === 'output')) {
                     $buckets[$direction.'_reproses'][] = $detail;
 
                     continue;
@@ -104,6 +115,7 @@ class ProduksiMouldingPerNomorProduksiReportService
         $afkirRows = $this->sortDetailRows($buckets['afkir']);
         $inputReprosesRows = $this->sortDetailRows($buckets['input_reproses']);
         $outputReprosesRows = $this->sortDetailRows($buckets['output_reproses']);
+        $outputHasilReprosesRows = $this->sortDetailRows($buckets['output_hasil_reproses']);
 
         $inputTotals = $this->calculateTotals($inputRows);
         $outputTotals = $this->calculateTotals($outputRows);
@@ -111,15 +123,17 @@ class ProduksiMouldingPerNomorProduksiReportService
         $afkirTotals = $this->calculateTotals($afkirRows);
         $inputReprosesTotals = $this->calculateTotals($inputReprosesRows);
         $outputReprosesTotals = $this->calculateTotals($outputReprosesRows);
+        $outputHasilReprosesTotals = $this->calculateTotals($outputHasilReprosesRows);
         // Rumus dari manajemen: (Output + Repair) / Input * 100. Afkir tidak dihitung.
         $rendemenNumerator = $outputTotals['kubik'] + $repairTotals['kubik'];
         $rendemen = $inputTotals['kubik'] > 0
             ? ($rendemenNumerator / $inputTotals['kubik']) * 100.0
             : null;
 
-        // Rendemen reproses hanya membandingkan tabel Input/Output Reproses.
+        // Rendemen reproses membandingkan seluruh output reproses (Output + Hasil) dengan input.
+        $rendemenReprosesNumerator = $outputReprosesTotals['kubik'] + $outputHasilReprosesTotals['kubik'];
         $rendemenReproses = $inputReprosesTotals['kubik'] > 0
-            ? ($outputReprosesTotals['kubik'] / $inputReprosesTotals['kubik']) * 100.0
+            ? ($rendemenReprosesNumerator / $inputReprosesTotals['kubik']) * 100.0
             : null;
 
         return [
@@ -144,6 +158,7 @@ class ProduksiMouldingPerNomorProduksiReportService
             'afkir_rows' => $afkirRows,
             'input_reproses_rows' => $inputReprosesRows,
             'output_reproses_rows' => $outputReprosesRows,
+            'output_hasil_reproses_rows' => $outputHasilReprosesRows,
             'totals' => [
                 'input' => $inputTotals,
                 'output' => $outputTotals,
@@ -151,6 +166,7 @@ class ProduksiMouldingPerNomorProduksiReportService
                 'afkir' => $afkirTotals,
                 'input_reproses' => $inputReprosesTotals,
                 'output_reproses' => $outputReprosesTotals,
+                'output_hasil_reproses' => $outputHasilReprosesTotals,
                 'rendemen' => $rendemen,
                 'rendemen_reproses' => $rendemenReproses,
             ],
@@ -257,18 +273,15 @@ class ProduksiMouldingPerNomorProduksiReportService
     }
 
     /**
-     * Baris reproses ditandai header sumber: IsReproses untuk Input,
-     * HasilDariReproses untuk Output. Group='REPROSES' hanya fallback untuk SP lama.
+     * Baris reproses ditandai header sumber lewat IsReproses atau HasilDariReproses.
+     * Checkbox UI mengisi IsReproses, jadi kedua flag diterima untuk kedua arah.
+     * Group='REPROSES' hanya fallback untuk SP lama.
      *
      * @param  array<string, mixed>  $row
      */
-    private function isReprosesRow(array $row, ?string $direction): bool
+    private function isReprosesRow(array $row): bool
     {
-        if ($direction === 'input' && $this->isFlagSet($row, 'IsReproses')) {
-            return true;
-        }
-
-        if ($direction === 'output' && $this->isFlagSet($row, 'HasilDariReproses')) {
+        if ($this->isFlagSet($row, 'IsReproses') || $this->isFlagSet($row, 'HasilDariReproses')) {
             return true;
         }
 
@@ -276,8 +289,7 @@ class ProduksiMouldingPerNomorProduksiReportService
             return false;
         }
 
-        return $direction !== null
-            && strcasecmp(trim((string) ($row['Group'] ?? '')), 'REPROSES') === 0;
+        return strcasecmp(trim((string) ($row['Group'] ?? '')), 'REPROSES') === 0;
     }
 
     /**

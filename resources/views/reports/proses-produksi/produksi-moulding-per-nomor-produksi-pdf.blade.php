@@ -222,6 +222,7 @@
         $afkirRows = $report['afkir_rows'] ?? [];
         $inputReprosesRows = $report['input_reproses_rows'] ?? [];
         $outputReprosesRows = $report['output_reproses_rows'] ?? [];
+        $outputHasilReprosesRows = $report['output_hasil_reproses_rows'] ?? [];
         $totals = $report['totals'] ?? [];
         $generatedByName = $generatedBy->name ?? 'sistem';
 
@@ -239,6 +240,7 @@
         $afkirTotals = $totals['afkir'] ?? $emptyTotals;
         $inputReprosesTotals = $totals['input_reproses'] ?? $emptyTotals;
         $outputReprosesTotals = $totals['output_reproses'] ?? $emptyTotals;
+        $outputHasilReprosesTotals = $totals['output_hasil_reproses'] ?? $emptyTotals;
         $rendemen = $totals['rendemen'] ?? null;
         $rendemenReproses = $totals['rendemen_reproses'] ?? null;
 
@@ -258,10 +260,10 @@
             'denominator' => $fmt4($inputTotals['kubik'] ?? 0),
             'percent' => $fmtPercent($rendemen),
         ];
-        $reprosesRendemen = ($inputReprosesRows !== [] || $outputReprosesRows !== [])
+        $reprosesRendemen = ($inputReprosesRows !== [] || $outputReprosesRows !== [] || $outputHasilReprosesRows !== [])
             ? [
                 'label' => 'Rendemen Reproses',
-                'numerator' => $fmt4($outputReprosesTotals['kubik'] ?? 0),
+                'numerator' => $fmt4($outputReprosesTotals['kubik'] ?? 0) . ' + ' . $fmt4($outputHasilReprosesTotals['kubik'] ?? 0),
                 'denominator' => $fmt4($inputReprosesTotals['kubik'] ?? 0),
                 'percent' => $fmtPercent($rendemenReproses),
             ]
@@ -302,7 +304,19 @@
                 'right_totals' => $outputReprosesTotals,
                 'left_empty' => 'Data input reproses tidak tersedia.',
                 'right_empty' => 'Data output reproses tidak tersedia.',
+                'rendemen' => null,
+            ],
+            [
+                'titles' => ['', 'Hasil Dari Reproses'],
+                'headings' => ['', 'Hasil Dari Reproses'],
+                'left_rows' => [],
+                'right_rows' => $outputHasilReprosesRows,
+                'left_totals' => $emptyTotals,
+                'right_totals' => $outputHasilReprosesTotals,
+                'left_empty' => '',
+                'right_empty' => 'Data hasil dari reproses tidak tersedia.',
                 'rendemen' => $reprosesRendemen,
+                'right_only' => true,
             ],
         ];
 
@@ -344,6 +358,7 @@
                     'show_right_empty' => true,
                     'show_left_total' => true,
                     'show_right_total' => true,
+                    'right_only' => $block['right_only'] ?? false,
                     'rendemen' => $block['rendemen'],
                 ];
                 $usedHeightMm += $blockHeight;
@@ -401,6 +416,7 @@
                     'show_right_empty' => $firstChunk && $rightChunk === [],
                     'show_left_total' => $showLeftTotal,
                     'show_right_total' => $showRightTotal,
+                    'right_only' => $block['right_only'] ?? false,
                     'rendemen' => $completes ? $block['rendemen'] : null,
                 ];
 
@@ -493,41 +509,62 @@
             </table>
 
             @foreach ($page['blocks'] as $block)
-                <table class="section-title-grid">
-                    <tr>
-                        <td>{{ $block['titles'][0] }}</td>
-                        <td>{{ $block['titles'][1] }}</td>
-                    </tr>
-                </table>
+                @if ($block['right_only'] ?? false)
+                    <div style="height: 4mm;"></div>
+                    <table class="split-grid">
+                        <tr>
+                            <td class="left-pane"></td>
+                            <td class="right-pane">
+                                <p class="section-heading">{{ $block['headings'][1] }}</p>
+                                @include('reports.partials.produksi-detail-table', [
+                                    'rows' => $block['right_rows'],
+                                    'totals' => $block['right_totals'],
+                                    'emptyMessage' => $block['right_empty'],
+                                    'showEmpty' => $block['show_right_empty'],
+                                    'showTotal' => $block['show_right_total'],
+                                    'fmtInt' => $fmtInt,
+                                    'fmt4' => $fmt4,
+                                ])
+                            </td>
+                        </tr>
+                    </table>
+                @else
+                    <table class="section-title-grid">
+                        <tr>
+                            <td>{{ $block['titles'][0] }}</td>
+                            <td>{{ $block['titles'][1] }}</td>
+                        </tr>
+                    </table>
 
-                <table class="split-grid">
-                    <tr>
-                        <td class="left-pane">
-                            <p class="section-heading">{{ $block['headings'][0] }}</p>
-                            @include('reports.partials.produksi-detail-table', [
-                                'rows' => $block['left_rows'],
-                                'totals' => $block['left_totals'],
-                                'emptyMessage' => $block['left_empty'],
-                                'showEmpty' => $block['show_left_empty'],
-                                'showTotal' => $block['show_left_total'],
-                                'fmtInt' => $fmtInt,
-                                'fmt4' => $fmt4,
-                            ])
-                        </td>
-                        <td class="right-pane">
-                            <p class="section-heading">{{ $block['headings'][1] }}</p>
-                            @include('reports.partials.produksi-detail-table', [
-                                'rows' => $block['right_rows'],
-                                'totals' => $block['right_totals'],
-                                'emptyMessage' => $block['right_empty'],
-                                'showEmpty' => $block['show_right_empty'],
-                                'showTotal' => $block['show_right_total'],
-                                'fmtInt' => $fmtInt,
-                                'fmt4' => $fmt4,
-                            ])
-                        </td>
-                    </tr>
-                </table>
+                    <table class="split-grid">
+                        <tr>
+                            <td class="left-pane">
+                                <p class="section-heading">{{ $block['headings'][0] }}</p>
+                                @include('reports.partials.produksi-detail-table', [
+                                    'rows' => $block['left_rows'],
+                                    'totals' => $block['left_totals'],
+                                    'emptyMessage' => $block['left_empty'],
+                                    'showEmpty' => $block['show_left_empty'],
+                                    'showTotal' => $block['show_left_total'],
+                                    'fmtInt' => $fmtInt,
+                                    'fmt4' => $fmt4,
+                                ])
+                            </td>
+                            <td class="right-pane">
+                                <p class="section-heading">{{ $block['headings'][1] }}</p>
+                                @include('reports.partials.produksi-detail-table', [
+                                    'rows' => $block['right_rows'],
+                                    'totals' => $block['right_totals'],
+                                    'emptyMessage' => $block['right_empty'],
+                                    'showEmpty' => $block['show_right_empty'],
+                                    'showTotal' => $block['show_right_total'],
+                                    'fmtInt' => $fmtInt,
+                                    'fmt4' => $fmt4,
+                                ])
+                            </td>
+                        </tr>
+                    </table>
+                @endif
 
                 @if ($block['rendemen'] !== null)
                     <p class="rendemen-line">
@@ -575,6 +612,12 @@
                         <td class="summary-label">Total Output Reproses</td>
                         <td class="meta-sep">:</td>
                         <td class="summary-value">{{ $fmt4($outputReprosesTotals['kubik'] ?? 0) }} m&sup3;</td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">Total Hasil Reproses</td>
+                        <td class="meta-sep">:</td>
+                        <td class="summary-value">{{ $fmt4($outputHasilReprosesTotals['kubik'] ?? 0) }} m&sup3;</td>
+                        <td colspan="3"></td>
                     </tr>
                 </table>
             @endif

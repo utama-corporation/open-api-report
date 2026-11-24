@@ -69,6 +69,8 @@ class ProduksiFjPerNomorProduksiReportService
         $labels = ['input' => null, 'output' => null];
 
         foreach ($rows as $row) {
+            $isReproses = $this->isReprosesRow($row);
+
             foreach ($this->extractCandidates($row) as [$detail, $direction, $label]) {
                 $flagBucket = $this->resolveFlagBucket($row, $direction);
 
@@ -82,9 +84,8 @@ class ProduksiFjPerNomorProduksiReportService
                     continue;
                 }
 
-                // Baris reproses hanya tampil di section Reproses;
-                // Input memakai IsReproses, Output memakai HasilDariReproses.
-                if ($this->isReprosesRow($row, $direction)) {
+                // Baris yang dicentang Reproses hanya tampil di section Reproses.
+                if ($isReproses && ($direction === 'input' || $direction === 'output')) {
                     $buckets[$direction.'_reproses'][] = $detail;
 
                     continue;
@@ -182,18 +183,15 @@ class ProduksiFjPerNomorProduksiReportService
     }
 
     /**
-     * Baris reproses ditandai header sumber: IsReproses untuk Input,
-     * HasilDariReproses untuk Output. Group='REPROSES' hanya fallback untuk SP lama.
+     * Baris reproses ditandai header sumber lewat IsReproses atau HasilDariReproses.
+     * Checkbox UI mengisi IsReproses, jadi kedua flag diterima untuk kedua arah.
+     * Group='REPROSES' hanya fallback untuk SP lama.
      *
      * @param  array<string, mixed>  $row
      */
-    private function isReprosesRow(array $row, ?string $direction): bool
+    private function isReprosesRow(array $row): bool
     {
-        if ($direction === 'input' && $this->isFlagSet($row, 'IsReproses')) {
-            return true;
-        }
-
-        if ($direction === 'output' && $this->isFlagSet($row, 'HasilDariReproses')) {
+        if ($this->isFlagSet($row, 'IsReproses') || $this->isFlagSet($row, 'HasilDariReproses')) {
             return true;
         }
 
@@ -201,8 +199,7 @@ class ProduksiFjPerNomorProduksiReportService
             return false;
         }
 
-        return $direction !== null
-            && strcasecmp(trim((string) ($row['Group'] ?? '')), 'REPROSES') === 0;
+        return strcasecmp(trim((string) ($row['Group'] ?? '')), 'REPROSES') === 0;
     }
 
     /**
