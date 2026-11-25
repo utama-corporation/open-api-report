@@ -237,7 +237,6 @@ class CompanyReportController extends Controller
             'generatedByName' => $reportData['printed_by'] ?? 'sistem',
             'pdf_format' => $pdfOptions['format'] ?? 'A4',
             'pdf_orientation' => $pdfOptions['orientation'] ?? null,
-            'pdf_disable_chunking' => (bool) ($pdfOptions['disable_chunking'] ?? false),
             'pdf_simple_tables' => false,
             'pdf_column_count' => $this->columnCount($definition, $reportData, $company),
         ]);

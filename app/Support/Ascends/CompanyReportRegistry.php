@@ -490,14 +490,14 @@ final class CompanyReportRegistry
                 slug: 'finance.outstanding_advance_payable.opname-kas',
                 service: OpnameKasReportService::class,
                 view: 'ascends.shared.finance.outstanding_advance_payable.opname_kas.pdf',
-                pdf: ['format' => 'A4', 'orientation' => 'portrait', 'disable_chunking' => true],
+                pdf: ['format' => 'A4', 'orientation' => 'portrait'],
                 filename: fn (array $data, string $company): string => 'Laporan Opname Kas ('.$company.').pdf',
             ),
             'finance.outstanding_advance_receivable.opname-kas' => new CompanyReportDefinition(
                 slug: 'finance.outstanding_advance_receivable.opname-kas',
                 service: OpnameKasReportService::class,
                 view: 'ascends.shared.finance.outstanding_advance_receivable.opname_kas.pdf',
-                pdf: ['format' => 'A4', 'orientation' => 'portrait', 'disable_chunking' => true],
+                pdf: ['format' => 'A4', 'orientation' => 'portrait'],
                 filename: fn (array $data, string $company): string => 'Laporan Opname Kas ('.$company.').pdf',
             ),
             'finance.payable-summary.saldo-hutang' => new CompanyReportDefinition(

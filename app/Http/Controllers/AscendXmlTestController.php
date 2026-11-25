@@ -9491,7 +9491,6 @@ class AscendXmlTestController extends Controller
             'generatedAt' => now(),
             'pdf_format' => 'A4',
             'pdf_orientation' => 'portrait',
-            'pdf_disable_chunking' => true,
             'pdf_simple_tables' => false,
         ]);
 
@@ -9539,7 +9538,6 @@ class AscendXmlTestController extends Controller
             'generatedAt' => now(),
             'pdf_format' => 'A4',
             'pdf_orientation' => 'portrait',
-            'pdf_disable_chunking' => true,
             'pdf_simple_tables' => false,
         ]);
 

@@ -135,7 +135,8 @@
         width: 100%;
         border-collapse: collapse;
         table-layout: fixed;
-        margin: 0;
+        margin: 28px 0 0 0;
+        page-break-inside: avoid;
     }
 
     .signature-table td {
@@ -148,11 +149,6 @@
 
     .signature-space-row td {
         height: 20mm;
-        padding: 0;
-    }
-
-    .signature-gap-row td {
-        height: 8mm;
         padding: 0;
     }
     </style>
@@ -168,9 +164,6 @@
     $headerTitle = 'Laporan Biaya Lain-lain Dibayar Dimuka';
     $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
     $generatedByName = trim((string) ($reportData['printed_by'] ?? ''));
-    $footerDateTime = isset($generatedAt)
-        ? \Carbon\Carbon::parse($generatedAt)->locale('id')->translatedFormat('d-M-y H:i')
-        : now()->locale('id')->translatedFormat('d-M-y H:i');
     $globalRow = 0;
 
     if (! function_exists('fmtAmount_finance_outstanding_advance_payable_opname_kas')) {
@@ -266,54 +259,25 @@
         </tbody>
     </table>
 
-    <htmlpagefooter name="signedFooter">
-        <table class="signature-table">
-            <tr>
-                <td>Dibukukan Oleh :</td>
-                <td>Diperiksa Oleh :</td>
-                <td>Disetujui Oleh :</td>
-            </tr>
-            <tr class="signature-space-row">
-                <td></td>
-                <td></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>(Staff Kasir)</td>
-                <td>(Kadiv. Accounting)</td>
-                <td>(Kadept. F&amp;A)</td>
-            </tr>
-            <tr class="signature-gap-row">
-                <td colspan="3"></td>
-            </tr>
-        </table>
-
-        <table
-            style="width: 100%; border-collapse: collapse; border-spacing: 0; table-layout: fixed; border: 0; margin: 0; padding: 0;">
-            <colgroup>
-                <col style="width: 30%;">
-                <col style="width: 40%;">
-                <col style="width: 30%;">
-            </colgroup>
-            <tr>
-                <td
-                    style="border: 0; background: transparent; padding: 0; margin: 0; vertical-align: bottom; text-align: left; white-space: nowrap; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic; font-weight: normal;">
-                    Dicetak oleh: {{ $generatedByName }} pada {{ $footerDateTime }}
-                </td>
-                <td
-                    style="border: 0; background: transparent; padding: 0; margin: 0; vertical-align: bottom; text-align: center; white-space: nowrap; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic; font-weight: normal;">
-                </td>
-                <td
-                    style="border: 0; background: transparent; padding: 0; margin: 0; vertical-align: bottom; text-align: right; white-space: nowrap; font-family: 'Noto Serif', serif; font-size: 8px; font-style: italic; font-weight: normal;">
-                    Halaman {PAGENO} dari {nbpg}
-                </td>
-            </tr>
-        </table>
-    </htmlpagefooter>
+    <table class="signature-table">
+        <tr>
+            <td>Dibukukan Oleh :</td>
+            <td>Diperiksa Oleh :</td>
+            <td>Disetujui Oleh :</td>
+        </tr>
+        <tr class="signature-space-row">
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>(Staff Kasir)</td>
+            <td>(Kadiv. Accounting)</td>
+            <td>(Kadept. F&amp;A)</td>
+        </tr>
+    </table>
 
     @include('ascends.shared.partials.report-footer')
-
-    <sethtmlpagefooter name="signedFooter" value="on" />
 </body>
 
 </html>
