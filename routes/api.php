@@ -52,6 +52,7 @@ use App\Http\Controllers\LabelStHidupDetailController;
 use App\Http\Controllers\LaminatingHidupDetailController;
 use App\Http\Controllers\LembarTallyHasilSawmillController;
 use App\Http\Controllers\MouldingHidupDetailController;
+use App\Http\Controllers\MouldingReprosesDanHasilReprosesController;
 use App\Http\Controllers\MutasiBarangJadiController;
 use App\Http\Controllers\MutasiBarangJadiPerJenisPerUkuranController;
 use App\Http\Controllers\MutasiCCAkhirController;
@@ -1376,6 +1377,7 @@ Route::middleware('report.jwt.claims')->group(function (): void {
         ['/reports/laminating/rekap-produksi-laminating-per-jenis-per-grade', 'api.reports.laminating.rekap-produksi-laminating-per-jenis-per-grade', RekapProduksiLaminatingPerJenisPerGradeController::class],
         ['/reports/laminating/ketahanan-barang-laminating', 'api.reports.laminating.ketahanan-barang-laminating', KetahananBarangDagangLaminatingController::class],
         ['/reports/moulding/rekap-produksi-moulding-consolidated', 'api.reports.moulding.rekap-produksi-moulding-consolidated', RekapProduksiMouldingConsolidatedController::class],
+        ['/reports/moulding/moulding-reproses-dan-hasil-reproses', 'api.reports.moulding.moulding-reproses-dan-hasil-reproses', MouldingReprosesDanHasilReprosesController::class],
         ['/reports/moulding/moulding-hidup-detail', 'api.reports.moulding.moulding-hidup-detail', MouldingHidupDetailController::class],
         ['/reports/moulding/rekap-produksi-moulding-per-jenis-per-grade', 'api.reports.moulding.rekap-produksi-moulding-per-jenis-per-grade', RekapProduksiMouldingPerJenisPerGradeController::class],
         ['/reports/moulding/ketahanan-barang-moulding', 'api.reports.moulding.ketahanan-barang-moulding', KetahananBarangDagangMouldingController::class],

@@ -1513,6 +1513,20 @@ return [
             'Tanggal,Shift,NamaMesin,JamKerja,JmlhAnggota,BJ,CCAkhir,FJ,Laminating,Moulding,Reproses,S4S,OutputMoulding,OutputReproses,HourMeter'
         )))),
     ],
+    'moulding_reproses_dan_hasil_reproses' => [
+        'database_connection' => env('MOULDING_REPROSES_DAN_HASIL_REPROSES_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
+        'stored_procedure' => env(
+            'MOULDING_REPROSES_DAN_HASIL_REPROSES_REPORT_PROCEDURE',
+            'SPWpsLaporanMouldingReprosesDanHasilReproses'
+        ),
+        'call_syntax' => env('MOULDING_REPROSES_DAN_HASIL_REPROSES_REPORT_CALL_SYNTAX', 'exec'),
+        'query' => env('MOULDING_REPROSES_DAN_HASIL_REPROSES_REPORT_QUERY'),
+        'parameter_count' => (int) env('MOULDING_REPROSES_DAN_HASIL_REPROSES_REPORT_PARAMETER_COUNT', 2),
+        'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
+            'MOULDING_REPROSES_DAN_HASIL_REPROSES_REPORT_EXPECTED_COLUMNS',
+            'Tanggal,InputReproses,OutputReproses,HasilDariReproses'
+        )))),
+    ],
     'moulding_hidup_detail' => [
         'database_connection' => env('MOULDING_HIDUP_DETAIL_REPORT_DB_CONNECTION', env('DB_CONNECTION')),
         'stored_procedure' => env('MOULDING_HIDUP_DETAIL_REPORT_PROCEDURE', 'SP_LapMouldingHidupDetail'),
