@@ -66,16 +66,47 @@ XML;
         $this->assertSame('26-Nov-26', $cod['rows'][0]['invoice_date_label']);
         $this->assertSame('Belum Lunas', $cod['rows'][0]['status']);
         $this->assertSame('Lunas', $cod['rows'][1]['status']);
+        $this->assertSame(0.0, $cod['rows'][0]['disc_pct']);
         $this->assertSame(3231900.0, $cod['total']);
         $this->assertSame(3231900.0, $cod['net_total']);
 
         $cbd = $data['sections'][1];
         $this->assertSame('CBD', $cbd['label']);
-        $this->assertSame(41900.0, $cbd['disc']);
+        $this->assertSame(1.38, $cbd['rows'][0]['disc_pct']);
 
         $this->assertSame(6273800.0, $data['grand_total_total']);
-        $this->assertSame(41900.0, $data['grand_total_disc']);
         $this->assertSame(6231900.0, $data['grand_total_net']);
+    }
+
+    public function test_discount_percentage_uses_disc_amount_only(): void
+    {
+        $xml = <<<'XML'
+<NewDataSet>
+    <Table>
+        <InvoiceDate>2026-11-12T00:00:00+07:00</InvoiceDate>
+        <InvoiceNumber>SI/11/26/1685</InvoiceNumber>
+        <Total>6659500.0000</Total>
+        <Disc>199785.0000</Disc>
+        <NetTotal>6459715.0000</NetTotal>
+        <Disc2>0.000000</Disc2>
+        <Ket>COD</Ket>
+    </Table>
+    <Table>
+        <InvoiceDate>2026-11-12T00:00:00+07:00</InvoiceDate>
+        <InvoiceNumber>SI/11/26/1525</InvoiceNumber>
+        <Total>642200.0000</Total>
+        <Disc>0.0000</Disc>
+        <NetTotal>642200.0000</NetTotal>
+        <Disc2>12844.000000</Disc2>
+        <Ket>COD</Ket>
+    </Table>
+</NewDataSet>
+XML;
+
+        $data = (new DailySalesCodCbdReportService)->buildReportDataFromXml($xml, 'test');
+
+        $this->assertSame(0.0, $data['sections'][0]['rows'][0]['disc_pct']);
+        $this->assertSame(3.0, $data['sections'][0]['rows'][1]['disc_pct']);
     }
 
     public function test_derives_period_from_invoice_dates_when_per_date_is_absent(): void

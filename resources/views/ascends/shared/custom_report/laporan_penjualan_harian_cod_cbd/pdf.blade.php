@@ -158,7 +158,6 @@
     @php
     $sections = $reportData['sections'] ?? [];
     $grandTotal = (float) ($reportData['grand_total_total'] ?? 0);
-    $grandDisc = (float) ($reportData['grand_total_disc'] ?? 0);
     $grandNet = (float) ($reportData['grand_total_net'] ?? 0);
     $headerTitle = 'Laporan Penjualan Harian COD & CBD';
     $headerSubtitle = trim((string) ($reportData['period_label'] ?? ''));
@@ -176,6 +175,16 @@
                 return '-';
             }
             return number_format($v, 0, '.', ',');
+        }
+    }
+    if (! function_exists('fmtPct_custom_report_laporan_penjualan_harian_cod_cbd')) {
+        function fmtPct_custom_report_laporan_penjualan_harian_cod_cbd($value)
+        {
+            $v = (float) $value;
+            if ($v == 0.0) {
+                return '-';
+            }
+            return number_format($v, 2, '.', ',') . '%';
         }
     }
     @endphp
@@ -217,8 +226,7 @@
                         <td class="center">{{ $row['age'] ?? 0 }}</td>
                         <td class="number nowrap {{ ($row['total'] ?? 0) < 0 ? 'number-negative' : '' }}">
                             {{ fmtAmount_custom_report_laporan_penjualan_harian_cod_cbd($row['total'] ?? 0) }}</td>
-                        <td class="number nowrap {{ ($row['disc'] ?? 0) < 0 ? 'number-negative' : '' }}">
-                            {{ fmtAmount_custom_report_laporan_penjualan_harian_cod_cbd($row['disc'] ?? 0) }}</td>
+                        <td class="number nowrap">{{ fmtPct_custom_report_laporan_penjualan_harian_cod_cbd($row['disc_pct'] ?? 0) }}</td>
                         <td class="number nowrap {{ ($row['net_total'] ?? 0) < 0 ? 'number-negative' : '' }}">
                             {{ fmtAmount_custom_report_laporan_penjualan_harian_cod_cbd($row['net_total'] ?? 0) }}</td>
                         <td class="center">{{ $row['status'] ?? '' }}</td>
@@ -236,8 +244,7 @@
                     <td></td>
                     <td class="number nowrap">
                         {{ fmtAmount_custom_report_laporan_penjualan_harian_cod_cbd($grandTotal) }}</td>
-                    <td class="number nowrap">
-                        {{ fmtAmount_custom_report_laporan_penjualan_harian_cod_cbd($grandDisc) }}</td>
+                    <td></td>
                     <td class="number nowrap">
                         {{ fmtAmount_custom_report_laporan_penjualan_harian_cod_cbd($grandNet) }}</td>
                     <td></td>

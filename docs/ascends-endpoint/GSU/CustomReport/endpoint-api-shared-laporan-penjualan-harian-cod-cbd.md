@@ -32,11 +32,11 @@ Data `<Table>` dikelompokkan per `Ket` (Remark): section `COD` lebih dulu, lalu 
 | Termin | `PaymentTerm` |
 | Umur | `Age` |
 | Nilai Invoice | `Total` |
-| Diskon | `Disc` |
+| Diskon | `Disc / Total` (persentase) |
 | Total Netto | `NetTotal` |
 | Status | `Status` (`-` atau kosong → `Belum Lunas`) |
 
-Grand Total = jumlah `Total`, `Disc`, dan `NetTotal` seluruh section.
+Grand Total = jumlah `Total` dan `NetTotal` seluruh section.
 
 ## Response Sukses
 

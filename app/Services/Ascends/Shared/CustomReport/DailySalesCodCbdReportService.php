@@ -34,7 +34,6 @@ class DailySalesCodCbdReportService
             'period_label' => $this->resolvePeriodLabel($filters, $parsed['rows']),
             'sections' => $sections,
             'grand_total_total' => round((float) array_sum(array_column($parsed['rows'], 'total')), 2),
-            'grand_total_disc' => round((float) array_sum(array_column($parsed['rows'], 'disc')), 2),
             'grand_total_net' => round((float) array_sum(array_column($parsed['rows'], 'net_total')), 2),
             'printed_by' => '',
         ];
@@ -81,6 +80,8 @@ class DailySalesCodCbdReportService
             }
 
             $status = trim((string) $node->Status);
+            $total = round((float) $node->Total, 2);
+            $discAmount = (float) $node->Disc;
 
             $rows[] = [
                 'invoice_date' => trim((string) $node->InvoiceDate),
@@ -90,8 +91,8 @@ class DailySalesCodCbdReportService
                 'remark' => strtoupper(trim((string) $node->Ket)),
                 'payment_term' => (int) trim((string) $node->PaymentTerm),
                 'age' => (int) trim((string) $node->Age),
-                'total' => round((float) $node->Total, 2),
-                'disc' => round((float) $node->Disc, 2),
+                'total' => $total,
+                'disc_pct' => $total > 0 ? round($discAmount / $total * 100, 2) : 0.0,
                 'net_total' => round((float) $node->NetTotal, 2),
                 'status' => $status === '' || $status === '-' ? 'Belum Lunas' : $status,
                 '_date' => $this->parseDate((string) $node->InvoiceDate),
@@ -149,10 +150,9 @@ class DailySalesCodCbdReportService
         foreach ($rows as $row) {
             $key = $row['remark'] !== '' ? $row['remark'] : 'LAINNYA';
 
-            $groups[$key] ??= ['label' => $key, 'rows' => [], 'total' => 0.0, 'disc' => 0.0, 'net_total' => 0.0];
+            $groups[$key] ??= ['label' => $key, 'rows' => [], 'total' => 0.0, 'net_total' => 0.0];
             $groups[$key]['rows'][] = $row;
             $groups[$key]['total'] += $row['total'];
-            $groups[$key]['disc'] += $row['disc'];
             $groups[$key]['net_total'] += $row['net_total'];
         }
 
@@ -184,7 +184,6 @@ class DailySalesCodCbdReportService
             unset($row);
 
             $group['total'] = round($group['total'], 2);
-            $group['disc'] = round($group['disc'], 2);
             $group['net_total'] = round($group['net_total'], 2);
 
             $sections[] = $group;
