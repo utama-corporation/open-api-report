@@ -2,7 +2,7 @@
 <html lang="id">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,100..900;1,100..900&display=swap"
@@ -10,6 +10,8 @@
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         @page {
@@ -21,60 +23,65 @@
             margin: 0;
             font-family: "Noto Serif", serif;
             font-size: 10px;
-            line-height: 1.2;
+            line-height: 1.15;
             color: #000;
         }
 
         .report-title {
-            margin: 0;
             text-align: center;
+            margin: 0;
             font-size: 16px;
             font-weight: bold;
         }
 
         .report-subtitle {
-            margin: 2px 0 20px 0;
             text-align: center;
+            margin: 2px 0 20px 0;
             font-size: 12px;
             color: #636466;
         }
 
-        table {
+        .data-table {
             width: 100%;
             border-collapse: collapse;
             table-layout: fixed;
-            border-bottom: 1px solid #000;
+            page-break-inside: auto;
         }
 
-        thead {
-            display: table-header-group;
+        .data-table th,
+        .data-table td {
+            border-left: 1px solid #000;
+            border-right: 1px solid #000;
+            padding: 1px 2px;
+            vertical-align: top;
+            word-wrap: break-word;
         }
 
-        tr {
-            page-break-inside: avoid;
-        }
-
-        th,
-        td {
-            border: 1px solid #000;
-            padding: 3px 4px;
-            font-size: 10px;
-            line-height: 1.15;
-        }
-
-        th {
-            background: #fff;
+        .data-table th {
             font-weight: bold;
+            font-size: 10px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .data-table td {
+            font-size: 10px;
+            border-top: none;
+            border-bottom: none;
+        }
+
+        .center {
             text-align: center;
         }
 
-        tbody td {
-            border-top: 0;
-            border-bottom: 0;
+        .number {
+            text-align: right;
         }
 
-        tbody tr:last-child td {
-            border-bottom: 1px solid #000;
+        .nowrap {
+            white-space: nowrap;
         }
 
         .row-odd td {
@@ -85,22 +92,35 @@
             background: #eef2f8;
         }
 
-        .center {
-            text-align: center;
+        .section-row td {
+            font-weight: bold;
+            font-size: 10px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 4px 2px;
         }
 
-        .number {
-            text-align: right;
-            white-space: nowrap;
-            font-family: "Calibri", "DejaVu Sans", sans-serif;
+        .grand-total-row td {
+            font-weight: bold;
+            font-size: 10px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 3px 2px;
         }
 
         .empty-row td {
             text-align: center;
             font-style: italic;
-            font-weight: bold;
-            color: #9c111d;
             background: #c9d1df;
+            font-weight: bold;
+            color: #000;
+            font-size: 11px;
+            padding: 8px 4px;
+            border-bottom: 1px solid #000;
+        }
+
+        tr {
+            page-break-inside: avoid;
         }
     </style>
 </head>
@@ -115,45 +135,100 @@
         $fmtDate = static fn(string $value): string => $value === ''
             ? ''
             : \Carbon\Carbon::parse($value)->locale('id')->isoFormat('DD-MMM-YY');
-        $fmt4 = static fn(mixed $value): string => number_format((float) $value, 4, '.', '') . ' m³';
+        $fmtInt = static fn(mixed $value): string => number_format((float) $value, 0, '.', ',');
+        $fmt4 = static fn(mixed $value): string => number_format((float) $value, 4, '.', '');
+
+        $sectionDefinitions = [
+            'input_reproses' => [
+                'title' => 'Input Reproses',
+                'total_label' => 'Total Input Reproses',
+            ],
+            'output_reproses' => [
+                'title' => 'Output Reproses',
+                'total_label' => 'Total Output Reproses',
+            ],
+            'hasil_dari_reproses' => [
+                'title' => 'Hasil Dari Reproses',
+                'total_label' => 'Total Hasil Dari Reproses',
+            ],
+        ];
+
+        $groupedRows = array_fill_keys(array_keys($sectionDefinitions), []);
+        foreach ($rows as $row) {
+            $key = (string) ($row['section_key'] ?? 'other');
+            if (isset($groupedRows[$key])) {
+                $groupedRows[$key][] = $row;
+            }
+        }
+
+        $sectionTotals = [];
+        foreach ($groupedRows as $key => $sectionRows) {
+            $jmlhBatang = 0;
+            $kubik = 0.0;
+            foreach ($sectionRows as $row) {
+                $jmlhBatang += (int) ($row['jmlh_batang'] ?? 0);
+                $kubik += (float) ($row['kubik'] ?? 0.0);
+            }
+            $sectionTotals[$key] = [
+                'jmlh_batang' => $jmlhBatang,
+                'kubik' => $kubik,
+            ];
+        }
 
         $generatedByName = $generatedBy?->name ?? 'sistem';
         $generatedAtText = isset($generatedAt) && method_exists($generatedAt, 'copy')
             ? $generatedAt->copy()->locale('id')->translatedFormat('d-M-y H:i')
             : now()->locale('id')->translatedFormat('d-M-y H:i');
+        $globalRow = 0;
     @endphp
 
     <h1 class="report-title">Laporan Proses Produksi Moulding Reproses Dan Hasil Dari Reproses</h1>
     <p class="report-subtitle">Dari {{ $startLabel }} s/d {{ $endLabel }}</p>
 
-    <table>
-        <colgroup>
-            <col style="width: 16%;">
-            <col style="width: 28%;">
-            <col style="width: 28%;">
-            <col style="width: 28%;">
-        </colgroup>
+    <table class="data-table">
         <thead>
             <tr>
-                <th>Tanggal</th>
-                <th>Input Reproses</th>
-                <th>Output Reproses</th>
-                <th>Hasil Dari Reproses</th>
+                <th style="width: 11%;">Tanggal</th>
+                <th style="width: 13%;">No Label</th>
+                <th style="width: 10%;">Tebal (mm)</th>
+                <th style="width: 10%;">Lebar (mm)</th>
+                <th style="width: 10%;">Panjang (ft)</th>
+                <th style="width: 10%;">Jmlh Batang</th>
+                <th style="width: 12%;">Kubik (m&sup3;)</th>
+                <th style="width: 24%;">No. SPK Tujuan</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($rows as $row)
-                <tr class="{{ $loop->odd ? 'row-odd' : 'row-even' }}">
-                    <td class="center">{{ $fmtDate((string) ($row['tanggal'] ?? '')) }}</td>
-                    <td class="number">{{ $fmt4($row['input_reproses'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt4($row['output_reproses'] ?? 0) }}</td>
-                    <td class="number">{{ $fmt4($row['hasil_dari_reproses'] ?? 0) }}</td>
+            @foreach ($sectionDefinitions as $key => $section)
+                <tr class="section-row">
+                    <td colspan="8">{{ $section['title'] }}</td>
                 </tr>
-            @empty
-                <tr class="empty-row">
-                    <td colspan="4">Data tidak tersedia.</td>
+
+                @forelse ($groupedRows[$key] as $row)
+                    @php $globalRow++; @endphp
+                    <tr class="{{ $globalRow % 2 === 0 ? 'row-even' : 'row-odd' }}">
+                        <td class="nowrap center">{{ $fmtDate((string) ($row['tanggal'] ?? '')) }}</td>
+                        <td class="center">{{ $row['no_label'] ?? '' }}</td>
+                        <td class="number">{{ $fmtInt($row['tebal'] ?? 0) }}</td>
+                        <td class="number">{{ $fmtInt($row['lebar'] ?? 0) }}</td>
+                        <td class="number">{{ $fmtInt($row['panjang'] ?? 0) }}</td>
+                        <td class="number">{{ $fmtInt($row['jmlh_batang'] ?? 0) }}</td>
+                        <td class="number">{{ $fmt4($row['kubik'] ?? 0) }}</td>
+                        <td class="center">{{ $row['no_spk_tujuan'] ?? '' }}</td>
+                    </tr>
+                @empty
+                    <tr class="empty-row">
+                        <td colspan="8">Tidak ada data.</td>
+                    </tr>
+                @endforelse
+
+                <tr class="grand-total-row">
+                    <td colspan="5" class="center">{{ $section['total_label'] }}</td>
+                    <td class="number">{{ $fmtInt($sectionTotals[$key]['jmlh_batang'] ?? 0) }}</td>
+                    <td class="number">{{ $fmt4($sectionTotals[$key]['kubik'] ?? 0) }}</td>
+                    <td></td>
                 </tr>
-            @endforelse
+            @endforeach
         </tbody>
     </table>
 

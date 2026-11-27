@@ -25,16 +25,48 @@ class MouldingReprosesDanHasilReprosesReportService
     {
         $normalized = array_map(function (mixed $row): array {
             $item = (array) $row;
+            $section = trim((string) ($item['Section'] ?? ''));
 
             return [
+                'section' => $section,
+                'section_key' => match ($section) {
+                    'Input Reproses' => 'input_reproses',
+                    'Output Reproses' => 'output_reproses',
+                    'Hasil Dari Reproses' => 'hasil_dari_reproses',
+                    default => 'other',
+                },
                 'tanggal' => trim((string) ($item['Tanggal'] ?? '')),
-                'input_reproses' => $this->toFloat($item['InputReproses'] ?? null),
-                'output_reproses' => $this->toFloat($item['OutputReproses'] ?? null),
-                'hasil_dari_reproses' => $this->toFloat($item['HasilDariReproses'] ?? null),
+                'no_label' => trim((string) ($item['NoLabel'] ?? '')),
+                'tebal' => $this->toFloat($item['Tebal'] ?? null),
+                'lebar' => $this->toFloat($item['Lebar'] ?? null),
+                'panjang' => $this->toFloat($item['Panjang'] ?? null),
+                'jmlh_batang' => (int) round($this->toFloat($item['JmlhBatang'] ?? null)),
+                'kubik' => $this->toFloat($item['Kubik'] ?? null),
+                'no_spk_tujuan' => trim((string) ($item['NoSPKTujuan'] ?? '')),
             ];
         }, array_values($rows));
 
-        usort($normalized, static fn (array $a, array $b): int => strcmp($a['tanggal'], $b['tanggal']));
+        $sectionOrder = [
+            'Input Reproses' => 1,
+            'Output Reproses' => 2,
+            'Hasil Dari Reproses' => 3,
+        ];
+        usort($normalized, static function (array $a, array $b) use ($sectionOrder): int {
+            $cmp = ($sectionOrder[$a['section']] ?? 99) <=> ($sectionOrder[$b['section']] ?? 99);
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+            $cmp = strcmp($a['tanggal'], $b['tanggal']);
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+            $cmp = strnatcasecmp($a['no_label'], $b['no_label']);
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+
+            return strnatcasecmp($a['no_spk_tujuan'], $b['no_spk_tujuan']);
+        });
 
         return [
             'start_date' => $startDate,
@@ -53,10 +85,15 @@ class MouldingReprosesDanHasilReprosesReportService
         $detected = array_keys($first);
 
         $required = [
+            'Section',
             'Tanggal',
-            'InputReproses',
-            'OutputReproses',
-            'HasilDariReproses',
+            'NoLabel',
+            'Tebal',
+            'Lebar',
+            'Panjang',
+            'JmlhBatang',
+            'Kubik',
+            'NoSPKTujuan',
         ];
         $missing = array_values(array_diff($required, $detected));
 

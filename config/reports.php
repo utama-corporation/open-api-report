@@ -1524,7 +1524,7 @@ return [
         'parameter_count' => (int) env('MOULDING_REPROSES_DAN_HASIL_REPROSES_REPORT_PARAMETER_COUNT', 2),
         'expected_columns' => array_filter(array_map('trim', explode(',', (string) env(
             'MOULDING_REPROSES_DAN_HASIL_REPROSES_REPORT_EXPECTED_COLUMNS',
-            'Tanggal,InputReproses,OutputReproses,HasilDariReproses'
+            'Section,Tanggal,NoLabel,Tebal,Lebar,Panjang,JmlhBatang,Kubik,NoSPKTujuan'
         )))),
     ],
     'moulding_hidup_detail' => [
