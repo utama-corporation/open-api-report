@@ -61,8 +61,8 @@ class CompanyReportRegistryTest extends TestCase
         ]));
         sort($paths);
 
-        // Four diagram slugs are merged into their list reports; 182 shared paths collapse to 161 slugs.
-        $this->assertSame(161, count($paths));
+        // Four diagram slugs are merged into their list reports; 183 shared paths collapse to 162 slugs.
+        $this->assertSame(162, count($paths));
         $this->assertSame($paths, array_keys(CompanyReportRegistry::all()));
         $this->assertNotNull(CompanyReportRegistry::get('general_ledger.trial_balance_monthly.arus-kas'));
         $this->assertSame(['ru'], CompanyReportRegistry::allowedCompanies('finance.receivable-summary.umur-piutang'));

@@ -361,6 +361,11 @@ Route::post(
 )->name('api.internal.ascends.shared.custom-report.item-discontinue.pdf');
 
 Route::post(
+    '/internal/ascends/shared/custom-report/laporan-penjualan-harian-cod-cbd/pdf',
+    [AscendXmlTestController::class, 'apiSharedCustomReportLaporanPenjualanHarianCodCbdPdf']
+)->name('api.internal.ascends.shared.custom-report.laporan-penjualan-harian-cod-cbd.pdf');
+
+Route::post(
     '/internal/ascends/shared/custom-report/bank-account-daily-cash/pdf',
     [AscendXmlTestController::class, 'apiBankAccountDailyCashPdf']
 )->name('api.internal.ascends.shared.custom-report.bank-account-daily-cash.pdf');

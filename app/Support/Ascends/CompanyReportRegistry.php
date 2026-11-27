@@ -22,6 +22,7 @@ use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitu
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureSalesProjectReportService;
 use App\Services\Ascends\Shared\CustomReport\CheckPriceGroupA\DaftarHargaFurnitureSemiGrosirReportService;
 use App\Services\Ascends\Shared\CustomReport\CustomerOverLimitReportService;
+use App\Services\Ascends\Shared\CustomReport\DailySalesCodCbdReportService;
 use App\Services\Ascends\Shared\CustomReport\ItemDiscontinueReportService;
 use App\Services\Ascends\Shared\CustomReport\MonitoringSoSiTagihanReportService;
 use App\Services\Ascends\Shared\CustomReport\PembelianKayuPerPeriodeReportService;
@@ -394,6 +395,13 @@ final class CompanyReportRegistry
                 view: 'ascends.shared.custom_report.item_discontinue.pdf',
                 pdf: ['format' => 'A4', 'orientation' => 'portrait'],
                 filename: fn (array $data, string $company): string => 'Laporan Item Discontinue ('.$company.').pdf',
+            ),
+            'custom-report.laporan-penjualan-harian-cod-cbd' => new CompanyReportDefinition(
+                slug: 'custom-report.laporan-penjualan-harian-cod-cbd',
+                service: DailySalesCodCbdReportService::class,
+                view: 'ascends.shared.custom_report.laporan_penjualan_harian_cod_cbd.pdf',
+                pdf: ['format' => 'A4', 'orientation' => 'landscape'],
+                filename: fn (array $data, string $company): string => 'Laporan Penjualan Harian COD & CBD ('.$company.').pdf',
             ),
             'custom-report.monitoring-so-si-tagihan' => new CompanyReportDefinition(
                 slug: 'custom-report.monitoring-so-si-tagihan',
