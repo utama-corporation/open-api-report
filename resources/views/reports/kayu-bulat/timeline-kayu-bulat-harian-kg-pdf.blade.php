@@ -233,10 +233,14 @@
             }
         }
 
-        // Lebar kolom dalam % agar No + Supplier + tanggal + Total selalu tepat 100%.
+        // Lebar kolom dalam % agar No + Supplier + tanggal + Total + Average/Min/Max tepat 100%.
         $dateCount = count($dateKeys);
         $supplierWidthPct = $dateCount >= 8 ? 18 : 22;
-        $dateWidthPct = $dateCount > 0 ? round((100 - 3 - $supplierWidthPct - 10) / $dateCount, 2) : 0;
+        $totalWidthPct = 8;
+        $statWidthPct = 5;
+        $dateWidthPct = $dateCount > 0
+            ? round((100 - 3 - $supplierWidthPct - $totalWidthPct - ($statWidthPct * 3)) / $dateCount, 2)
+            : 0;
 
         $matrix = [];
         foreach ($periods as $period) {
@@ -256,6 +260,24 @@
             }
         }
 
+        foreach ($matrix as $supplier => $row) {
+            $dailyValues = [];
+            foreach ($dateKeys as $dateKey) {
+                $value = (float) ($row['by_date'][$dateKey] ?? 0.0);
+                if (abs($value) >= 0.0000001) {
+                    $dailyValues[] = $value;
+                }
+            }
+
+            $matrix[$supplier]['stats'] = $dailyValues === []
+                ? ['avg' => null, 'min' => null, 'max' => null]
+                : [
+                    'avg' => array_sum($dailyValues) / count($dailyValues),
+                    'min' => min($dailyValues),
+                    'max' => max($dailyValues),
+                ];
+        }
+
         $supplierRows = array_values($matrix);
         usort($supplierRows, static function (array $a, array $b): int {
             $cmp = ($b['total'] ?? 0.0) <=> ($a['total'] ?? 0.0);
@@ -272,6 +294,22 @@
             }
         }
         $grandTotal = array_sum($columnTotals);
+
+        $grandValues = [];
+        foreach ($columnTotals as $value) {
+            $value = (float) $value;
+            if (abs($value) >= 0.0000001) {
+                $grandValues[] = $value;
+            }
+        }
+
+        $grandStats = $grandValues === []
+            ? ['avg' => null, 'min' => null, 'max' => null]
+            : [
+                'avg' => array_sum($grandValues) / count($grandValues),
+                'min' => min($grandValues),
+                'max' => max($grandValues),
+            ];
     @endphp
 
     <h1 class="report-title">Laporan Timeline KB - Harian (Rambung)</h1>
@@ -289,7 +327,10 @@
                                 {{ $group['label'] }}
                             </th>
                         @endforeach
-                        <th rowspan="2" style="width: 10%;">Total</th>
+                        <th rowspan="2" style="width: {{ $totalWidthPct }}%;">Total</th>
+                        <th rowspan="2" style="width: {{ $statWidthPct }}%;">Average</th>
+                        <th rowspan="2" style="width: {{ $statWidthPct }}%;">Min</th>
+                        <th rowspan="2" style="width: {{ $statWidthPct }}%;">Max</th>
                     </tr>
                     <tr class="headers-row">
                         @foreach ($dateKeys as $dateKey)
@@ -308,10 +349,13 @@
                             <td class="number col-total" style="font-weight: bold;">
                                 {{ $fmtBlankZero((float) ($row['total'] ?? 0.0)) }}
                             </td>
+                            <td class="number">{{ $fmtBlankZero((float) ($row['stats']['avg'] ?? 0.0)) }}</td>
+                            <td class="number">{{ $fmtBlankZero((float) ($row['stats']['min'] ?? 0.0)) }}</td>
+                            <td class="number">{{ $fmtBlankZero((float) ($row['stats']['max'] ?? 0.0)) }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="{{ 3 + count($dateKeys) }}" class="center">Tidak ada data.</td>
+                            <td colspan="{{ 6 + count($dateKeys) }}" class="center">Tidak ada data.</td>
                         </tr>
                     @endforelse
 
@@ -322,6 +366,9 @@
                                 <td class="number">{{ $fmtBlankZero((float) ($columnTotals[$dateKey] ?? 0.0)) }}</td>
                             @endforeach
                             <td class="number col-total">{{ $fmtBlankZero((float) $grandTotal) }}</td>
+                            <td class="number">{{ $fmtBlankZero((float) ($grandStats['avg'] ?? 0.0)) }}</td>
+                            <td class="number">{{ $fmtBlankZero((float) ($grandStats['min'] ?? 0.0)) }}</td>
+                            <td class="number">{{ $fmtBlankZero((float) ($grandStats['max'] ?? 0.0)) }}</td>
                         </tr>
                     @endif
                 </tbody>
